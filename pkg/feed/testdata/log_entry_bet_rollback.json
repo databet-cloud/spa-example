@@ -1,0 +1,13 @@
+{
+  "v": "1sCXRWyLJkO000dnRKGnzm",
+  "sport_event_id": "eb1a6310-8d37-4f67-a4c3-2ff1078788bb",
+  "type": "bet_rollback",
+  "timestamp": 1573039897,
+  "match_id": "eb1a6310-8d37-4f67-a4c3-2ff1078788bb",
+  "market_ids": [
+    "1",
+    "2"
+  ],
+  "dt_start": "2019-08-08T14:21:52Z",
+  "dt_end": "2019-08-08T14:21:52Z"
+}
