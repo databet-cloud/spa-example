@@ -6,6 +6,7 @@ import (
 
 	"github.com/databet-cloud/databet-go-sdk/pkg/fixture"
 	"github.com/databet-cloud/databet-go-sdk/pkg/market"
+	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
 )
 
 //easyjson:json
@@ -17,4 +18,20 @@ type SportEvent struct {
 	BetStop   bool                   `json:"bet_stop"`
 	Sources   []Source               `json:"sources"`
 	UpdatedAt time.Time              `json:"updated_at"`
+}
+
+func (se SportEvent) WithPatch(tree patch.Tree) (SportEvent, error) {
+	if v, ok := patch.GetFromTree[time.Time](tree, "updated_at"); ok {
+		se.UpdatedAt = v
+		se.Fixture.UpdatedAt = v
+	}
+
+	if v, ok := patch.GetFromTree[bool](tree, "bet_stop"); ok {
+		se.BetStop = v
+	}
+
+	// se.Markets = se.Markets.WithPatch(tree.Enter("markets"))
+	se.Fixture = se.Fixture.WithPatch(tree.SubTree("fixture"))
+
+	return se, nil
 }
