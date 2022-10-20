@@ -13,7 +13,6 @@ func NewFixture() *Fixture {
 		Streams:     Streams{},
 		Venue:       Venue{},
 		Tournament:  Tournament{},
-		Meta:        Meta{},
 	}
 }
 
@@ -33,7 +32,6 @@ type Fixture struct {
 	LiveCoverage bool        `json:"live_coverage"`
 	StartTime    time.Time   `json:"start_time"`
 	Flags        int         `json:"flags"`
-	Meta         Meta        `json:"meta"`
 	CreatedAt    time.Time   `json:"created_at"`
 	UpdatedAt    time.Time   `json:"updated_at"`
 	PublishedAt  time.Time   `json:"published_at"`
@@ -60,11 +58,11 @@ func (f Fixture) WithPatch(patchTree patch.Tree) Fixture {
 	f.Venue = f.Venue.WithPatch(patchTree.SubTree("venue"))
 
 	if subTree := patchTree.SubTree("streams"); !subTree.Empty() {
-		f.Streams = patch.PatchMap(f.Streams, subTree)
+		f.Streams = patch.MapPatchable(f.Streams, subTree)
 	}
 
 	if subTree := patchTree.SubTree("competitors"); !subTree.Empty() {
-		f.Competitors = patch.PatchMap(f.Competitors, subTree)
+		f.Competitors = patch.MapPatchable(f.Competitors, subTree)
 	}
 
 	return f
@@ -72,7 +70,6 @@ func (f Fixture) WithPatch(patchTree patch.Tree) Fixture {
 
 func (f Fixture) Clone() Fixture {
 	result := f
-	result.Meta = f.Meta.Clone()
 	result.Competitors = f.Competitors.Clone()
 
 	return result

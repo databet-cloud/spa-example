@@ -26,7 +26,7 @@ func (s Stream) WithPatch(tree patch.Tree) Stream {
 	}
 
 	if subTree := tree.SubTree("platforms"); !subTree.Empty() {
-		s.Platforms = patch.PatchMap(s.Platforms, subTree)
+		s.Platforms = patch.MapPatchable(s.Platforms, subTree)
 	}
 
 	if v, ok := patch.GetFromTree[int](tree, "priority"); ok {

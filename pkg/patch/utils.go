@@ -8,7 +8,7 @@ type Patchable[T any] interface {
 	WithPatch(tree Tree) T
 }
 
-func PatchMap[P Patchable[P]](m map[string]P, tree Tree) map[string]P {
+func MapPatchable[P Patchable[P]](m map[string]P, tree Tree) map[string]P {
 	res := maps.Clone(m)
 	if res == nil {
 		res = make(map[string]P, len(tree.Patch()))

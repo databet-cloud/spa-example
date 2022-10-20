@@ -139,7 +139,7 @@ func TestCompetitors_WithPatch(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			actual := fixture.Competitors(patch.PatchMap(tc.prev, patch.NewTree(tc.input, "/")))
+			actual := fixture.Competitors(patch.MapPatchable(tc.prev, patch.NewTree(tc.input, "/")))
 			assert.Equal(t, tc.expected, actual)
 		})
 	}

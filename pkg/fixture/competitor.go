@@ -22,7 +22,6 @@ type Competitor struct {
 	HomeAway         int    `json:"home_away"`
 	TemplatePosition int    `json:"template_position"`
 	Scores           Scores `json:"scores"`
-	Meta             Meta   `json:"meta"`
 	//
 	Name        string `json:"name"`
 	MasterID    string `json:"master_id"`
@@ -63,7 +62,7 @@ func (c Competitor) WithPatch(tree patch.Tree) Competitor {
 			c.Scores = Scores{}
 		}
 
-		c.Scores = patch.PatchMap(c.Scores, subTree)
+		c.Scores = patch.MapPatchable(c.Scores, subTree)
 	}
 
 	return c
@@ -71,7 +70,6 @@ func (c Competitor) WithPatch(tree patch.Tree) Competitor {
 
 func (c Competitor) Clone() Competitor {
 	result := c
-	c.Meta = c.Meta.Clone()
 	c.Scores = c.Scores.Clone()
 
 	return result
