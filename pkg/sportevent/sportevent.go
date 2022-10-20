@@ -4,8 +4,6 @@ package sportevent
 import (
 	"time"
 
-	"golang.org/x/exp/maps"
-
 	"github.com/databet-cloud/databet-go-sdk/pkg/fixture"
 	"github.com/databet-cloud/databet-go-sdk/pkg/market"
 	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
@@ -32,23 +30,15 @@ func (se SportEvent) WithPatch(tree patch.Tree) (SportEvent, error) {
 		se.BetStop = v
 	}
 
-	// se.Markets = se.Markets.WithPatch(tree.Enter("markets"))
+	if subTree := tree.SubTree("markets"); !subTree.Empty() {
+		se.Markets = patch.MapPatchable(se.Markets, subTree)
+	}
+
+	if subTree := tree.SubTree("meta"); !subTree.Empty() {
+		se.Meta = patch.PatchMap(se.Meta, subTree)
+	}
+
 	se.Fixture = se.Fixture.WithPatch(tree.SubTree("fixture"))
-	se.Meta = metaWithPatch(se.Meta, tree.SubTree("meta"))
 
 	return se, nil
-}
-
-func metaWithPatch(m map[string]interface{}, tree patch.Tree) map[string]interface{} {
-	meta := maps.Clone(m)
-
-	if meta == nil {
-		meta = map[string]interface{}{}
-	}
-
-	for k, v := range tree.Patch() {
-		meta[k] = v
-	}
-
-	return meta
 }

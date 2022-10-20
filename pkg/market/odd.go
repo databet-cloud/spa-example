@@ -2,9 +2,7 @@
 package market
 
 import (
-	"encoding/json"
-
-	"github.com/mailru/easyjson/jwriter"
+	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
 )
 
 const (
@@ -45,9 +43,9 @@ func (os OddStatus) IsResulted() bool {
 }
 
 //easyjson:json
-type OddCollection map[string]Odd
+type Odds map[string]Odd
 
-func (c OddCollection) Equals(other OddCollection) bool {
+func (c Odds) Equals(other Odds) bool {
 	if len(c) != len(other) {
 		return false
 	}
@@ -66,8 +64,8 @@ func (c OddCollection) Equals(other OddCollection) bool {
 	return true
 }
 
-func (c OddCollection) Clone() OddCollection {
-	newC := make(OddCollection, len(c))
+func (c Odds) Clone() Odds {
+	newC := make(Odds, len(c))
 	for id, odd := range c {
 		newC[id] = odd.Clone()
 	}
@@ -75,14 +73,47 @@ func (c OddCollection) Clone() OddCollection {
 	return newC
 }
 
+//easyjson:json
 type Odd struct {
-	ID           string    `json:"id" bson:"id"`
-	Template     string    `json:"template" bson:"template"`
-	IsActive     bool      `json:"is_active" bson:"is_active"`
-	Status       OddStatus `json:"status" bson:"status"`
-	Value        float64   `json:"value,string" bson:"value"`
-	Marge        float64   `json:"marge,string" bson:"marge"`
-	StatusReason string    `json:"status_reason" bson:"status_reason"`
+	ID           string    `json:"id"`
+	Template     string    `json:"template"`
+	IsActive     bool      `json:"is_active"`
+	Status       OddStatus `json:"status"`
+	Value        string    `json:"value"`
+	StatusReason string    `json:"status_reason"`
+}
+
+func (o Odd) WithPatch(tree patch.Tree) Odd {
+	if v, ok := patch.GetFromTree[string](tree, "id"); ok {
+		o.ID = v
+	}
+
+	if v, ok := patch.GetFromTree[string](tree, "template"); ok {
+		o.Template = v
+	}
+
+	if v, ok := patch.GetFromTree[bool](tree, "is_active"); ok {
+		o.IsActive = v
+	}
+
+	if tree.Has("status") {
+		switch v := tree.Get("status").(type) {
+		case float64:
+			o.Status = OddStatus(v)
+		case int:
+			o.Status = OddStatus(v)
+		}
+	}
+
+	if v, ok := patch.GetFromTree[string](tree, "value"); ok {
+		o.Value = v
+	}
+
+	if v, ok := patch.GetFromTree[string](tree, "status_reason"); ok {
+		o.StatusReason = v
+	}
+
+	return o
 }
 
 func (o Odd) Equals(other Odd) bool {
@@ -91,7 +122,6 @@ func (o Odd) Equals(other Odd) bool {
 		o.IsActive == other.IsActive &&
 		o.Status == other.Status &&
 		o.Value == other.Value &&
-		o.Marge == other.Marge &&
 		o.StatusReason == other.StatusReason
 }
 
@@ -102,43 +132,6 @@ func (o Odd) Clone() Odd {
 		IsActive:     o.IsActive,
 		Status:       o.Status,
 		Value:        o.Value,
-		Marge:        o.Marge,
 		StatusReason: o.StatusReason,
 	}
-}
-
-//easyjson:json
-type oddJSON struct {
-	ID           string          `json:"id"`
-	Template     string          `json:"template"`
-	IsActive     bool            `json:"is_active"`
-	Status       OddStatus       `json:"status"`
-	Value        float64         `json:"value,string"`
-	Marge        float64         `json:"marge,string"`
-	Meta         json.RawMessage `json:"meta"` // todo: Deprecated field (saved for BC), should be removed
-	StatusReason string          `json:"status_reason"`
-}
-
-//nolint:gochecknoglobals // shared constant meta for BC
-var emptyMeta = []byte{'{', '}'}
-
-func (o Odd) makeJSONOdd() oddJSON {
-	return oddJSON{
-		ID:           o.ID,
-		Template:     o.Template,
-		IsActive:     o.IsActive,
-		Status:       o.Status,
-		Value:        o.Value,
-		Marge:        o.Marge,
-		Meta:         emptyMeta,
-		StatusReason: o.StatusReason,
-	}
-}
-
-func (o Odd) MarshalEasyJSON(w *jwriter.Writer) {
-	o.makeJSONOdd().MarshalEasyJSON(w)
-}
-
-func (o Odd) MarshalJSON() ([]byte, error) {
-	return o.makeJSONOdd().MarshalJSON()
 }

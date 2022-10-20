@@ -20,3 +20,20 @@ func MapPatchable[P Patchable[P]](m map[string]P, tree Tree) map[string]P {
 
 	return res
 }
+
+func PatchMap[V any](m map[string]V, tree Tree) map[string]V {
+	res := maps.Clone(m)
+
+	if res == nil {
+		res = map[string]V{}
+	}
+
+	for k, v := range tree.Patch() {
+		value, ok := v.(V)
+		if ok {
+			res[k] = value
+		}
+	}
+
+	return res
+}

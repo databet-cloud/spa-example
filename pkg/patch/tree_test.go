@@ -21,7 +21,7 @@ func TestTreeSubTree(t *testing.T) {
 				"field1": 1,
 				"field2": 2,
 				"field3": 3,
-				"field4": patch.Patch{
+				"field4": map[string]any{
 					"subfield1": 1,
 					"subfield2": 2,
 					"subfield3": 3,

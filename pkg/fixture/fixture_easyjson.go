@@ -17,7 +17,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson8f177a29DecodeDatabetGoSdkPkgFixture(in *jlexer.Lexer, out *Fixture) {
+func easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture(in *jlexer.Lexer, out *Fixture) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -51,9 +51,9 @@ func easyjson8f177a29DecodeDatabetGoSdkPkgFixture(in *jlexer.Lexer, out *Fixture
 		case "sport_id":
 			out.SportID = string(in.String())
 		case "tournament":
-			easyjson8f177a29DecodeDatabetGoSdkPkgFixture1(in, &out.Tournament)
+			easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture1(in, &out.Tournament)
 		case "venue":
-			easyjson8f177a29DecodeDatabetGoSdkPkgFixture2(in, &out.Venue)
+			easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture2(in, &out.Venue)
 		case "competitors":
 			if in.IsNull() {
 				in.Skip()
@@ -64,7 +64,7 @@ func easyjson8f177a29DecodeDatabetGoSdkPkgFixture(in *jlexer.Lexer, out *Fixture
 					key := string(in.String())
 					in.WantColon()
 					var v1 Competitor
-					easyjson8f177a29DecodeDatabetGoSdkPkgFixture3(in, &v1)
+					easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture3(in, &v1)
 					(out.Competitors)[key] = v1
 					in.WantComma()
 				}
@@ -80,7 +80,7 @@ func easyjson8f177a29DecodeDatabetGoSdkPkgFixture(in *jlexer.Lexer, out *Fixture
 					key := string(in.String())
 					in.WantColon()
 					var v2 Stream
-					easyjson8f177a29DecodeDatabetGoSdkPkgFixture4(in, &v2)
+					easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture4(in, &v2)
 					(out.Streams)[key] = v2
 					in.WantComma()
 				}
@@ -94,8 +94,6 @@ func easyjson8f177a29DecodeDatabetGoSdkPkgFixture(in *jlexer.Lexer, out *Fixture
 			}
 		case "flags":
 			out.Flags = int(in.Int())
-		case "meta":
-			(out.Meta).UnmarshalEasyJSON(in)
 		case "created_at":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.CreatedAt).UnmarshalJSON(data))
@@ -118,7 +116,7 @@ func easyjson8f177a29DecodeDatabetGoSdkPkgFixture(in *jlexer.Lexer, out *Fixture
 		in.Consumed()
 	}
 }
-func easyjson8f177a29EncodeDatabetGoSdkPkgFixture(out *jwriter.Writer, in Fixture) {
+func easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture(out *jwriter.Writer, in Fixture) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -160,12 +158,12 @@ func easyjson8f177a29EncodeDatabetGoSdkPkgFixture(out *jwriter.Writer, in Fixtur
 	{
 		const prefix string = ",\"tournament\":"
 		out.RawString(prefix)
-		easyjson8f177a29EncodeDatabetGoSdkPkgFixture1(out, in.Tournament)
+		easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture1(out, in.Tournament)
 	}
 	{
 		const prefix string = ",\"venue\":"
 		out.RawString(prefix)
-		easyjson8f177a29EncodeDatabetGoSdkPkgFixture2(out, in.Venue)
+		easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture2(out, in.Venue)
 	}
 	{
 		const prefix string = ",\"competitors\":"
@@ -183,7 +181,7 @@ func easyjson8f177a29EncodeDatabetGoSdkPkgFixture(out *jwriter.Writer, in Fixtur
 				}
 				out.String(string(v3Name))
 				out.RawByte(':')
-				easyjson8f177a29EncodeDatabetGoSdkPkgFixture3(out, v3Value)
+				easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture3(out, v3Value)
 			}
 			out.RawByte('}')
 		}
@@ -204,7 +202,7 @@ func easyjson8f177a29EncodeDatabetGoSdkPkgFixture(out *jwriter.Writer, in Fixtur
 				}
 				out.String(string(v4Name))
 				out.RawByte(':')
-				easyjson8f177a29EncodeDatabetGoSdkPkgFixture4(out, v4Value)
+				easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture4(out, v4Value)
 			}
 			out.RawByte('}')
 		}
@@ -223,11 +221,6 @@ func easyjson8f177a29EncodeDatabetGoSdkPkgFixture(out *jwriter.Writer, in Fixtur
 		const prefix string = ",\"flags\":"
 		out.RawString(prefix)
 		out.Int(int(in.Flags))
-	}
-	{
-		const prefix string = ",\"meta\":"
-		out.RawString(prefix)
-		(in.Meta).MarshalEasyJSON(out)
 	}
 	{
 		const prefix string = ",\"created_at\":"
@@ -250,27 +243,27 @@ func easyjson8f177a29EncodeDatabetGoSdkPkgFixture(out *jwriter.Writer, in Fixtur
 // MarshalJSON supports json.Marshaler interface
 func (v Fixture) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson8f177a29EncodeDatabetGoSdkPkgFixture(&w, v)
+	easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Fixture) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson8f177a29EncodeDatabetGoSdkPkgFixture(w, v)
+	easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Fixture) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson8f177a29DecodeDatabetGoSdkPkgFixture(&r, v)
+	easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Fixture) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson8f177a29DecodeDatabetGoSdkPkgFixture(l, v)
+	easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture(l, v)
 }
-func easyjson8f177a29DecodeDatabetGoSdkPkgFixture4(in *jlexer.Lexer, out *Stream) {
+func easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture4(in *jlexer.Lexer, out *Stream) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -305,7 +298,7 @@ func easyjson8f177a29DecodeDatabetGoSdkPkgFixture4(in *jlexer.Lexer, out *Stream
 					key := string(in.String())
 					in.WantColon()
 					var v5 Platform
-					easyjson8f177a29DecodeDatabetGoSdkPkgFixture5(in, &v5)
+					easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture5(in, &v5)
 					(out.Platforms)[key] = v5
 					in.WantComma()
 				}
@@ -323,7 +316,7 @@ func easyjson8f177a29DecodeDatabetGoSdkPkgFixture4(in *jlexer.Lexer, out *Stream
 		in.Consumed()
 	}
 }
-func easyjson8f177a29EncodeDatabetGoSdkPkgFixture4(out *jwriter.Writer, in Stream) {
+func easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture4(out *jwriter.Writer, in Stream) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -358,7 +351,7 @@ func easyjson8f177a29EncodeDatabetGoSdkPkgFixture4(out *jwriter.Writer, in Strea
 				}
 				out.String(string(v6Name))
 				out.RawByte(':')
-				easyjson8f177a29EncodeDatabetGoSdkPkgFixture5(out, v6Value)
+				easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture5(out, v6Value)
 			}
 			out.RawByte('}')
 		}
@@ -370,7 +363,7 @@ func easyjson8f177a29EncodeDatabetGoSdkPkgFixture4(out *jwriter.Writer, in Strea
 	}
 	out.RawByte('}')
 }
-func easyjson8f177a29DecodeDatabetGoSdkPkgFixture5(in *jlexer.Lexer, out *Platform) {
+func easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture5(in *jlexer.Lexer, out *Platform) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -426,7 +419,7 @@ func easyjson8f177a29DecodeDatabetGoSdkPkgFixture5(in *jlexer.Lexer, out *Platfo
 		in.Consumed()
 	}
 }
-func easyjson8f177a29EncodeDatabetGoSdkPkgFixture5(out *jwriter.Writer, in Platform) {
+func easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture5(out *jwriter.Writer, in Platform) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -458,7 +451,7 @@ func easyjson8f177a29EncodeDatabetGoSdkPkgFixture5(out *jwriter.Writer, in Platf
 	}
 	out.RawByte('}')
 }
-func easyjson8f177a29DecodeDatabetGoSdkPkgFixture3(in *jlexer.Lexer, out *Competitor) {
+func easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture3(in *jlexer.Lexer, out *Competitor) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -495,14 +488,12 @@ func easyjson8f177a29DecodeDatabetGoSdkPkgFixture3(in *jlexer.Lexer, out *Compet
 					key := string(in.String())
 					in.WantColon()
 					var v10 Score
-					easyjson8f177a29DecodeDatabetGoSdkPkgFixture6(in, &v10)
+					easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture6(in, &v10)
 					(out.Scores)[key] = v10
 					in.WantComma()
 				}
 				in.Delim('}')
 			}
-		case "meta":
-			(out.Meta).UnmarshalEasyJSON(in)
 		case "name":
 			out.Name = string(in.String())
 		case "master_id":
@@ -519,7 +510,7 @@ func easyjson8f177a29DecodeDatabetGoSdkPkgFixture3(in *jlexer.Lexer, out *Compet
 		in.Consumed()
 	}
 }
-func easyjson8f177a29EncodeDatabetGoSdkPkgFixture3(out *jwriter.Writer, in Competitor) {
+func easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture3(out *jwriter.Writer, in Competitor) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -559,15 +550,10 @@ func easyjson8f177a29EncodeDatabetGoSdkPkgFixture3(out *jwriter.Writer, in Compe
 				}
 				out.String(string(v11Name))
 				out.RawByte(':')
-				easyjson8f177a29EncodeDatabetGoSdkPkgFixture6(out, v11Value)
+				easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture6(out, v11Value)
 			}
 			out.RawByte('}')
 		}
-	}
-	{
-		const prefix string = ",\"meta\":"
-		out.RawString(prefix)
-		(in.Meta).MarshalEasyJSON(out)
 	}
 	{
 		const prefix string = ",\"name\":"
@@ -586,7 +572,7 @@ func easyjson8f177a29EncodeDatabetGoSdkPkgFixture3(out *jwriter.Writer, in Compe
 	}
 	out.RawByte('}')
 }
-func easyjson8f177a29DecodeDatabetGoSdkPkgFixture6(in *jlexer.Lexer, out *Score) {
+func easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture6(in *jlexer.Lexer, out *Score) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -623,7 +609,7 @@ func easyjson8f177a29DecodeDatabetGoSdkPkgFixture6(in *jlexer.Lexer, out *Score)
 		in.Consumed()
 	}
 }
-func easyjson8f177a29EncodeDatabetGoSdkPkgFixture6(out *jwriter.Writer, in Score) {
+func easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture6(out *jwriter.Writer, in Score) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -649,7 +635,7 @@ func easyjson8f177a29EncodeDatabetGoSdkPkgFixture6(out *jwriter.Writer, in Score
 	}
 	out.RawByte('}')
 }
-func easyjson8f177a29DecodeDatabetGoSdkPkgFixture2(in *jlexer.Lexer, out *Venue) {
+func easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture2(in *jlexer.Lexer, out *Venue) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -680,7 +666,7 @@ func easyjson8f177a29DecodeDatabetGoSdkPkgFixture2(in *jlexer.Lexer, out *Venue)
 		in.Consumed()
 	}
 }
-func easyjson8f177a29EncodeDatabetGoSdkPkgFixture2(out *jwriter.Writer, in Venue) {
+func easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture2(out *jwriter.Writer, in Venue) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -691,7 +677,7 @@ func easyjson8f177a29EncodeDatabetGoSdkPkgFixture2(out *jwriter.Writer, in Venue
 	}
 	out.RawByte('}')
 }
-func easyjson8f177a29DecodeDatabetGoSdkPkgFixture1(in *jlexer.Lexer, out *Tournament) {
+func easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture1(in *jlexer.Lexer, out *Tournament) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -728,7 +714,7 @@ func easyjson8f177a29DecodeDatabetGoSdkPkgFixture1(in *jlexer.Lexer, out *Tourna
 		in.Consumed()
 	}
 }
-func easyjson8f177a29EncodeDatabetGoSdkPkgFixture1(out *jwriter.Writer, in Tournament) {
+func easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture1(out *jwriter.Writer, in Tournament) {
 	out.RawByte('{')
 	first := true
 	_ = first

@@ -1,0 +1,30 @@
+{
+  "id": "1",
+  "meta": {},
+  "odds": {
+    "1": {
+      "id": "1",
+      "value": "1.88",
+      "status": 1,
+      "template": "{$competitor1}",
+      "is_active": true,
+      "status_reason": "reason1"
+    },
+    "2": {
+      "id": "2",
+      "value": "2.09",
+      "status": 1,
+      "template": "{$competitor2}",
+      "is_active": true,
+      "status_reason": "reason2"
+    }
+  },
+  "flags": 2,
+  "status": 2,
+  "type_id": 1,
+  "template": "Winner",
+  "specifiers": {
+    "1": "2"
+  },
+  "is_defective": true
+}
