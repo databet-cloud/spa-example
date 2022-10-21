@@ -22,13 +22,8 @@ func NewTree(patch Patch, levelDelimiter string) Tree {
 }
 
 func (t Tree) SubTree(level string) Tree {
-	if t.Has(level) {
-		switch subPatch := t.Get(level).(type) {
-		case map[string]any:
-			return t.newSubTree(level, subPatch)
-		case Patch:
-			return t.newSubTree(level, subPatch)
-		}
+	if subPatch := castToPatch(t.Get(level)); subPatch != nil {
+		return t.newSubTree(level, subPatch)
 	}
 
 	subPatch := make(Patch)
@@ -41,6 +36,17 @@ func (t Tree) SubTree(level string) Tree {
 	}
 
 	return t.newSubTree(level, subPatch)
+}
+
+func castToPatch(value any) Patch {
+	switch v := value.(type) {
+	case Patch:
+		return v
+	case map[string]any:
+		return v
+	default:
+		return nil
+	}
 }
 
 func (t Tree) SubTrees() map[string]Tree {

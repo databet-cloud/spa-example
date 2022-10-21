@@ -36,7 +36,7 @@ func (c *ClientHTTP) GetAll(
 		ctx,
 		http.MethodGet,
 		fmt.Sprintf("%s/v2/bookmaker/%s/all", c.feedURL, bookmakerID),
-		nil, // empty body
+		http.NoBody,
 	)
 	if err != nil {
 		return "", fmt.Errorf("create http request: %w", err)
@@ -81,7 +81,7 @@ func (c *ClientHTTP) GetFeedVersion(ctx context.Context, bookmakerID string) (st
 		ctx,
 		http.MethodGet,
 		fmt.Sprintf("%s/v2/bookmaker/%s/logVersion", c.feedURL, bookmakerID),
-		nil, // empty body
+		http.NoBody,
 	)
 	if err != nil {
 		return "", fmt.Errorf("create http request: %w", err)
@@ -109,7 +109,7 @@ func (c *ClientHTTP) GetLogsFromVersion(
 		ctx,
 		http.MethodGet,
 		fmt.Sprintf("%s/v2/bookmaker/%s/log", c.feedURL, bookmakerID),
-		nil, // empty body
+		http.NoBody,
 	)
 	if err != nil {
 		return fmt.Errorf("create http request: %w", err)
