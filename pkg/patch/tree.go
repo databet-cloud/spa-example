@@ -2,6 +2,9 @@ package patch
 
 import (
 	"strings"
+	"time"
+
+	"github.com/mitchellh/mapstructure"
 )
 
 type Tree struct {
@@ -83,6 +86,22 @@ func (t Tree) LastLevel() string {
 
 func (t Tree) Patch() Patch {
 	return t.patch
+}
+
+func (t Tree) UnmarshalPatch(destination any) error {
+	config := &mapstructure.DecoderConfig{
+		DecodeHook: mapstructure.ComposeDecodeHookFunc(
+			mapstructure.StringToTimeHookFunc(time.RFC3339),
+		),
+		Result: destination,
+	}
+
+	decoder, err := mapstructure.NewDecoder(config)
+	if err != nil {
+		return err
+	}
+
+	return decoder.Decode(t.patch)
 }
 
 func (t Tree) Empty() bool {

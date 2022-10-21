@@ -1,6 +1,8 @@
 package fixture
 
 import (
+	"fmt"
+
 	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
 )
 
@@ -28,46 +30,60 @@ type Competitor struct {
 	CountryCode string `json:"country_code"`
 }
 
-func (c Competitor) WithPatch(tree patch.Tree) Competitor {
-	if v, ok := patch.GetFromTree[string](tree, "id"); ok {
-		c.ID = v
+type CompetitorPatch struct {
+	ID               *string `mapstructure:"id"`
+	Type             *int    `mapstructure:"type"`
+	HomeAway         *int    `mapstructure:"home_away"`
+	TemplatePosition *int    `mapstructure:"template_position"`
+	Name             *string `mapstructure:"name"`
+	MasterID         *string `mapstructure:"master_id"`
+	CountryCode      *string `mapstructure:"country_code"`
+}
+
+func (c Competitor) WithPatch(tree patch.Tree) (Competitor, error) {
+	var competitorPatch CompetitorPatch
+
+	err := tree.UnmarshalPatch(&competitorPatch)
+	if err != nil {
+		return Competitor{}, fmt.Errorf("unmarshal competitor patch: %w", err)
 	}
 
-	if v, ok := patch.GetFromTree[int](tree, "type"); ok {
-		c.Type = v
-	} else if v, ok := patch.GetFromTree[float64](tree, "type"); ok {
-		c.Type = int(v)
+	if competitorPatch.ID != nil {
+		c.ID = *competitorPatch.ID
 	}
 
-	if v, ok := patch.GetFromTree[int](tree, "home_away"); ok {
-		c.HomeAway = v
-	} else if v, ok := patch.GetFromTree[float64](tree, "home_away"); ok {
-		c.HomeAway = int(v)
+	if competitorPatch.Type != nil {
+		c.Type = *competitorPatch.Type
 	}
 
-	if v, ok := patch.GetFromTree[int](tree, "template_position"); ok {
-		c.TemplatePosition = v
-	} else if v, ok := patch.GetFromTree[float64](tree, "template_position"); ok {
-		c.TemplatePosition = int(v)
+	if competitorPatch.HomeAway != nil {
+		c.HomeAway = *competitorPatch.HomeAway
 	}
 
-	if v, ok := patch.GetFromTree[string](tree, "name"); ok {
-		c.Name = v
+	if competitorPatch.TemplatePosition != nil {
+		c.TemplatePosition = *competitorPatch.TemplatePosition
 	}
 
-	if v, ok := patch.GetFromTree[string](tree, "master_id"); ok {
-		c.MasterID = v
+	if competitorPatch.Name != nil {
+		c.Name = *competitorPatch.Name
 	}
 
-	if v, ok := patch.GetFromTree[string](tree, "country_code"); ok {
-		c.CountryCode = v
+	if competitorPatch.MasterID != nil {
+		c.MasterID = *competitorPatch.MasterID
+	}
+
+	if competitorPatch.CountryCode != nil {
+		c.CountryCode = *competitorPatch.CountryCode
 	}
 
 	if subTree := tree.SubTree("score"); !subTree.Empty() {
-		c.Scores = patch.MapPatchable(c.Scores, subTree)
+		c.Scores, err = patch.MapPatchable(c.Scores, subTree)
+		if err != nil {
+			return Competitor{}, fmt.Errorf("patch scores: %w", err)
+		}
 	}
 
-	return c
+	return c, nil
 }
 
 func (c Competitor) Clone() Competitor {

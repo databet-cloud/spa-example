@@ -59,7 +59,8 @@ func TestStream_WithPatch(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			actual := tc.prev.WithPatch(patch.NewTree(tc.input, "/"))
+			actual, err := tc.prev.WithPatch(patch.NewTree(tc.input, "/"))
+			assert.NoError(t, err)
 			assert.Equal(t, tc.expected, actual)
 		})
 	}

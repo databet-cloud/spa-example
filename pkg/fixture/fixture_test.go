@@ -162,7 +162,8 @@ func TestFixtureDiff(t *testing.T) {
 				require.NoError(t, err)
 			}
 
-			actual := f.WithPatch(patch.NewTree(tc.input, "/"))
+			actual, err := f.WithPatch(patch.NewTree(tc.input, "/"))
+			assert.NoError(t, err)
 			assert.Equal(t, tc.expected, actual)
 		})
 	}

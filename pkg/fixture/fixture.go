@@ -2,6 +2,7 @@
 package fixture
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
@@ -37,40 +38,59 @@ type Fixture struct {
 	PublishedAt  time.Time   `json:"published_at"`
 }
 
-func (f Fixture) WithPatch(patchTree patch.Tree) Fixture {
-	if v, ok := patch.GetFromTree[int](patchTree, "status"); ok {
-		f.Status = v
+type FixturePatch struct {
+	Status       *int      `mapstructure:"status"`
+	Type         *int      `mapstructure:"type"`
+	StartTime    time.Time `mapstructure:"start_time"`
+	LiveCoverage *bool     `mapstructure:"live_coverage"`
+}
+
+func (f Fixture) WithPatch(patchTree patch.Tree) (Fixture, error) {
+	var fixturePatch FixturePatch
+
+	err := patchTree.UnmarshalPatch(&fixturePatch)
+	if err != nil {
+		return Fixture{}, fmt.Errorf("unmarshal fixture patch: %w", err)
 	}
 
-	if v, ok := patch.GetFromTree[int](patchTree, "type"); ok {
-		f.Type = v
-	} else if v, ok := patch.GetFromTree[float64](patchTree, "type"); ok {
-		f.Type = int(v)
+	if fixturePatch.Status != nil {
+		f.Status = *fixturePatch.Status
 	}
 
-	if v, ok := patch.GetFromTree[string](patchTree, "start_time"); ok {
-		startTime, err := time.Parse(time.RFC3339, v)
-		if err == nil {
-			f.StartTime = startTime
-		}
+	if fixturePatch.Type != nil {
+		f.Type = *fixturePatch.Type
 	}
 
-	if v, ok := patch.GetFromTree[bool](patchTree, "live_coverage"); ok {
-		f.LiveCoverage = v
+	if !fixturePatch.StartTime.IsZero() {
+		f.StartTime = fixturePatch.StartTime
 	}
 
-	f.Tournament = f.Tournament.WithPatch(patchTree.SubTree("tournament"))
+	if fixturePatch.LiveCoverage != nil {
+		f.LiveCoverage = *fixturePatch.LiveCoverage
+	}
+
+	f.Tournament, err = f.Tournament.WithPatch(patchTree.SubTree("tournament"))
+	if err != nil {
+		return Fixture{}, fmt.Errorf("patch tournament: %w", err)
+	}
+
 	f.Venue = f.Venue.WithPatch(patchTree.SubTree("venue"))
 
 	if subTree := patchTree.SubTree("streams"); !subTree.Empty() {
-		f.Streams = patch.MapPatchable(f.Streams, subTree)
+		f.Streams, err = patch.MapPatchable(f.Streams, subTree)
+		if err != nil {
+			return Fixture{}, fmt.Errorf("patch streams: %w", err)
+		}
 	}
 
 	if subTree := patchTree.SubTree("competitors"); !subTree.Empty() {
-		f.Competitors = patch.MapPatchable(f.Competitors, subTree)
+		f.Competitors, err = patch.MapPatchable(f.Competitors, subTree)
+		if err != nil {
+			return Fixture{}, fmt.Errorf("patch competitors: %w", err)
+		}
 	}
 
-	return f
+	return f, nil
 }
 
 func (f Fixture) Clone() Fixture {

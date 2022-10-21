@@ -1,7 +1,8 @@
 package fixture
 
 import (
-	"github.com/databet-cloud/databet-go-sdk/internal/generic"
+	"fmt"
+
 	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
 )
 
@@ -11,27 +12,33 @@ type Platform struct {
 	Enabled          bool     `json:"enabled"`
 }
 
-func (p Platform) WithPatch(tree patch.Tree) Platform {
-	if v, ok := patch.GetFromTree[string](tree, "type"); ok {
-		p.Type = v
+type PlatformPatch struct {
+	Type             *string  `mapstructure:"type"`
+	AllowedCountries []string `mapstructure:"allowed_countries"`
+	Enabled          *bool    `mapstructure:"enabled"`
+}
+
+func (p Platform) WithPatch(tree patch.Tree) (Platform, error) {
+	var platformPatch PlatformPatch
+
+	err := tree.UnmarshalPatch(&platformPatch)
+	if err != nil {
+		return Platform{}, fmt.Errorf("decode platform patch: %w", err)
 	}
 
-	if tree.Has("allowed_countries") {
-		allowedCountries, ok := patch.GetFromTree[[]string](tree, "allowed_countries")
-		if !ok {
-			if v, ok := patch.GetFromTree[[]interface{}](tree, "allowed_countries"); ok {
-				allowedCountries = generic.CastSlice[string](v)
-			}
-		}
-
-		p.AllowedCountries = allowedCountries
+	if platformPatch.Type != nil {
+		p.Type = *platformPatch.Type
 	}
 
-	if v, ok := patch.GetFromTree[bool](tree, "enabled"); ok {
-		p.Enabled = v
+	if platformPatch.AllowedCountries != nil {
+		p.AllowedCountries = platformPatch.AllowedCountries
 	}
 
-	return p
+	if platformPatch.Enabled != nil {
+		p.Enabled = *platformPatch.Enabled
+	}
+
+	return p, nil
 }
 
 type Platforms map[string]Platform

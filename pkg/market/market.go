@@ -2,6 +2,7 @@
 package market
 
 import (
+	"fmt"
 	"strconv"
 
 	"golang.org/x/exp/maps"
@@ -97,29 +98,52 @@ type Market struct {
 	Flags       int                    `json:"flags"`
 }
 
-func (m Market) WithPatch(tree patch.Tree) Market {
-	if v, ok := patch.GetFromTree[string](tree, "id"); ok {
-		m.ID = v
+type MarketPatch struct {
+	ID          *string `mapstructure:"id"`
+	Template    *string `mapstructure:"template"`
+	Status      *Status `mapstructure:"status"`
+	TypeID      *int    `mapstructure:"type_id"`
+	IsDefective *bool   `mapstructure:"is_defective"`
+	Flags       *int    `mapstructure:"flags"`
+}
+
+func (m Market) WithPatch(tree patch.Tree) (Market, error) {
+	var marketPatch MarketPatch
+
+	err := tree.UnmarshalPatch(&marketPatch)
+	if err != nil {
+		return Market{}, fmt.Errorf("unmarshal patch: %w", err)
 	}
 
-	if v, ok := patch.GetFromTree[float64](tree, "type_id"); ok {
-		m.TypeID = int(v)
-	} else if v, ok := patch.GetFromTree[int](tree, "type_id"); ok {
-		m.TypeID = v
+	if marketPatch.ID != nil {
+		m.ID = *marketPatch.ID
 	}
 
-	if v, ok := patch.GetFromTree[string](tree, "template"); ok {
-		m.Template = v
+	if marketPatch.TypeID != nil {
+		m.TypeID = *marketPatch.TypeID
 	}
 
-	if v, ok := patch.GetFromTree[float64](tree, "status"); ok {
-		m.Status = Status(v)
-	} else if v, ok := patch.GetFromTree[int](tree, "status"); ok {
-		m.Status = Status(v)
+	if marketPatch.Template != nil {
+		m.Template = *marketPatch.Template
+	}
+
+	if marketPatch.Status != nil {
+		m.Status = *marketPatch.Status
+	}
+
+	if marketPatch.Flags != nil {
+		m.Flags = *marketPatch.Flags
+	}
+
+	if marketPatch.IsDefective != nil {
+		m.IsDefective = *marketPatch.IsDefective
 	}
 
 	if subTree := tree.SubTree("odds"); !subTree.Empty() {
-		m.Odds = patch.MapPatchable(m.Odds, subTree)
+		m.Odds, err = patch.MapPatchable(m.Odds, subTree)
+		if err != nil {
+			return Market{}, fmt.Errorf("patch odd: %w", err)
+		}
 	}
 
 	if subTree := tree.SubTree("specifiers"); !subTree.Empty() {
@@ -130,17 +154,7 @@ func (m Market) WithPatch(tree patch.Tree) Market {
 		m.Meta = patch.PatchMap(m.Meta, subTree)
 	}
 
-	if v, ok := patch.GetFromTree[float64](tree, "flags"); ok {
-		m.Flags = int(v)
-	} else if v, ok := patch.GetFromTree[int](tree, "flags"); ok {
-		m.Flags = v
-	}
-
-	if v, ok := patch.GetFromTree[bool](tree, "is_defective"); ok {
-		m.IsDefective = v
-	}
-
-	return m
+	return m, nil
 }
 
 func (m Market) Clone() Market {

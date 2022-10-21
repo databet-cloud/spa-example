@@ -1,6 +1,10 @@
 package fixture
 
-import "github.com/databet-cloud/databet-go-sdk/pkg/patch"
+import (
+	"fmt"
+
+	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
+)
 
 type Tournament struct {
 	ID          string `json:"id"`
@@ -9,22 +13,36 @@ type Tournament struct {
 	CountryCode string `json:"country_code"`
 }
 
-func (t Tournament) WithPatch(patchTree patch.Tree) Tournament {
-	if v, ok := patch.GetFromTree[string](patchTree, "id"); ok {
-		t.ID = v
+type TournamentPatch struct {
+	ID          *string `mapstructure:"id"`
+	Name        *string `mapstructure:"name"`
+	MasterID    *string `mapstructure:"master_id"`
+	CountryCode *string `mapstructure:"country_code"`
+}
+
+func (t Tournament) WithPatch(tree patch.Tree) (Tournament, error) {
+	var tournamentPatch TournamentPatch
+
+	err := tree.UnmarshalPatch(&tournamentPatch)
+	if err != nil {
+		return Tournament{}, fmt.Errorf("unmarshal tournament patch: %w", err)
 	}
 
-	if v, ok := patch.GetFromTree[string](patchTree, "name"); ok {
-		t.Name = v
+	if tournamentPatch.ID != nil {
+		t.ID = *tournamentPatch.ID
 	}
 
-	if v, ok := patch.GetFromTree[string](patchTree, "master_id"); ok {
-		t.MasterID = v
+	if tournamentPatch.Name != nil {
+		t.Name = *tournamentPatch.Name
 	}
 
-	if v, ok := patch.GetFromTree[string](patchTree, "country_code"); ok {
-		t.CountryCode = v
+	if tournamentPatch.MasterID != nil {
+		t.MasterID = *tournamentPatch.MasterID
 	}
 
-	return t
+	if tournamentPatch.CountryCode != nil {
+		t.CountryCode = *tournamentPatch.CountryCode
+	}
+
+	return t, nil
 }

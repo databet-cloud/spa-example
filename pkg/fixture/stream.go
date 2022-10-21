@@ -1,6 +1,8 @@
 package fixture
 
 import (
+	"fmt"
+
 	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
 )
 
@@ -12,30 +14,45 @@ type Stream struct {
 	Priority  int       `json:"priority"`
 }
 
-func (s Stream) WithPatch(tree patch.Tree) Stream {
-	if v, ok := patch.GetFromTree[string](tree, "id"); ok {
-		s.ID = v
+type StreamPatch struct {
+	ID       *string `mapstructure:"id"`
+	Locale   *string `mapstructure:"locale"`
+	URL      *string `mapstructure:"url"`
+	Priority *int    `mapstructure:"priority"`
+}
+
+func (s Stream) WithPatch(tree patch.Tree) (Stream, error) {
+	var streamPatch StreamPatch
+
+	err := tree.UnmarshalPatch(&streamPatch)
+	if err != nil {
+		return Stream{}, fmt.Errorf("unmarshal stream patch: %w", err)
 	}
 
-	if v, ok := patch.GetFromTree[string](tree, "locale"); ok {
-		s.Locale = v
+	if streamPatch.ID != nil {
+		s.ID = *streamPatch.ID
 	}
 
-	if v, ok := patch.GetFromTree[string](tree, "url"); ok {
-		s.URL = v
+	if streamPatch.Locale != nil {
+		s.Locale = *streamPatch.Locale
+	}
+
+	if streamPatch.URL != nil {
+		s.URL = *streamPatch.URL
+	}
+
+	if streamPatch.Priority != nil {
+		s.Priority = *streamPatch.Priority
 	}
 
 	if subTree := tree.SubTree("platforms"); !subTree.Empty() {
-		s.Platforms = patch.MapPatchable(s.Platforms, subTree)
+		s.Platforms, err = patch.MapPatchable(s.Platforms, subTree)
+		if err != nil {
+			return Stream{}, fmt.Errorf("patch platforms: %w", err)
+		}
 	}
 
-	if v, ok := patch.GetFromTree[int](tree, "priority"); ok {
-		s.Priority = v
-	} else if v, ok := patch.GetFromTree[float64](tree, "priority"); ok {
-		s.Priority = int(v)
-	}
-
-	return s
+	return s, nil
 }
 
 type Streams map[string]Stream

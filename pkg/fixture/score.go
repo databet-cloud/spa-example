@@ -1,6 +1,8 @@
 package fixture
 
 import (
+	"fmt"
+
 	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
 )
 
@@ -11,26 +13,38 @@ type Score struct {
 	Number int    `json:"number"`
 }
 
-func (s Score) WithPatch(patchTree patch.Tree) Score {
-	if v, ok := patch.GetFromTree[string](patchTree, "id"); ok {
-		s.ID = v
+type ScorePatch struct {
+	ID     *string `mapstructure:"id"`
+	Type   *string `mapstructure:"type"`
+	Points *string `mapstructure:"points"`
+	Number *int    `mapstructure:"number"`
+}
+
+func (s Score) WithPatch(tree patch.Tree) (Score, error) {
+	var scorePatch ScorePatch
+
+	err := tree.UnmarshalPatch(&scorePatch)
+	if err != nil {
+		return Score{}, fmt.Errorf("unmarshal score patch: %w", err)
 	}
 
-	if v, ok := patch.GetFromTree[string](patchTree, "type"); ok {
-		s.Type = v
+	if scorePatch.ID != nil {
+		s.ID = *scorePatch.ID
 	}
 
-	if v, ok := patch.GetFromTree[string](patchTree, "points"); ok {
-		s.Points = v
+	if scorePatch.Type != nil {
+		s.Type = *scorePatch.Type
 	}
 
-	if v, ok := patch.GetFromTree[int](patchTree, "number"); ok {
-		s.Number = v
-	} else if v, ok := patch.GetFromTree[float64](patchTree, "number"); ok {
-		s.Number = int(v)
+	if scorePatch.Points != nil {
+		s.Points = *scorePatch.Points
 	}
 
-	return s
+	if scorePatch.Number != nil {
+		s.Number = *scorePatch.Number
+	}
+
+	return s, nil
 }
 
 type Scores map[string]Score

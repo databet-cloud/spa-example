@@ -2,6 +2,8 @@
 package market
 
 import (
+	"fmt"
+
 	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
 )
 
@@ -83,37 +85,48 @@ type Odd struct {
 	StatusReason string    `json:"status_reason"`
 }
 
-func (o Odd) WithPatch(tree patch.Tree) Odd {
-	if v, ok := patch.GetFromTree[string](tree, "id"); ok {
-		o.ID = v
+type OddPatch struct {
+	ID           *string    `mapstructure:"id"`
+	Template     *string    `mapstructure:"template"`
+	IsActive     *bool      `mapstructure:"is_active"`
+	Status       *OddStatus `mapstructure:"status"`
+	Value        *string    `mapstructure:"value"`
+	StatusReason *string    `mapstructure:"status_reason"`
+}
+
+func (o Odd) WithPatch(tree patch.Tree) (Odd, error) {
+	var oddPatch OddPatch
+
+	err := tree.UnmarshalPatch(&oddPatch)
+	if err != nil {
+		return Odd{}, fmt.Errorf("unmarshal odd patch: %w", err)
 	}
 
-	if v, ok := patch.GetFromTree[string](tree, "template"); ok {
-		o.Template = v
+	if oddPatch.ID != nil {
+		o.ID = *oddPatch.ID
 	}
 
-	if v, ok := patch.GetFromTree[bool](tree, "is_active"); ok {
-		o.IsActive = v
+	if oddPatch.Template != nil {
+		o.Template = *oddPatch.Template
 	}
 
-	if tree.Has("status") {
-		switch v := tree.Get("status").(type) {
-		case float64:
-			o.Status = OddStatus(v)
-		case int:
-			o.Status = OddStatus(v)
-		}
+	if oddPatch.IsActive != nil {
+		o.IsActive = *oddPatch.IsActive
 	}
 
-	if v, ok := patch.GetFromTree[string](tree, "value"); ok {
-		o.Value = v
+	if oddPatch.Status != nil {
+		o.Status = *oddPatch.Status
 	}
 
-	if v, ok := patch.GetFromTree[string](tree, "status_reason"); ok {
-		o.StatusReason = v
+	if oddPatch.Value != nil {
+		o.Value = *oddPatch.Value
 	}
 
-	return o
+	if oddPatch.StatusReason != nil {
+		o.StatusReason = *oddPatch.StatusReason
+	}
+
+	return o, nil
 }
 
 func (o Odd) Equals(other Odd) bool {
