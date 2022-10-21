@@ -1,6 +1,8 @@
 package patch
 
-import "strings"
+import (
+	"strings"
+)
 
 type Tree struct {
 	patch          Patch

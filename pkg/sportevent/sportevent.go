@@ -21,9 +21,11 @@ type SportEvent struct {
 }
 
 func (se SportEvent) WithPatch(tree patch.Tree) (SportEvent, error) {
-	if v, ok := patch.GetFromTree[time.Time](tree, "updated_at"); ok {
-		se.UpdatedAt = v
-		se.Fixture.UpdatedAt = v
+	if v, ok := patch.GetFromTree[string](tree, "updated_at"); ok {
+		if t, err := time.Parse(time.RFC3339, v); err == nil {
+			se.UpdatedAt = t
+			se.Fixture.UpdatedAt = t
+		}
 	}
 
 	if v, ok := patch.GetFromTree[bool](tree, "bet_stop"); ok {

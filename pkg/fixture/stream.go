@@ -31,6 +31,8 @@ func (s Stream) WithPatch(tree patch.Tree) Stream {
 
 	if v, ok := patch.GetFromTree[int](tree, "priority"); ok {
 		s.Priority = v
+	} else if v, ok := patch.GetFromTree[float64](tree, "priority"); ok {
+		s.Priority = int(v)
 	}
 
 	return s

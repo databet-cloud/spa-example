@@ -26,6 +26,8 @@ func (s Score) WithPatch(patchTree patch.Tree) Score {
 
 	if v, ok := patch.GetFromTree[int](patchTree, "number"); ok {
 		s.Number = v
+	} else if v, ok := patch.GetFromTree[float64](patchTree, "number"); ok {
+		s.Number = int(v)
 	}
 
 	return s

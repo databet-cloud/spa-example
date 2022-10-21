@@ -44,10 +44,15 @@ func (f Fixture) WithPatch(patchTree patch.Tree) Fixture {
 
 	if v, ok := patch.GetFromTree[int](patchTree, "type"); ok {
 		f.Type = v
+	} else if v, ok := patch.GetFromTree[float64](patchTree, "type"); ok {
+		f.Type = int(v)
 	}
 
-	if v, ok := patch.GetFromTree[time.Time](patchTree, "start_time"); ok {
-		f.StartTime = v
+	if v, ok := patch.GetFromTree[string](patchTree, "start_time"); ok {
+		startTime, err := time.Parse(time.RFC3339, v)
+		if err == nil {
+			f.StartTime = startTime
+		}
 	}
 
 	if v, ok := patch.GetFromTree[bool](patchTree, "live_coverage"); ok {

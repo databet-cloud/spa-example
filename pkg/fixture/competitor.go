@@ -35,14 +35,20 @@ func (c Competitor) WithPatch(tree patch.Tree) Competitor {
 
 	if v, ok := patch.GetFromTree[int](tree, "type"); ok {
 		c.Type = v
+	} else if v, ok := patch.GetFromTree[float64](tree, "type"); ok {
+		c.Type = int(v)
 	}
 
 	if v, ok := patch.GetFromTree[int](tree, "home_away"); ok {
 		c.HomeAway = v
+	} else if v, ok := patch.GetFromTree[float64](tree, "home_away"); ok {
+		c.HomeAway = int(v)
 	}
 
 	if v, ok := patch.GetFromTree[int](tree, "template_position"); ok {
 		c.TemplatePosition = v
+	} else if v, ok := patch.GetFromTree[float64](tree, "template_position"); ok {
+		c.TemplatePosition = int(v)
 	}
 
 	if v, ok := patch.GetFromTree[string](tree, "name"); ok {
@@ -58,10 +64,6 @@ func (c Competitor) WithPatch(tree patch.Tree) Competitor {
 	}
 
 	if subTree := tree.SubTree("score"); !subTree.Empty() {
-		if c.Scores == nil {
-			c.Scores = Scores{}
-		}
-
 		c.Scores = patch.MapPatchable(c.Scores, subTree)
 	}
 
