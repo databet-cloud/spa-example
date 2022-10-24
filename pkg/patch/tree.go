@@ -97,7 +97,10 @@ func (t Tree) Patch() Patch {
 func (t Tree) UnmarshalPatch(destination any) error {
 	config := &mapstructure.DecoderConfig{
 		DecodeHook: mapstructure.ComposeDecodeHookFunc(
-			mapstructure.StringToTimeHookFunc(time.RFC3339),
+			mapstructure.OrComposeDecodeHookFunc(
+				mapstructure.StringToTimeHookFunc(time.RFC3339),
+				mapstructure.StringToTimeHookFunc(time.RFC3339Nano),
+			),
 		),
 		Result: destination,
 	}
