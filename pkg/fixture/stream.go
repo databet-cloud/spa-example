@@ -29,21 +29,7 @@ func (s Stream) WithPatch(tree patch.Tree) (Stream, error) {
 		return Stream{}, fmt.Errorf("unmarshal stream patch: %w", err)
 	}
 
-	if streamPatch.ID != nil {
-		s.ID = *streamPatch.ID
-	}
-
-	if streamPatch.Locale != nil {
-		s.Locale = *streamPatch.Locale
-	}
-
-	if streamPatch.URL != nil {
-		s.URL = *streamPatch.URL
-	}
-
-	if streamPatch.Priority != nil {
-		s.Priority = *streamPatch.Priority
-	}
+	s.applyStreamPatch(&streamPatch)
 
 	if subTree := tree.SubTree("platforms"); !subTree.Empty() {
 		s.Platforms, err = patch.MapPatchable(s.Platforms, subTree)
@@ -53,6 +39,44 @@ func (s Stream) WithPatch(tree patch.Tree) (Stream, error) {
 	}
 
 	return s, nil
+}
+
+func (s *Stream) ApplyPatch(tree patch.Tree) error {
+	var streamPatch StreamPatch
+
+	err := tree.UnmarshalPatch(&streamPatch)
+	if err != nil {
+		return fmt.Errorf("unmarshal stream patch: %w", err)
+	}
+
+	s.applyStreamPatch(&streamPatch)
+
+	if subTree := tree.SubTree("platforms"); !subTree.Empty() {
+		s.Platforms, err = patch.MapPatchable(s.Platforms, subTree)
+		if err != nil {
+			return fmt.Errorf("patch platforms: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (s *Stream) applyStreamPatch(patch *StreamPatch) {
+	if patch.ID != nil {
+		s.ID = *patch.ID
+	}
+
+	if patch.Locale != nil {
+		s.Locale = *patch.Locale
+	}
+
+	if patch.URL != nil {
+		s.URL = *patch.URL
+	}
+
+	if patch.Priority != nil {
+		s.Priority = *patch.Priority
+	}
 }
 
 type Streams map[string]Stream

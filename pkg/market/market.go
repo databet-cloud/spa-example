@@ -115,29 +115,7 @@ func (m Market) WithPatch(tree patch.Tree) (Market, error) {
 		return Market{}, fmt.Errorf("unmarshal patch: %w", err)
 	}
 
-	if marketPatch.ID != nil {
-		m.ID = *marketPatch.ID
-	}
-
-	if marketPatch.TypeID != nil {
-		m.TypeID = *marketPatch.TypeID
-	}
-
-	if marketPatch.Template != nil {
-		m.Template = *marketPatch.Template
-	}
-
-	if marketPatch.Status != nil {
-		m.Status = *marketPatch.Status
-	}
-
-	if marketPatch.Flags != nil {
-		m.Flags = *marketPatch.Flags
-	}
-
-	if marketPatch.IsDefective != nil {
-		m.IsDefective = *marketPatch.IsDefective
-	}
+	m.applyMarketPatch(marketPatch)
 
 	if subTree := tree.SubTree("odds"); !subTree.Empty() {
 		m.Odds, err = patch.MapPatchable(m.Odds, subTree)
@@ -155,6 +133,32 @@ func (m Market) WithPatch(tree patch.Tree) (Market, error) {
 	}
 
 	return m, nil
+}
+
+func (m Market) applyMarketPatch(patch MarketPatch) {
+	if patch.ID != nil {
+		m.ID = *patch.ID
+	}
+
+	if patch.TypeID != nil {
+		m.TypeID = *patch.TypeID
+	}
+
+	if patch.Template != nil {
+		m.Template = *patch.Template
+	}
+
+	if patch.Status != nil {
+		m.Status = *patch.Status
+	}
+
+	if patch.Flags != nil {
+		m.Flags = *patch.Flags
+	}
+
+	if patch.IsDefective != nil {
+		m.IsDefective = *patch.IsDefective
+	}
 }
 
 func (m Market) Clone() Market {

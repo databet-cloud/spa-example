@@ -26,19 +26,35 @@ func (p Platform) WithPatch(tree patch.Tree) (Platform, error) {
 		return Platform{}, fmt.Errorf("decode platform patch: %w", err)
 	}
 
-	if platformPatch.Type != nil {
-		p.Type = *platformPatch.Type
-	}
-
-	if platformPatch.AllowedCountries != nil {
-		p.AllowedCountries = platformPatch.AllowedCountries
-	}
-
-	if platformPatch.Enabled != nil {
-		p.Enabled = *platformPatch.Enabled
-	}
+	p.applyPlatformPatch(&platformPatch)
 
 	return p, nil
+}
+func (p *Platform) ApplyPatch(tree patch.Tree) error {
+	var platformPatch PlatformPatch
+
+	err := tree.UnmarshalPatch(&platformPatch)
+	if err != nil {
+		return fmt.Errorf("decode platform patch: %w", err)
+	}
+
+	p.applyPlatformPatch(&platformPatch)
+
+	return nil
+}
+
+func (p *Platform) applyPlatformPatch(patch *PlatformPatch) {
+	if patch.Type != nil {
+		p.Type = *patch.Type
+	}
+
+	if patch.AllowedCountries != nil {
+		p.AllowedCountries = patch.AllowedCountries
+	}
+
+	if patch.Enabled != nil {
+		p.Enabled = *patch.Enabled
+	}
 }
 
 type Platforms map[string]Platform

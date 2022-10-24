@@ -48,33 +48,7 @@ func (c Competitor) WithPatch(tree patch.Tree) (Competitor, error) {
 		return Competitor{}, fmt.Errorf("unmarshal competitor patch: %w", err)
 	}
 
-	if competitorPatch.ID != nil {
-		c.ID = *competitorPatch.ID
-	}
-
-	if competitorPatch.Type != nil {
-		c.Type = *competitorPatch.Type
-	}
-
-	if competitorPatch.HomeAway != nil {
-		c.HomeAway = *competitorPatch.HomeAway
-	}
-
-	if competitorPatch.TemplatePosition != nil {
-		c.TemplatePosition = *competitorPatch.TemplatePosition
-	}
-
-	if competitorPatch.Name != nil {
-		c.Name = *competitorPatch.Name
-	}
-
-	if competitorPatch.MasterID != nil {
-		c.MasterID = *competitorPatch.MasterID
-	}
-
-	if competitorPatch.CountryCode != nil {
-		c.CountryCode = *competitorPatch.CountryCode
-	}
+	c.applyCompetitorPatch(competitorPatch)
 
 	if subTree := tree.SubTree("score"); !subTree.Empty() {
 		c.Scores, err = patch.MapPatchable(c.Scores, subTree)
@@ -84,6 +58,66 @@ func (c Competitor) WithPatch(tree patch.Tree) (Competitor, error) {
 	}
 
 	return c, nil
+}
+
+func (c *Competitor) ApplyPatch(tree patch.Tree) error {
+	var competitorPatch CompetitorPatch
+
+	err := tree.UnmarshalPatch(&competitorPatch)
+	if err != nil {
+		return fmt.Errorf("unmarshal competitor patch: %w", err)
+	}
+
+	c.applyCompetitorPatch(competitorPatch)
+
+	if subTree := tree.SubTree("score"); !subTree.Empty() {
+		if c.Scores == nil {
+			c.Scores = map[string]Score{}
+		}
+
+		for id, subTree := range subTree.SubTrees() {
+			v := c.Scores[id]
+
+			err := v.ApplyPatch(subTree)
+			if err != nil {
+				return err
+			}
+
+			c.Scores[id] = v
+		}
+	}
+
+	return nil
+}
+
+func (c *Competitor) applyCompetitorPatch(patch CompetitorPatch) {
+	if patch.ID != nil {
+		c.ID = *patch.ID
+	}
+
+	if patch.Type != nil {
+		c.Type = *patch.Type
+	}
+
+	if patch.HomeAway != nil {
+		c.HomeAway = *patch.HomeAway
+	}
+
+	if patch.TemplatePosition != nil {
+		c.TemplatePosition = *patch.TemplatePosition
+	}
+
+	if patch.Name != nil {
+		c.Name = *patch.Name
+	}
+
+	if patch.MasterID != nil {
+		c.MasterID = *patch.MasterID
+	}
+
+	if patch.CountryCode != nil {
+		c.CountryCode = *patch.CountryCode
+	}
 }
 
 func (c Competitor) Clone() Competitor {

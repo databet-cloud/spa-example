@@ -53,21 +53,7 @@ func (f Fixture) WithPatch(patchTree patch.Tree) (Fixture, error) {
 		return Fixture{}, fmt.Errorf("unmarshal fixture patch: %w", err)
 	}
 
-	if fixturePatch.Status != nil {
-		f.Status = *fixturePatch.Status
-	}
-
-	if fixturePatch.Type != nil {
-		f.Type = *fixturePatch.Type
-	}
-
-	if !fixturePatch.StartTime.IsZero() {
-		f.StartTime = fixturePatch.StartTime
-	}
-
-	if fixturePatch.LiveCoverage != nil {
-		f.LiveCoverage = *fixturePatch.LiveCoverage
-	}
+	f.applyFixturePatch(&fixturePatch)
 
 	f.Tournament, err = f.Tournament.WithPatch(patchTree.SubTree("tournament"))
 	if err != nil {
@@ -91,6 +77,78 @@ func (f Fixture) WithPatch(patchTree patch.Tree) (Fixture, error) {
 	}
 
 	return f, nil
+}
+
+func (f *Fixture) ApplyPatch(patchTree patch.Tree) error {
+	var fixturePatch FixturePatch
+
+	err := patchTree.UnmarshalPatch(&fixturePatch)
+	if err != nil {
+		return fmt.Errorf("unmarshal fixture patch: %w", err)
+	}
+
+	f.applyFixturePatch(&fixturePatch)
+
+	err = f.Tournament.ApplyPatch(patchTree.SubTree("tournament"))
+	if err != nil {
+		return fmt.Errorf("patch tournament: %w", err)
+	}
+
+	f.Venue = f.Venue.WithPatch(patchTree.SubTree("venue"))
+
+	if subTree := patchTree.SubTree("streams"); !subTree.Empty() {
+		if f.Streams == nil {
+			f.Streams = make(map[string]Stream)
+		}
+
+		for id, subTree := range subTree.SubTrees() {
+			v := f.Streams[id]
+
+			err = v.ApplyPatch(subTree)
+			if err != nil {
+				return fmt.Errorf("patch competitors: %w", err)
+			}
+
+			f.Streams[id] = v
+		}
+	}
+
+	if subTree := patchTree.SubTree("competitors"); !subTree.Empty() {
+		if f.Competitors == nil {
+			f.Competitors = make(map[string]Competitor)
+		}
+
+		for id, subTree := range subTree.SubTrees() {
+			v := f.Competitors[id]
+
+			err = v.ApplyPatch(subTree)
+			if err != nil {
+				return fmt.Errorf("patch competitors: %w", err)
+			}
+
+			f.Competitors[id] = v
+		}
+	}
+
+	return nil
+}
+
+func (f *Fixture) applyFixturePatch(patch *FixturePatch) {
+	if patch.Status != nil {
+		f.Status = *patch.Status
+	}
+
+	if patch.Type != nil {
+		f.Type = *patch.Type
+	}
+
+	if !patch.StartTime.IsZero() {
+		f.StartTime = patch.StartTime
+	}
+
+	if patch.LiveCoverage != nil {
+		f.LiveCoverage = *patch.LiveCoverage
+	}
 }
 
 func (f Fixture) Clone() Fixture {

@@ -7,21 +7,32 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-type Tree struct {
+type Tree interface {
+	SubTree(level string) Tree
+	SubTrees() map[string]Tree
+	Has(field string) bool
+	Get(field string) any
+	LastLevel() string
+	Patch() Patch
+	Empty() bool
+	UnmarshalPatch(destination any) error
+}
+
+type MapTree struct {
 	patch          Patch
 	level          string
 	levelDelimiter string
 }
 
-func NewTree(patch Patch, levelDelimiter string) Tree {
-	return Tree{
+func NewMapTree(patch Patch, levelDelimiter string) *MapTree {
+	return &MapTree{
 		patch:          patch,
 		level:          "",
 		levelDelimiter: levelDelimiter,
 	}
 }
 
-func (t Tree) SubTree(level string) Tree {
+func (t *MapTree) SubTree(level string) Tree {
 	if subPatch := castToPatch(t.Get(level)); subPatch != nil {
 		return t.newSubTree(level, subPatch)
 	}
@@ -49,7 +60,7 @@ func castToPatch(value any) Patch {
 	}
 }
 
-func (t Tree) SubTrees() map[string]Tree {
+func (t *MapTree) SubTrees() map[string]Tree {
 	subTrees := make(map[string]Tree)
 
 	for field := range t.patch {
@@ -65,23 +76,24 @@ func (t Tree) SubTrees() map[string]Tree {
 	return subTrees
 }
 
-func (t Tree) newSubTree(level string, patch Patch) Tree {
-	t.patch = patch
-	t.level = t.level + t.levelDelimiter + level
-
-	return t
+func (t *MapTree) newSubTree(level string, patch Patch) *MapTree {
+	return &MapTree{
+		patch:          patch,
+		level:          t.level + t.levelDelimiter + level,
+		levelDelimiter: t.levelDelimiter,
+	}
 }
 
-func (t Tree) Has(field string) bool {
+func (t *MapTree) Has(field string) bool {
 	_, ok := t.patch[field]
 	return ok
 }
 
-func (t Tree) Get(field string) any {
+func (t *MapTree) Get(field string) any {
 	return t.patch[field]
 }
 
-func (t Tree) LastLevel() string {
+func (t *MapTree) LastLevel() string {
 	values := strings.Split(t.level, t.levelDelimiter)
 	if len(values) == 0 {
 		return ""
@@ -90,11 +102,11 @@ func (t Tree) LastLevel() string {
 	return values[len(values)-1]
 }
 
-func (t Tree) Patch() Patch {
+func (t *MapTree) Patch() Patch {
 	return t.patch
 }
 
-func (t Tree) UnmarshalPatch(destination any) error {
+func (t *MapTree) UnmarshalPatch(destination any) error {
 	config := &mapstructure.DecoderConfig{
 		DecodeHook: mapstructure.ComposeDecodeHookFunc(
 			mapstructure.OrComposeDecodeHookFunc(
@@ -113,7 +125,7 @@ func (t Tree) UnmarshalPatch(destination any) error {
 	return decoder.Decode(t.patch)
 }
 
-func (t Tree) Empty() bool {
+func (t *MapTree) Empty() bool {
 	return len(t.patch) == 0
 }
 

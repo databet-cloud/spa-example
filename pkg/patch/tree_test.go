@@ -59,7 +59,7 @@ func TestTreeSubTree(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			tree := patch.NewTree(tc.input, "/")
+			tree := patch.NewMapTree(tc.input, "/")
 			subTree := tree.SubTree(tc.level)
 			assert.Equal(t, tc.expected, subTree.Patch())
 		})

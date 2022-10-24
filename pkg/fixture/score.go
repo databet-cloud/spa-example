@@ -28,23 +28,40 @@ func (s Score) WithPatch(tree patch.Tree) (Score, error) {
 		return Score{}, fmt.Errorf("unmarshal score patch: %w", err)
 	}
 
-	if scorePatch.ID != nil {
-		s.ID = *scorePatch.ID
-	}
-
-	if scorePatch.Type != nil {
-		s.Type = *scorePatch.Type
-	}
-
-	if scorePatch.Points != nil {
-		s.Points = *scorePatch.Points
-	}
-
-	if scorePatch.Number != nil {
-		s.Number = *scorePatch.Number
-	}
+	s.applyScorePatch(&scorePatch)
 
 	return s, nil
+}
+
+func (s *Score) ApplyPatch(tree patch.Tree) error {
+	var scorePatch ScorePatch
+
+	err := tree.UnmarshalPatch(&scorePatch)
+	if err != nil {
+		return fmt.Errorf("unmarshal score patch: %w", err)
+	}
+
+	s.applyScorePatch(&scorePatch)
+
+	return nil
+}
+
+func (s *Score) applyScorePatch(patch *ScorePatch) {
+	if patch.ID != nil {
+		s.ID = *patch.ID
+	}
+
+	if patch.Type != nil {
+		s.Type = *patch.Type
+	}
+
+	if patch.Points != nil {
+		s.Points = *patch.Points
+	}
+
+	if patch.Number != nil {
+		s.Number = *patch.Number
+	}
 }
 
 type Scores map[string]Score

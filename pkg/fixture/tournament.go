@@ -28,21 +28,39 @@ func (t Tournament) WithPatch(tree patch.Tree) (Tournament, error) {
 		return Tournament{}, fmt.Errorf("unmarshal tournament patch: %w", err)
 	}
 
-	if tournamentPatch.ID != nil {
-		t.ID = *tournamentPatch.ID
-	}
-
-	if tournamentPatch.Name != nil {
-		t.Name = *tournamentPatch.Name
-	}
-
-	if tournamentPatch.MasterID != nil {
-		t.MasterID = *tournamentPatch.MasterID
-	}
-
-	if tournamentPatch.CountryCode != nil {
-		t.CountryCode = *tournamentPatch.CountryCode
-	}
+	t.applyTournamentPatch(&tournamentPatch)
 
 	return t, nil
+}
+
+func (t *Tournament) ApplyPatch(tree patch.Tree) error {
+	var tournamentPatch TournamentPatch
+
+	err := tree.UnmarshalPatch(&tournamentPatch)
+	if err != nil {
+		return fmt.Errorf("unmarshal tournament patch: %w", err)
+	}
+
+	t.applyTournamentPatch(&tournamentPatch)
+
+	return nil
+}
+
+func (t *Tournament) applyTournamentPatch(patch *TournamentPatch) {
+	if patch.ID != nil {
+		t.ID = *patch.ID
+	}
+
+	if patch.Name != nil {
+		t.Name = *patch.Name
+	}
+
+	if patch.MasterID != nil {
+		t.MasterID = *patch.MasterID
+	}
+
+	if patch.CountryCode != nil {
+		t.CountryCode = *patch.CountryCode
+	}
+
 }

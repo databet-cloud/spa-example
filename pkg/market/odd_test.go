@@ -79,7 +79,7 @@ func TestOdd_WithPatch(t *testing.T) {
 				require.NoError(t, err)
 			}
 
-			actual, err := tc.prev.WithPatch(patch.NewTree(tc.input, "/"))
+			actual, err := tc.prev.WithPatch(patch.NewMapTree(tc.input, "/"))
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expected, actual)
 		})
