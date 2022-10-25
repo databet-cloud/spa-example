@@ -7,6 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/exp/maps"
+	"golang.org/x/exp/slices"
+
 	"github.com/databet-cloud/databet-go-sdk/pkg/fixture"
 	"github.com/databet-cloud/databet-go-sdk/pkg/market"
 )
@@ -54,4 +57,16 @@ func (se *SportEvent) ApplyPatch(path string, value json.RawMessage) error {
 	}
 
 	return nil
+}
+
+func (se *SportEvent) Clone() *SportEvent {
+	return &SportEvent{
+		ID:        se.ID,
+		Meta:      maps.Clone(se.Meta),
+		Fixture:   se.Fixture.Clone(),
+		Markets:   se.Markets.Clone(),
+		BetStop:   se.BetStop,
+		Sources:   slices.Clone(se.Sources),
+		UpdatedAt: se.UpdatedAt,
+	}
 }
