@@ -4,7 +4,6 @@ package feed
 
 import (
 	json "encoding/json"
-	patch "github.com/databet-cloud/databet-go-sdk/pkg/patch"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
@@ -53,22 +52,18 @@ func easyjsonB6915918DecodeGithubComDatabetCloudDatabetGoSdkPkgFeed(in *jlexer.L
 			} else {
 				in.Delim('{')
 				if !in.IsDelim('}') {
-					out.Changes = make(patch.Patch)
+					out.Patches = make(map[string]json.RawMessage)
 				} else {
-					out.Changes = nil
+					out.Patches = nil
 				}
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v1 interface{}
-					if m, ok := v1.(easyjson.Unmarshaler); ok {
-						m.UnmarshalEasyJSON(in)
-					} else if m, ok := v1.(json.Unmarshaler); ok {
-						_ = m.UnmarshalJSON(in.Raw())
-					} else {
-						v1 = in.Interface()
+					var v1 json.RawMessage
+					if data := in.Raw(); in.Ok() {
+						in.AddError((v1).UnmarshalJSON(data))
 					}
-					(out.Changes)[key] = v1
+					(out.Patches)[key] = v1
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -142,13 +137,13 @@ func easyjsonB6915918EncodeGithubComDatabetCloudDatabetGoSdkPkgFeed(out *jwriter
 		out.RawString(prefix)
 		easyjsonB6915918EncodeGithubComDatabetCloudDatabetGoSdkPkgFeed1(out, in.Timestamp)
 	}
-	if len(in.Changes) != 0 {
+	if len(in.Patches) != 0 {
 		const prefix string = ",\"changes\":"
 		out.RawString(prefix)
 		{
 			out.RawByte('{')
 			v3First := true
-			for v3Name, v3Value := range in.Changes {
+			for v3Name, v3Value := range in.Patches {
 				if v3First {
 					v3First = false
 				} else {
@@ -156,13 +151,7 @@ func easyjsonB6915918EncodeGithubComDatabetCloudDatabetGoSdkPkgFeed(out *jwriter
 				}
 				out.String(string(v3Name))
 				out.RawByte(':')
-				if m, ok := v3Value.(easyjson.Marshaler); ok {
-					m.MarshalEasyJSON(out)
-				} else if m, ok := v3Value.(json.Marshaler); ok {
-					out.Raw(m.MarshalJSON())
-				} else {
-					out.Raw(json.Marshal(v3Value))
-				}
+				out.Raw((v3Value).MarshalJSON())
 			}
 			out.RawByte('}')
 		}

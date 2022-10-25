@@ -2,12 +2,12 @@
 package feed
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
 	"github.com/databet-cloud/databet-go-sdk/pkg/sportevent"
 )
 
@@ -30,8 +30,8 @@ type LogEntry struct {
 	Type         LogType   `json:"type"`
 	Timestamp    timestamp `json:"timestamp"`
 
-	// Changes filled for LogTypeMatchUpdate only
-	Changes patch.Patch `json:"changes,omitempty"`
+	// Patches filled for LogTypeMatchUpdate only
+	Patches map[string]json.RawMessage `json:"changes,omitempty"`
 
 	// SportEvent filled for LogTypeMatchNew only
 	SportEvent sportevent.SportEvent `json:"sport_event,omitempty"`

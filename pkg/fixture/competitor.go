@@ -1,9 +1,10 @@
+//go:generate go run github.com/mailru/easyjson/easyjson competitor.go
 package fixture
 
 import (
+	"encoding/json"
 	"fmt"
-
-	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
+	"strings"
 )
 
 const (
@@ -18,6 +19,7 @@ const (
 	CompetitorAway
 )
 
+//easyjson:json
 type Competitor struct {
 	ID               string `json:"id"`
 	Type             int    `json:"type"`
@@ -30,94 +32,55 @@ type Competitor struct {
 	CountryCode string `json:"country_code"`
 }
 
-type CompetitorPatch struct {
-	ID               *string `mapstructure:"id"`
-	Type             *int    `mapstructure:"type"`
-	HomeAway         *int    `mapstructure:"home_away"`
-	TemplatePosition *int    `mapstructure:"template_position"`
-	Name             *string `mapstructure:"name"`
-	MasterID         *string `mapstructure:"master_id"`
-	CountryCode      *string `mapstructure:"country_code"`
-}
+func (c *Competitor) ApplyPatch(path string, value json.RawMessage) error {
+	var (
+		unmarshaller     any
+		key, rest, found = strings.Cut(path, "/")
+		partialPatch     = found
+	)
 
-func (c Competitor) WithPatch(tree patch.Tree) (Competitor, error) {
-	var competitorPatch CompetitorPatch
-
-	err := tree.UnmarshalPatch(&competitorPatch)
-	if err != nil {
-		return Competitor{}, fmt.Errorf("unmarshal competitor patch: %w", err)
-	}
-
-	c.applyCompetitorPatch(competitorPatch)
-
-	if subTree := tree.SubTree("score"); !subTree.Empty() {
-		c.Scores, err = patch.MapPatchable(c.Scores, subTree)
-		if err != nil {
-			return Competitor{}, fmt.Errorf("patch scores: %w", err)
-		}
-	}
-
-	return c, nil
-}
-
-func (c *Competitor) ApplyPatch(tree patch.Tree) error {
-	var competitorPatch CompetitorPatch
-
-	err := tree.UnmarshalPatch(&competitorPatch)
-	if err != nil {
-		return fmt.Errorf("unmarshal competitor patch: %w", err)
-	}
-
-	c.applyCompetitorPatch(competitorPatch)
-
-	if subTree := tree.SubTree("score"); !subTree.Empty() {
-		if c.Scores == nil {
-			c.Scores = map[string]Score{}
-		}
-
-		for id, subTree := range subTree.SubTrees() {
-			v := c.Scores[id]
-
-			err := v.ApplyPatch(subTree)
-			if err != nil {
-				return err
+	switch key {
+	case "id":
+		unmarshaller = &c.ID
+	case "type":
+		unmarshaller = &c.Type
+	case "home_away":
+		unmarshaller = &c.HomeAway
+	case "template_position":
+		unmarshaller = &c.TemplatePosition
+	case "name":
+		unmarshaller = &c.Name
+	case "master_id":
+		unmarshaller = &c.MasterID
+	case "country_code":
+		unmarshaller = &c.CountryCode
+	case "scores":
+		if partialPatch {
+			if c.Scores == nil {
+				return fmt.Errorf("patch nil scores")
 			}
 
-			c.Scores[id] = v
+			return c.Scores.ApplyPatch(rest, value)
 		}
+
+		unmarshaller = &c.Scores
+	case "score":
+		if c.Scores == nil {
+			return fmt.Errorf("patch nil scores")
+		}
+
+		return c.Scores.ApplyPatch(rest, value)
+
+	default:
+		return nil
+	}
+
+	err := json.Unmarshal(value, unmarshaller)
+	if err != nil {
+		return fmt.Errorf("unmarshal value: %w, path: %q", err, path)
 	}
 
 	return nil
-}
-
-func (c *Competitor) applyCompetitorPatch(patch CompetitorPatch) {
-	if patch.ID != nil {
-		c.ID = *patch.ID
-	}
-
-	if patch.Type != nil {
-		c.Type = *patch.Type
-	}
-
-	if patch.HomeAway != nil {
-		c.HomeAway = *patch.HomeAway
-	}
-
-	if patch.TemplatePosition != nil {
-		c.TemplatePosition = *patch.TemplatePosition
-	}
-
-	if patch.Name != nil {
-		c.Name = *patch.Name
-	}
-
-	if patch.MasterID != nil {
-		c.MasterID = *patch.MasterID
-	}
-
-	if patch.CountryCode != nil {
-		c.CountryCode = *patch.CountryCode
-	}
 }
 
 func (c Competitor) Clone() Competitor {
@@ -127,6 +90,7 @@ func (c Competitor) Clone() Competitor {
 	return result
 }
 
+//easyjson:json
 type Competitors map[string]Competitor
 
 func (c Competitors) Clone() Competitors {
@@ -136,4 +100,31 @@ func (c Competitors) Clone() Competitors {
 	}
 
 	return result
+}
+
+func (c Competitors) ApplyPatch(path string, value json.RawMessage) error {
+	key, rest, found := strings.Cut(path, "/")
+	competitor, ok := c[key]
+
+	if !found {
+		err := json.Unmarshal(value, &competitor)
+		if err != nil {
+			return fmt.Errorf("unmarshal competitor: %w, path: %q", err, path)
+		}
+
+		c[key] = competitor
+		return nil
+	}
+
+	if !ok {
+		return fmt.Errorf("partial patch non-existent competitor: %q", key)
+	}
+
+	err := competitor.ApplyPatch(rest, value)
+	if err != nil {
+		return fmt.Errorf("patch competitor: %w, path: %q", err, rest)
+	}
+
+	c[key] = competitor
+	return nil
 }

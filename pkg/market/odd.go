@@ -2,9 +2,9 @@
 package market
 
 import (
+	"encoding/json"
 	"fmt"
-
-	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
+	"strings"
 )
 
 const (
@@ -75,6 +75,33 @@ func (c Odds) Clone() Odds {
 	return newC
 }
 
+func (c Odds) ApplyPatch(path string, value json.RawMessage) error {
+	key, rest, found := strings.Cut(path, "/")
+	odd, ok := c[key]
+
+	if !found {
+		err := json.Unmarshal(value, &odd)
+		if err != nil {
+			return fmt.Errorf("odd %q unmarshal: %w", key, err)
+		}
+
+		c[key] = odd
+		return nil
+	}
+
+	if !ok {
+		return fmt.Errorf("partial patch non-existent odd: %q", key)
+	}
+
+	err := odd.ApplyPatch(rest, value)
+	if err != nil {
+		return fmt.Errorf("apply odd patch: %w", err)
+	}
+
+	c[key] = odd
+	return nil
+}
+
 //easyjson:json
 type Odd struct {
 	ID           string    `json:"id"`
@@ -85,48 +112,30 @@ type Odd struct {
 	StatusReason string    `json:"status_reason"`
 }
 
-type OddPatch struct {
-	ID           *string    `mapstructure:"id"`
-	Template     *string    `mapstructure:"template"`
-	IsActive     *bool      `mapstructure:"is_active"`
-	Status       *OddStatus `mapstructure:"status"`
-	Value        *string    `mapstructure:"value"`
-	StatusReason *string    `mapstructure:"status_reason"`
-}
+func (o *Odd) ApplyPatch(path string, value json.RawMessage) error {
+	var unmarshaller any
 
-func (o Odd) WithPatch(tree patch.Tree) (Odd, error) {
-	var oddPatch OddPatch
+	switch path {
+	case "name":
+		unmarshaller = &o.Template
+	case "value":
+		unmarshaller = &o.Value
+	case "is_active":
+		unmarshaller = &o.IsActive
+	case "status":
+		unmarshaller = &o.Status
+	case "status_reason":
+		unmarshaller = &o.StatusReason
+	default:
+		return nil
+	}
 
-	err := tree.UnmarshalPatch(&oddPatch)
+	err := json.Unmarshal(value, unmarshaller)
 	if err != nil {
-		return Odd{}, fmt.Errorf("unmarshal odd patch: %w", err)
+		return fmt.Errorf("%q unmarshal: %w", path, err)
 	}
 
-	if oddPatch.ID != nil {
-		o.ID = *oddPatch.ID
-	}
-
-	if oddPatch.Template != nil {
-		o.Template = *oddPatch.Template
-	}
-
-	if oddPatch.IsActive != nil {
-		o.IsActive = *oddPatch.IsActive
-	}
-
-	if oddPatch.Status != nil {
-		o.Status = *oddPatch.Status
-	}
-
-	if oddPatch.Value != nil {
-		o.Value = *oddPatch.Value
-	}
-
-	if oddPatch.StatusReason != nil {
-		o.StatusReason = *oddPatch.StatusReason
-	}
-
-	return o, nil
+	return nil
 }
 
 func (o Odd) Equals(other Odd) bool {

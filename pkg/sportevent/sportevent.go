@@ -2,12 +2,13 @@
 package sportevent
 
 import (
+	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/databet-cloud/databet-go-sdk/pkg/fixture"
 	"github.com/databet-cloud/databet-go-sdk/pkg/market"
-	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
 )
 
 //easyjson:json
@@ -21,76 +22,35 @@ type SportEvent struct {
 	UpdatedAt time.Time              `json:"updated_at"`
 }
 
-type SportEventPatch struct {
-	BetStop   *bool     `mapstructure:"bet_stop"`
-	UpdatedAt time.Time `mapstructure:"updated_at"`
-}
+func (se *SportEvent) ApplyPatch(path string, value json.RawMessage) error {
+	var (
+		unmarshaller     any
+		key, rest, found = strings.Cut(path, "/")
+		partialPatch     = found
+	)
 
-func (se SportEvent) WithPatch(tree patch.Tree) (SportEvent, error) {
-	var sportEventPatch SportEventPatch
-
-	err := tree.UnmarshalPatch(&sportEventPatch)
-	if err != nil {
-		return SportEvent{}, fmt.Errorf("unmarshal sport event patch: %w", err)
-	}
-
-	if sportEventPatch.BetStop != nil {
-		se.BetStop = *sportEventPatch.BetStop
-	}
-
-	if !sportEventPatch.UpdatedAt.IsZero() {
-		se.UpdatedAt = sportEventPatch.UpdatedAt
-	}
-
-	if subTree := tree.SubTree("markets"); !subTree.Empty() {
-		se.Markets, err = patch.MapPatchable(se.Markets, subTree)
-		if err != nil {
-			return SportEvent{}, fmt.Errorf("patch markets: %w", err)
+	switch key {
+	case "bet_stop":
+		unmarshaller = &se.BetStop
+	case "updated_at":
+		unmarshaller = &se.UpdatedAt
+	case "fixture":
+		if partialPatch {
+			return se.Fixture.ApplyPatch(rest, value)
 		}
-	}
 
-	if subTree := tree.SubTree("meta"); !subTree.Empty() {
-		se.Meta = patch.PatchMap(se.Meta, subTree)
-	}
-
-	se.Fixture, err = se.Fixture.WithPatch(tree.SubTree("fixture"))
-	if err != nil {
-		return SportEvent{}, fmt.Errorf("patch fixture: %w", err)
-	}
-
-	return se, nil
-}
-
-func (se *SportEvent) ApplyPatch(tree patch.Tree) error {
-	var sportEventPatch SportEventPatch
-
-	err := tree.UnmarshalPatch(&sportEventPatch)
-	if err != nil {
-		return fmt.Errorf("unmarshal sport event patch: %w", err)
-	}
-
-	if sportEventPatch.BetStop != nil {
-		se.BetStop = *sportEventPatch.BetStop
-	}
-
-	if !sportEventPatch.UpdatedAt.IsZero() {
-		se.UpdatedAt = sportEventPatch.UpdatedAt
-	}
-
-	if subTree := tree.SubTree("markets"); !subTree.Empty() {
-		se.Markets, err = patch.MapPatchable(se.Markets, subTree)
-		if err != nil {
-			return fmt.Errorf("patch markets: %w", err)
+		unmarshaller = &se.Fixture
+	case "markets":
+		if partialPatch {
+			return se.Markets.ApplyPatch(rest, value)
 		}
+
+		unmarshaller = &se.Markets
 	}
 
-	if subTree := tree.SubTree("meta"); !subTree.Empty() {
-		se.Meta = patch.PatchMap(se.Meta, subTree)
-	}
-
-	err = se.Fixture.ApplyPatch(tree.SubTree("fixture"))
+	err := json.Unmarshal(value, unmarshaller)
 	if err != nil {
-		return fmt.Errorf("patch fixture: %w", err)
+		return fmt.Errorf("%q unmarshal: %w", key, err)
 	}
 
 	return nil

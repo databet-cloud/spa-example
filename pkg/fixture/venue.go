@@ -1,16 +1,19 @@
+//go:generate go run github.com/mailru/easyjson/easyjson venue.go
 package fixture
 
-import "github.com/databet-cloud/databet-go-sdk/pkg/patch"
+import (
+	"encoding/json"
+)
 
+//easyjson:json
 type Venue struct {
 	ID string `json:"id"`
 }
 
-func (v Venue) WithPatch(tree patch.Tree) Venue {
-	id, ok := patch.GetFromTree[string](tree, "id")
-	if ok {
-		v.ID = id
+func (v *Venue) ApplyPatch(path string, value json.RawMessage) error {
+	if path == "id" {
+		return json.Unmarshal(value, &v.ID)
 	}
 
-	return v
+	return nil
 }

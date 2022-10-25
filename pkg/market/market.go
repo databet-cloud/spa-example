@@ -2,12 +2,12 @@
 package market
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"golang.org/x/exp/maps"
-
-	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
 )
 
 const (
@@ -85,6 +85,33 @@ func (c Markets) ToSlice() []Market {
 	return res
 }
 
+func (c Markets) ApplyPatch(path string, value json.RawMessage) error {
+	key, rest, found := strings.Cut(path, "/")
+	market, ok := c[key]
+
+	if !found {
+		err := json.Unmarshal(value, &market)
+		if err != nil {
+			return fmt.Errorf("market %q unmarshal: %w", key, err)
+		}
+
+		c[key] = market
+		return nil
+	}
+
+	if !ok {
+		return fmt.Errorf("partial patch non-existent market: %q", key)
+	}
+
+	err := market.ApplyPatch(rest, value)
+	if err != nil {
+		return fmt.Errorf("apply market patch: %w", err)
+	}
+
+	c[key] = market
+	return nil
+}
+
 //easyjson:json
 type Market struct {
 	ID          string                 `json:"id"`
@@ -98,67 +125,40 @@ type Market struct {
 	Flags       int                    `json:"flags"`
 }
 
-type MarketPatch struct {
-	ID          *string `mapstructure:"id"`
-	Template    *string `mapstructure:"template"`
-	Status      *Status `mapstructure:"status"`
-	TypeID      *int    `mapstructure:"type_id"`
-	IsDefective *bool   `mapstructure:"is_defective"`
-	Flags       *int    `mapstructure:"flags"`
-}
+func (m *Market) ApplyPatch(path string, value json.RawMessage) error {
+	var (
+		unmarshaller     any
+		key, rest, found = strings.Cut(path, "/")
+		partialPatch     = found
+	)
 
-func (m Market) WithPatch(tree patch.Tree) (Market, error) {
-	var marketPatch MarketPatch
+	switch key {
+	case "name":
+		unmarshaller = &m.Template
+	case "status":
+		unmarshaller = &m.Status
+	case "type_id":
+		unmarshaller = &m.TypeID
+	case "odds":
+		if partialPatch {
+			if m.Odds == nil {
+				return fmt.Errorf("patch nil odds")
+			}
 
-	err := tree.UnmarshalPatch(&marketPatch)
-	if err != nil {
-		return Market{}, fmt.Errorf("unmarshal patch: %w", err)
-	}
-
-	m.applyMarketPatch(marketPatch)
-
-	if subTree := tree.SubTree("odds"); !subTree.Empty() {
-		m.Odds, err = patch.MapPatchable(m.Odds, subTree)
-		if err != nil {
-			return Market{}, fmt.Errorf("patch odd: %w", err)
+			return m.Odds.ApplyPatch(rest, value)
 		}
+
+		unmarshaller = &m.Odds
+	default:
+		return nil
 	}
 
-	if subTree := tree.SubTree("specifiers"); !subTree.Empty() {
-		m.Specifiers = patch.PatchMap(m.Specifiers, subTree)
+	err := json.Unmarshal(value, unmarshaller)
+	if err != nil {
+		return fmt.Errorf("%q unmarshal: %w", key, err)
 	}
 
-	if subTree := tree.SubTree("meta"); !subTree.Empty() {
-		m.Meta = patch.PatchMap(m.Meta, subTree)
-	}
-
-	return m, nil
-}
-
-func (m Market) applyMarketPatch(patch MarketPatch) {
-	if patch.ID != nil {
-		m.ID = *patch.ID
-	}
-
-	if patch.TypeID != nil {
-		m.TypeID = *patch.TypeID
-	}
-
-	if patch.Template != nil {
-		m.Template = *patch.Template
-	}
-
-	if patch.Status != nil {
-		m.Status = *patch.Status
-	}
-
-	if patch.Flags != nil {
-		m.Flags = *patch.Flags
-	}
-
-	if patch.IsDefective != nil {
-		m.IsDefective = *patch.IsDefective
-	}
+	return nil
 }
 
 func (m Market) Clone() Market {

@@ -1,11 +1,13 @@
+//go:generate go run github.com/mailru/easyjson/easyjson stream.go
 package fixture
 
 import (
+	"encoding/json"
 	"fmt"
-
-	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
+	"strings"
 )
 
+//easyjson:json
 type Stream struct {
 	ID        string    `json:"id"`
 	Locale    string    `json:"locale"`
@@ -14,69 +16,69 @@ type Stream struct {
 	Priority  int       `json:"priority"`
 }
 
-type StreamPatch struct {
-	ID       *string `mapstructure:"id"`
-	Locale   *string `mapstructure:"locale"`
-	URL      *string `mapstructure:"url"`
-	Priority *int    `mapstructure:"priority"`
-}
+func (s *Stream) ApplyPatch(path string, value json.RawMessage) error {
+	var (
+		unmarshaller     any
+		key, rest, found = strings.Cut(path, "/")
+		partialPatch     = found
+	)
 
-func (s Stream) WithPatch(tree patch.Tree) (Stream, error) {
-	var streamPatch StreamPatch
+	switch key {
+	case "id":
+		unmarshaller = &s.ID
+	case "locale":
+		unmarshaller = &s.Locale
+	case "url":
+		unmarshaller = &s.URL
+	case "priority":
+		unmarshaller = &s.Priority
+	case "platforms":
+		if partialPatch {
+			if s.Platforms == nil {
+				return fmt.Errorf("patch nil platfroms")
+			}
 
-	err := tree.UnmarshalPatch(&streamPatch)
-	if err != nil {
-		return Stream{}, fmt.Errorf("unmarshal stream patch: %w", err)
-	}
-
-	s.applyStreamPatch(&streamPatch)
-
-	if subTree := tree.SubTree("platforms"); !subTree.Empty() {
-		s.Platforms, err = patch.MapPatchable(s.Platforms, subTree)
-		if err != nil {
-			return Stream{}, fmt.Errorf("patch platforms: %w", err)
+			return s.Platforms.ApplyPatch(rest, value)
 		}
+
+		unmarshaller = &s.Platforms
+	default:
+		return nil
 	}
 
-	return s, nil
-}
-
-func (s *Stream) ApplyPatch(tree patch.Tree) error {
-	var streamPatch StreamPatch
-
-	err := tree.UnmarshalPatch(&streamPatch)
+	err := json.Unmarshal(value, unmarshaller)
 	if err != nil {
-		return fmt.Errorf("unmarshal stream patch: %w", err)
-	}
-
-	s.applyStreamPatch(&streamPatch)
-
-	if subTree := tree.SubTree("platforms"); !subTree.Empty() {
-		s.Platforms, err = patch.MapPatchable(s.Platforms, subTree)
-		if err != nil {
-			return fmt.Errorf("patch platforms: %w", err)
-		}
+		return fmt.Errorf("unmarshal value: %w, path: %q", err, path)
 	}
 
 	return nil
 }
 
-func (s *Stream) applyStreamPatch(patch *StreamPatch) {
-	if patch.ID != nil {
-		s.ID = *patch.ID
-	}
-
-	if patch.Locale != nil {
-		s.Locale = *patch.Locale
-	}
-
-	if patch.URL != nil {
-		s.URL = *patch.URL
-	}
-
-	if patch.Priority != nil {
-		s.Priority = *patch.Priority
-	}
-}
-
 type Streams map[string]Stream
+
+func (s Streams) ApplyPatch(path string, value json.RawMessage) error {
+	key, rest, found := strings.Cut(path, "/")
+	stream, ok := s[key]
+
+	if !found {
+		err := json.Unmarshal(value, &stream)
+		if err != nil {
+			return fmt.Errorf("unmarshal stream: %w, path: %q", err, path)
+		}
+
+		s[key] = stream
+		return nil
+	}
+
+	if !ok {
+		return fmt.Errorf("partial patch non-existent stream: %q", path)
+	}
+
+	err := stream.ApplyPatch(rest, value)
+	if err != nil {
+		return fmt.Errorf("patch stream: %w, path: %q", err, rest)
+	}
+
+	s[key] = stream
+	return nil
+}

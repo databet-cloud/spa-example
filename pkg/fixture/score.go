@@ -1,11 +1,13 @@
+//go:generate go run github.com/mailru/easyjson/easyjson score.go
 package fixture
 
 import (
+	"encoding/json"
 	"fmt"
-
-	"github.com/databet-cloud/databet-go-sdk/pkg/patch"
+	"strings"
 )
 
+//easyjson:json
 type Score struct {
 	ID     string `json:"id"`
 	Type   string `json:"type"`
@@ -13,57 +15,31 @@ type Score struct {
 	Number int    `json:"number"`
 }
 
-type ScorePatch struct {
-	ID     *string `mapstructure:"id"`
-	Type   *string `mapstructure:"type"`
-	Points *string `mapstructure:"points"`
-	Number *int    `mapstructure:"number"`
-}
+func (s *Score) ApplyPatch(key string, value json.RawMessage) error {
+	var unmarshaller any
 
-func (s Score) WithPatch(tree patch.Tree) (Score, error) {
-	var scorePatch ScorePatch
-
-	err := tree.UnmarshalPatch(&scorePatch)
-	if err != nil {
-		return Score{}, fmt.Errorf("unmarshal score patch: %w", err)
+	switch key {
+	case "id":
+		unmarshaller = &s.ID
+	case "type":
+		unmarshaller = &s.Type
+	case "points":
+		unmarshaller = &s.Points
+	case "number":
+		unmarshaller = &s.Number
+	default:
+		return nil
 	}
 
-	s.applyScorePatch(&scorePatch)
-
-	return s, nil
-}
-
-func (s *Score) ApplyPatch(tree patch.Tree) error {
-	var scorePatch ScorePatch
-
-	err := tree.UnmarshalPatch(&scorePatch)
+	err := json.Unmarshal(value, unmarshaller)
 	if err != nil {
-		return fmt.Errorf("unmarshal score patch: %w", err)
+		return fmt.Errorf("unmarshal score value: %w, field: %q", err, key)
 	}
-
-	s.applyScorePatch(&scorePatch)
 
 	return nil
 }
 
-func (s *Score) applyScorePatch(patch *ScorePatch) {
-	if patch.ID != nil {
-		s.ID = *patch.ID
-	}
-
-	if patch.Type != nil {
-		s.Type = *patch.Type
-	}
-
-	if patch.Points != nil {
-		s.Points = *patch.Points
-	}
-
-	if patch.Number != nil {
-		s.Number = *patch.Number
-	}
-}
-
+//easyjson:json
 type Scores map[string]Score
 
 func (s Scores) Clone() Scores {
@@ -73,4 +49,31 @@ func (s Scores) Clone() Scores {
 	}
 
 	return result
+}
+
+func (s Scores) ApplyPatch(path string, value json.RawMessage) error {
+	key, rest, found := strings.Cut(path, "/")
+	score, ok := s[key]
+
+	if !found {
+		err := json.Unmarshal(value, &score)
+		if err != nil {
+			return fmt.Errorf("unmarshal competitor: %w, key: %q", err, key)
+		}
+
+		s[key] = score
+		return nil
+	}
+
+	if !ok {
+		return fmt.Errorf("partial patch non-existent score: %q", key)
+	}
+
+	err := score.ApplyPatch(rest, value)
+	if err != nil {
+		return fmt.Errorf("patch competitor: %w, path: %q", err, rest)
+	}
+
+	s[key] = score
+	return nil
 }
