@@ -55,7 +55,7 @@ func (c Markets) Clone() Markets {
 	return res
 }
 
-func (c Markets) Suspended() Markets {
+func (c Markets) Suspend() Markets {
 	res := make(Markets, len(c))
 
 	for mID, m := range c {
@@ -71,18 +71,7 @@ func (c Markets) Suspended() Markets {
 
 func (c Markets) Has(id string) bool {
 	_, ok := c[id]
-
 	return ok
-}
-
-func (c Markets) ToSlice() []Market {
-	res := make([]Market, 0, len(c))
-
-	for _, m := range c {
-		res = append(res, m)
-	}
-
-	return res
 }
 
 func (c Markets) ApplyPatch(path string, value json.RawMessage) error {
