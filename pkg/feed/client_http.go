@@ -30,8 +30,6 @@ func (c *ClientHTTP) GetAll(
 	bookmakerID string,
 	receiveCh chan<- json.RawMessage,
 ) (lastVersion string, err error) {
-	defer close(receiveCh)
-
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
@@ -103,8 +101,6 @@ func (c *ClientHTTP) GetLogsFromVersion(
 	version string,
 	receiveCh chan<- json.RawMessage,
 ) error {
-	defer close(receiveCh)
-
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,

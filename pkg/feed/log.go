@@ -25,7 +25,7 @@ const (
 
 //easyjson:json
 type LogEntry struct {
-	Version      string    `json:"version"`
+	Version      string    `json:"v"`
 	SportEventID string    `json:"sport_event_id"`
 	Type         LogType   `json:"type"`
 	Timestamp    timestamp `json:"timestamp"`

@@ -36,7 +36,7 @@ func easyjsonB6915918DecodeGithubComDatabetCloudDatabetGoSdkPkgFeed(in *jlexer.L
 			continue
 		}
 		switch key {
-		case "version":
+		case "v":
 			out.Version = string(in.String())
 		case "sport_event_id":
 			out.SportEventID = string(in.String())
@@ -118,7 +118,7 @@ func easyjsonB6915918EncodeGithubComDatabetCloudDatabetGoSdkPkgFeed(out *jwriter
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"version\":"
+		const prefix string = ",\"v\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.Version))
 	}
