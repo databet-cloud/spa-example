@@ -11,11 +11,11 @@ import (
 )
 
 const (
-	StatusActive      Status = 0
-	StatusSuspended   Status = 1
-	StatusDeactivated Status = 2
-	StatusResulted    Status = 3
-	StatusCancelled   Status = 4
+	StatusActive Status = iota
+	StatusSuspended
+	StatusDeactivated
+	StatusResulted
+	StatusCancelled
 
 	IsDefective     = 1 << 0
 	IsRobotDetached = 1 << 1

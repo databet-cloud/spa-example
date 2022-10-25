@@ -8,13 +8,13 @@ import (
 )
 
 const (
-	OddStatusNotResulted OddStatus = 0
-	OddStatusWin         OddStatus = 1
-	OddStatusLoss        OddStatus = 2
-	OddStatusHalfWin     OddStatus = 3
-	OddStatusHalfLoss    OddStatus = 4
-	OddStatusRefunded    OddStatus = 5
-	OddStatusCancelled   OddStatus = 6
+	OddStatusNotResulted OddStatus = iota
+	OddStatusWin
+	OddStatusLoss
+	OddStatusHalfWin
+	OddStatusHalfLoss
+	OddStatusRefunded
+	OddStatusCancelled
 )
 
 type OddStatus int
