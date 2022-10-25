@@ -49,6 +49,8 @@ func (se *SportEvent) ApplyPatch(path string, value json.RawMessage) error {
 		}
 
 		unmarshaller = &se.Markets
+	default:
+		return nil
 	}
 
 	err := json.Unmarshal(value, unmarshaller)
