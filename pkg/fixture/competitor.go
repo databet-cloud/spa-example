@@ -117,7 +117,7 @@ func (c Competitors) ApplyPatch(path string, value json.RawMessage) error {
 	}
 
 	if !ok {
-		return fmt.Errorf("partial patch non-existent competitor: %q", key)
+		return fmt.Errorf("partial patch non-existent competitor: %q", path)
 	}
 
 	err := competitor.ApplyPatch(rest, value)

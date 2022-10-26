@@ -4,7 +4,6 @@ go 1.18
 
 require (
 	github.com/mailru/easyjson v0.7.7
-	github.com/mitchellh/mapstructure v1.5.0
 	github.com/stretchr/testify v1.8.0
 	golang.org/x/exp v0.0.0-20221012211006-4de253d81b95
 )
