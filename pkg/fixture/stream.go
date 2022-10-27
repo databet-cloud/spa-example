@@ -5,6 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+
+	"github.com/minio/simdjson-go"
+
+	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
 
 //easyjson:json
@@ -54,6 +58,82 @@ func (s *Stream) ApplyPatch(path string, value json.RawMessage) error {
 	return nil
 }
 
+func (s *Stream) UnmarshalSimdJSON(obj *simdjson.Object) error {
+	iter := new(simdjson.Iter)
+
+	for {
+		name, elementType, err := obj.NextElement(iter)
+		if err != nil {
+			return err
+		}
+
+		if elementType == simdjson.TypeNone {
+			break
+		}
+
+		switch name {
+		case "id":
+			s.ID, err = iter.String()
+		case "locale":
+			s.Locale, err = iter.String()
+		case "url":
+			s.URL, err = iter.String()
+		case "platforms":
+			obj, err := iter.Object(nil)
+			if err != nil {
+				return err
+			}
+
+			s.Platforms = make(Platforms)
+
+			err = s.Platforms.UnmarshalSimdJSON(obj)
+
+		case "priority":
+			s.Priority, err = simdutil.IntFromIter(iter)
+		}
+
+		if err != nil {
+			return fmt.Errorf("%q unmarshal: %w", name, err)
+		}
+	}
+
+	return nil
+}
+
+func (s *Stream) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
+	var (
+		err                     error
+		key, rest, partialPatch = strings.Cut(path, "/")
+	)
+
+	switch path {
+	case "id":
+		s.ID, err = iter.String()
+	case "locale":
+		s.Locale, err = iter.String()
+	case "url":
+		s.URL, err = iter.String()
+	case "platforms":
+		if partialPatch {
+			if s.Platforms == nil {
+				return fmt.Errorf("partial patch nil platforms")
+			}
+
+			s.Platforms.ApplyPatchSimdJSON(rest, iter)
+		}
+
+		s.Platforms.FromIter(iter)
+	case "priority":
+		s.Priority, err = simdutil.IntFromIter(iter)
+	}
+
+	if err != nil {
+		return fmt.Errorf("%q unmarshal: %w", key, err)
+	}
+
+	return nil
+}
+
 type Streams map[string]Stream
 
 func (s Streams) ApplyPatch(path string, value json.RawMessage) error {
@@ -77,6 +157,78 @@ func (s Streams) ApplyPatch(path string, value json.RawMessage) error {
 	err := stream.ApplyPatch(rest, value)
 	if err != nil {
 		return fmt.Errorf("patch stream: %w, path: %q", err, rest)
+	}
+
+	s[key] = stream
+	return nil
+}
+
+func (s Streams) UnmarshalSimdJSON(obj *simdjson.Object) error {
+	tmpIter := new(simdjson.Iter)
+	streamObj := new(simdjson.Object)
+	tmpStream := new(Stream)
+
+	for {
+		name, elementType, err := obj.NextElement(tmpIter)
+		if err != nil {
+			return err
+		}
+
+		if elementType == simdjson.TypeNone {
+			break
+		}
+
+		streamObj, err = tmpIter.Object(streamObj)
+		if err != nil {
+			return fmt.Errorf("create %q object: %w", name, err)
+		}
+
+		err = tmpStream.UnmarshalSimdJSON(streamObj)
+		if err != nil {
+			return fmt.Errorf("unmarshal %q odd: %w", name, err)
+		}
+
+		s[name] = *tmpStream
+	}
+
+	return nil
+}
+
+func (s Streams) FromIter(iter *simdjson.Iter, dst *simdjson.Object) error {
+	obj, err := iter.Object(dst)
+	if err != nil {
+		return err
+	}
+
+	return s.UnmarshalSimdJSON(obj)
+}
+
+func (s Streams) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
+	key, rest, partialPatch := strings.Cut(path, "/")
+	stream, ok := s[key]
+
+	if !partialPatch {
+		obj, err := iter.Object(nil)
+		if err != nil {
+			return err
+		}
+
+		err = stream.UnmarshalSimdJSON(obj)
+		if err != nil {
+			return fmt.Errorf("stream %q unmarshal simdjson: %w", key, err)
+		}
+
+		s[key] = stream
+		return nil
+	}
+
+	if !ok {
+		return fmt.Errorf("partial patch non-existent stream: %q", key)
+	}
+
+	err := stream.ApplyPatchSimdJSON(rest, iter)
+	if err != nil {
+		return fmt.Errorf("apply stream patch: %w", err)
 	}
 
 	s[key] = stream

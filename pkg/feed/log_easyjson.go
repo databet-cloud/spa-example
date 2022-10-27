@@ -47,29 +47,13 @@ func easyjsonB6915918DecodeGithubComDatabetCloudDatabetGoSdkPkgFeed(in *jlexer.L
 				in.AddError((out.Timestamp).UnmarshalJSON(data))
 			}
 		case "changes":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				in.Delim('{')
-				if !in.IsDelim('}') {
-					out.Patches = make(map[string]json.RawMessage)
-				} else {
-					out.Patches = nil
-				}
-				for !in.IsDelim('}') {
-					key := string(in.String())
-					in.WantColon()
-					var v1 json.RawMessage
-					if data := in.Raw(); in.Ok() {
-						in.AddError((v1).UnmarshalJSON(data))
-					}
-					(out.Patches)[key] = v1
-					in.WantComma()
-				}
-				in.Delim('}')
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.Patches).UnmarshalJSON(data))
 			}
 		case "sport_event":
-			(out.SportEvent).UnmarshalEasyJSON(in)
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.SportEvent).UnmarshalJSON(data))
+			}
 		case "match_id":
 			out.MatchID = string(in.String())
 		case "market_ids":
@@ -88,9 +72,9 @@ func easyjsonB6915918DecodeGithubComDatabetCloudDatabetGoSdkPkgFeed(in *jlexer.L
 					out.MarketIDs = (out.MarketIDs)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v2 string
-					v2 = string(in.String())
-					out.MarketIDs = append(out.MarketIDs, v2)
+					var v1 string
+					v1 = string(in.String())
+					out.MarketIDs = append(out.MarketIDs, v1)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -140,26 +124,12 @@ func easyjsonB6915918EncodeGithubComDatabetCloudDatabetGoSdkPkgFeed(out *jwriter
 	if len(in.Patches) != 0 {
 		const prefix string = ",\"changes\":"
 		out.RawString(prefix)
-		{
-			out.RawByte('{')
-			v3First := true
-			for v3Name, v3Value := range in.Patches {
-				if v3First {
-					v3First = false
-				} else {
-					out.RawByte(',')
-				}
-				out.String(string(v3Name))
-				out.RawByte(':')
-				out.Raw((v3Value).MarshalJSON())
-			}
-			out.RawByte('}')
-		}
+		out.Raw((in.Patches).MarshalJSON())
 	}
-	if true {
+	if len(in.SportEvent) != 0 {
 		const prefix string = ",\"sport_event\":"
 		out.RawString(prefix)
-		(in.SportEvent).MarshalEasyJSON(out)
+		out.Raw((in.SportEvent).MarshalJSON())
 	}
 	if in.MatchID != "" {
 		const prefix string = ",\"match_id\":"
@@ -171,11 +141,11 @@ func easyjsonB6915918EncodeGithubComDatabetCloudDatabetGoSdkPkgFeed(out *jwriter
 		out.RawString(prefix)
 		{
 			out.RawByte('[')
-			for v4, v5 := range in.MarketIDs {
-				if v4 > 0 {
+			for v2, v3 := range in.MarketIDs {
+				if v2 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v5))
+				out.String(string(v3))
 			}
 			out.RawByte(']')
 		}

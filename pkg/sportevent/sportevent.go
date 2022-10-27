@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"golang.org/x/exp/maps"
-	"golang.org/x/exp/slices"
 
 	"github.com/databet-cloud/databet-go-sdk/pkg/fixture"
 	"github.com/databet-cloud/databet-go-sdk/pkg/market"
@@ -16,16 +15,34 @@ import (
 
 //easyjson:json
 type SportEvent struct {
-	ID        string                 `json:"id"`
-	Meta      map[string]interface{} `json:"meta"`
-	Fixture   fixture.Fixture        `json:"fixture"`
-	Markets   market.Markets         `json:"markets"`
-	BetStop   bool                   `json:"bet_stop"`
-	Sources   []Source               `json:"sources"`
-	UpdatedAt time.Time              `json:"updated_at"`
+	ID         string                 `json:"id"`
+	Meta       map[string]interface{} `json:"meta"`
+	Fixture    fixture.Fixture        `json:"fixture"`
+	MarketIter *market.Iterator
+	Markets    market.Markets `json:"markets"`
+	BetStop    bool           `json:"bet_stop"`
+	UpdatedAt  time.Time      `json:"updated_at"`
 }
 
-func (se *SportEvent) ApplyPatch(path string, value json.RawMessage) error {
+func (se *SportEvent) ApplyPatchesV1(rawPatches json.RawMessage) error {
+	var patches map[string]json.RawMessage
+
+	err := json.Unmarshal(rawPatches, &patches)
+	if err != nil {
+		return fmt.Errorf("unmarshal patches: %w", err)
+	}
+
+	for path, patch := range patches {
+		err := se.applyPatch(path, patch)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (se *SportEvent) applyPatch(path string, value json.RawMessage) error {
 	var (
 		unmarshaller     any
 		key, rest, found = strings.Cut(path, "/")
@@ -63,12 +80,12 @@ func (se *SportEvent) ApplyPatch(path string, value json.RawMessage) error {
 
 func (se *SportEvent) Clone() *SportEvent {
 	return &SportEvent{
-		ID:        se.ID,
-		Meta:      maps.Clone(se.Meta),
-		Fixture:   se.Fixture.Clone(),
-		Markets:   se.Markets.Clone(),
-		BetStop:   se.BetStop,
-		Sources:   slices.Clone(se.Sources),
-		UpdatedAt: se.UpdatedAt,
+		ID:         se.ID,
+		Meta:       maps.Clone(se.Meta),
+		Fixture:    se.Fixture.Clone(),
+		MarketIter: se.MarketIter,
+		Markets:    se.Markets.Clone(),
+		BetStop:    se.BetStop,
+		UpdatedAt:  se.UpdatedAt,
 	}
 }

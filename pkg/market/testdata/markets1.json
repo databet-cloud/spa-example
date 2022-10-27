@@ -1,0 +1,318 @@
+{
+  "1": {
+    "id": "1",
+    "meta": {
+      "k1": 42
+    },
+    "odds": {
+      "1": {
+        "id": "1",
+        "value": "1.88",
+        "status": 0,
+        "template": "{$competitor1}",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "2": {
+        "id": "2",
+        "value": "2.09",
+        "status": 0,
+        "template": "{$competitor2}",
+        "is_active": true,
+        "status_reason": ""
+      }
+    },
+    "flags": 1,
+    "status": 1,
+    "type_id": 1,
+    "template": "Winner",
+    "specifiers": {
+      "s1": "v1"
+    },
+    "is_defective": false
+  },
+  "7m1": {
+    "id": "7m1",
+    "meta": {},
+    "odds": {
+      "1": {
+        "id": "1",
+        "value": "1.88",
+        "status": 0,
+        "template": "{$competitor1}",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "2": {
+        "id": "2",
+        "value": "2.09",
+        "status": 0,
+        "template": "{$competitor2}",
+        "is_active": true,
+        "status_reason": ""
+      }
+    },
+    "flags": 0,
+    "status": 0,
+    "type_id": 7,
+    "template": "{!mapnr} map - winner (incl. overtime)",
+    "specifiers": {
+      "mapnr": "1"
+    },
+    "is_defective": true
+  },
+  "15m1": {
+    "id": "15m1",
+    "meta": {},
+    "odds": {
+      "1": {
+        "id": "1",
+        "value": "99.08",
+        "status": 0,
+        "template": "16:0",
+        "is_active": false,
+        "status_reason": ""
+      },
+      "2": {
+        "id": "2",
+        "value": "92.94",
+        "status": 0,
+        "template": "16:1",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "3": {
+        "id": "3",
+        "value": "74.29",
+        "status": 0,
+        "template": "16:2",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "4": {
+        "id": "4",
+        "value": "57.34",
+        "status": 0,
+        "template": "16:3",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "5": {
+        "id": "5",
+        "value": "44.34",
+        "status": 0,
+        "template": "16:4",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "6": {
+        "id": "6",
+        "value": "35.17",
+        "status": 0,
+        "template": "16:5",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "7": {
+        "id": "7",
+        "value": "28.89",
+        "status": 0,
+        "template": "16:6",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "8": {
+        "id": "8",
+        "value": "24.62",
+        "status": 0,
+        "template": "16:7",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "9": {
+        "id": "9",
+        "value": "21.7",
+        "status": 0,
+        "template": "16:8",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "10": {
+        "id": "10",
+        "value": "19.69",
+        "status": 0,
+        "template": "16:9",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "11": {
+        "id": "11",
+        "value": "18.36",
+        "status": 0,
+        "template": "16:10",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "12": {
+        "id": "12",
+        "value": "17.54",
+        "status": 0,
+        "template": "16:11",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "13": {
+        "id": "13",
+        "value": "17.11",
+        "status": 0,
+        "template": "16:12",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "14": {
+        "id": "14",
+        "value": "17",
+        "status": 0,
+        "template": "16:13",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "15": {
+        "id": "15",
+        "value": "17.19",
+        "status": 0,
+        "template": "16:14",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "16": {
+        "id": "16",
+        "value": "99.45",
+        "status": 0,
+        "template": "0:16",
+        "is_active": false,
+        "status_reason": ""
+      },
+      "17": {
+        "id": "17",
+        "value": "95.54",
+        "status": 0,
+        "template": "1:16",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "18": {
+        "id": "18",
+        "value": "81.08",
+        "status": 0,
+        "template": "2:16",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "19": {
+        "id": "19",
+        "value": "65.02",
+        "status": 0,
+        "template": "3:16",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "20": {
+        "id": "20",
+        "value": "51.15",
+        "status": 0,
+        "template": "4:16",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "21": {
+        "id": "21",
+        "value": "40.71",
+        "status": 0,
+        "template": "5:16",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "22": {
+        "id": "22",
+        "value": "33.27",
+        "status": 0,
+        "template": "6:16",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "23": {
+        "id": "23",
+        "value": "28.08",
+        "status": 0,
+        "template": "7:16",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "24": {
+        "id": "24",
+        "value": "24.47",
+        "status": 0,
+        "template": "8:16",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "25": {
+        "id": "25",
+        "value": "21.92",
+        "status": 0,
+        "template": "9:16",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "26": {
+        "id": "26",
+        "value": "20.16",
+        "status": 0,
+        "template": "10:16",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "27": {
+        "id": "27",
+        "value": "18.97",
+        "status": 0,
+        "template": "11:16",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "28": {
+        "id": "28",
+        "value": "18.24",
+        "status": 0,
+        "template": "12:16",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "29": {
+        "id": "29",
+        "value": "17.87",
+        "status": 0,
+        "template": "13:16",
+        "is_active": true,
+        "status_reason": ""
+      },
+      "30": {
+        "id": "30",
+        "value": "17.8",
+        "status": 0,
+        "template": "14:16",
+        "is_active": true,
+        "status_reason": ""
+      }
+    },
+    "flags": 0,
+    "status": 0,
+    "type_id": 15,
+    "template": "{!mapnr} map - correct score",
+    "specifiers": {
+      "mapnr": "1"
+    },
+    "is_defective": false
+  }
+}

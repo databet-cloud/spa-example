@@ -3,11 +3,10 @@
 package market
 
 import (
-	"encoding/json"
-
-	"github.com/mailru/easyjson"
-	"github.com/mailru/easyjson/jlexer"
-	"github.com/mailru/easyjson/jwriter"
+	json "encoding/json"
+	easyjson "github.com/mailru/easyjson"
+	jlexer "github.com/mailru/easyjson/jlexer"
+	jwriter "github.com/mailru/easyjson/jwriter"
 )
 
 // suppress unused package warning
@@ -18,7 +17,71 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson6e040014DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket(in *jlexer.Lexer, out *Market) {
+func easyjson6e040014DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket(in *jlexer.Lexer, out *Markets) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		in.Skip()
+	} else {
+		in.Delim('{')
+		*out = make(Markets)
+		for !in.IsDelim('}') {
+			key := string(in.String())
+			in.WantColon()
+			var v1 Market
+			(v1).UnmarshalEasyJSON(in)
+			(*out)[key] = v1
+			in.WantComma()
+		}
+		in.Delim('}')
+	}
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson6e040014EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket(out *jwriter.Writer, in Markets) {
+	if in == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
+		out.RawString(`null`)
+	} else {
+		out.RawByte('{')
+		v2First := true
+		for v2Name, v2Value := range in {
+			if v2First {
+				v2First = false
+			} else {
+				out.RawByte(',')
+			}
+			out.String(string(v2Name))
+			out.RawByte(':')
+			(v2Value).MarshalEasyJSON(out)
+		}
+		out.RawByte('}')
+	}
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v Markets) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson6e040014EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v Markets) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson6e040014EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *Markets) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson6e040014DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *Markets) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson6e040014DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket(l, v)
+}
+func easyjson6e040014DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket1(in *jlexer.Lexer, out *Market) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -39,14 +102,14 @@ func easyjson6e040014DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket(in *jlexer
 		switch key {
 		case "id":
 			out.ID = string(in.String())
-		case "type_id":
-			out.TypeID = int(in.Int())
 		case "template":
 			out.Template = string(in.String())
 		case "status":
 			out.Status = Status(in.Int())
 		case "odds":
 			(out.Odds).UnmarshalEasyJSON(in)
+		case "type_id":
+			out.TypeID = int(in.Int())
 		case "specifiers":
 			if in.IsNull() {
 				in.Skip()
@@ -56,13 +119,15 @@ func easyjson6e040014DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket(in *jlexer
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v1 string
-					v1 = string(in.String())
-					(out.Specifiers)[key] = v1
+					var v3 string
+					v3 = string(in.String())
+					(out.Specifiers)[key] = v3
 					in.WantComma()
 				}
 				in.Delim('}')
 			}
+		case "is_defective":
+			out.IsDefective = bool(in.Bool())
 		case "meta":
 			if in.IsNull() {
 				in.Skip()
@@ -72,15 +137,15 @@ func easyjson6e040014DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket(in *jlexer
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v2 interface{}
-					if m, ok := v2.(easyjson.Unmarshaler); ok {
+					var v4 interface{}
+					if m, ok := v4.(easyjson.Unmarshaler); ok {
 						m.UnmarshalEasyJSON(in)
-					} else if m, ok := v2.(json.Unmarshaler); ok {
+					} else if m, ok := v4.(json.Unmarshaler); ok {
 						_ = m.UnmarshalJSON(in.Raw())
 					} else {
-						v2 = in.Interface()
+						v4 = in.Interface()
 					}
-					(out.Meta)[key] = v2
+					(out.Meta)[key] = v4
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -97,7 +162,7 @@ func easyjson6e040014DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket(in *jlexer
 		in.Consumed()
 	}
 }
-func easyjson6e040014EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket(out *jwriter.Writer, in Market) {
+func easyjson6e040014EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket1(out *jwriter.Writer, in Market) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -105,11 +170,6 @@ func easyjson6e040014EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket(out *jwrit
 		const prefix string = ",\"id\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.ID))
-	}
-	{
-		const prefix string = ",\"type_id\":"
-		out.RawString(prefix)
-		out.Int(int(in.TypeID))
 	}
 	{
 		const prefix string = ",\"template\":"
@@ -127,25 +187,35 @@ func easyjson6e040014EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket(out *jwrit
 		(in.Odds).MarshalEasyJSON(out)
 	}
 	{
+		const prefix string = ",\"type_id\":"
+		out.RawString(prefix)
+		out.Int(int(in.TypeID))
+	}
+	{
 		const prefix string = ",\"specifiers\":"
 		out.RawString(prefix)
 		if in.Specifiers == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
 			out.RawString(`null`)
 		} else {
 			out.RawByte('{')
-			v3First := true
-			for v3Name, v3Value := range in.Specifiers {
-				if v3First {
-					v3First = false
+			v5First := true
+			for v5Name, v5Value := range in.Specifiers {
+				if v5First {
+					v5First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v3Name))
+				out.String(string(v5Name))
 				out.RawByte(':')
-				out.String(string(v3Value))
+				out.String(string(v5Value))
 			}
 			out.RawByte('}')
 		}
+	}
+	{
+		const prefix string = ",\"is_defective\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsDefective))
 	}
 	{
 		const prefix string = ",\"meta\":"
@@ -154,21 +224,21 @@ func easyjson6e040014EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket(out *jwrit
 			out.RawString(`null`)
 		} else {
 			out.RawByte('{')
-			v4First := true
-			for v4Name, v4Value := range in.Meta {
-				if v4First {
-					v4First = false
+			v6First := true
+			for v6Name, v6Value := range in.Meta {
+				if v6First {
+					v6First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v4Name))
+				out.String(string(v6Name))
 				out.RawByte(':')
-				if m, ok := v4Value.(easyjson.Marshaler); ok {
+				if m, ok := v6Value.(easyjson.Marshaler); ok {
 					m.MarshalEasyJSON(out)
-				} else if m, ok := v4Value.(json.Marshaler); ok {
+				} else if m, ok := v6Value.(json.Marshaler); ok {
 					out.Raw(m.MarshalJSON())
 				} else {
-					out.Raw(json.Marshal(v4Value))
+					out.Raw(json.Marshal(v6Value))
 				}
 			}
 			out.RawByte('}')
@@ -185,87 +255,23 @@ func easyjson6e040014EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket(out *jwrit
 // MarshalJSON supports json.Marshaler interface
 func (v Market) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6e040014EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket(&w, v)
-	return w.Buffer.BuildBytes(), w.Error
-}
-
-// MarshalEasyJSON supports easyjson.Marshaler interface
-func (v Market) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6e040014EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket(w, v)
-}
-
-// UnmarshalJSON supports json.Unmarshaler interface
-func (v *Market) UnmarshalJSON(data []byte) error {
-	r := jlexer.Lexer{Data: data}
-	easyjson6e040014DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket(&r, v)
-	return r.Error()
-}
-
-// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *Market) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6e040014DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket(l, v)
-}
-func easyjson6e040014DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket1(in *jlexer.Lexer, out *Markets) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		in.Skip()
-	} else {
-		in.Delim('{')
-		*out = make(Markets)
-		for !in.IsDelim('}') {
-			key := string(in.String())
-			in.WantColon()
-			var v5 Market
-			(v5).UnmarshalEasyJSON(in)
-			(*out)[key] = v5
-			in.WantComma()
-		}
-		in.Delim('}')
-	}
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson6e040014EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket1(out *jwriter.Writer, in Markets) {
-	if in == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
-		out.RawString(`null`)
-	} else {
-		out.RawByte('{')
-		v6First := true
-		for v6Name, v6Value := range in {
-			if v6First {
-				v6First = false
-			} else {
-				out.RawByte(',')
-			}
-			out.String(string(v6Name))
-			out.RawByte(':')
-			(v6Value).MarshalEasyJSON(out)
-		}
-		out.RawByte('}')
-	}
-}
-
-// MarshalJSON supports json.Marshaler interface
-func (v Markets) MarshalJSON() ([]byte, error) {
-	w := jwriter.Writer{}
 	easyjson6e040014EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket1(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
-func (v Markets) MarshalEasyJSON(w *jwriter.Writer) {
+func (v Market) MarshalEasyJSON(w *jwriter.Writer) {
 	easyjson6e040014EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket1(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
-func (v *Markets) UnmarshalJSON(data []byte) error {
+func (v *Market) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
 	easyjson6e040014DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket1(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *Markets) UnmarshalEasyJSON(l *jlexer.Lexer) {
+func (v *Market) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson6e040014DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket1(l, v)
 }

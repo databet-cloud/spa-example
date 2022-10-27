@@ -3,8 +3,8 @@
 package sportevent
 
 import (
-	market "github.com/databet-cloud/databet-go-sdk/pkg/market"
 	json "encoding/json"
+	market "github.com/databet-cloud/databet-go-sdk/pkg/market"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
@@ -18,7 +18,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson82c1e1aeDecodeDatabetGoSdkPkgSportevent(in *jlexer.Lexer, out *SportEvent) {
+func easyjson82c1e1aeDecodeGithubComDatabetCloudDatabetGoSdkPkgSportevent(in *jlexer.Lexer, out *SportEvent) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -63,47 +63,20 @@ func easyjson82c1e1aeDecodeDatabetGoSdkPkgSportevent(in *jlexer.Lexer, out *Spor
 			}
 		case "fixture":
 			(out.Fixture).UnmarshalEasyJSON(in)
-		case "markets":
+		case "MarketIter":
 			if in.IsNull() {
 				in.Skip()
+				out.MarketIter = nil
 			} else {
-				in.Delim('{')
-				out.Markets = make(market.Markets)
-				for !in.IsDelim('}') {
-					key := string(in.String())
-					in.WantColon()
-					var v2 market.Market
-					easyjson82c1e1aeDecodeDatabetGoSdkPkgMarket(in, &v2)
-					(out.Markets)[key] = v2
-					in.WantComma()
+				if out.MarketIter == nil {
+					out.MarketIter = new(market.Iterator)
 				}
-				in.Delim('}')
+				easyjson82c1e1aeDecodeGithubComDatabetCloudDatabetGoSdkPkgMarket(in, out.MarketIter)
 			}
+		case "markets":
+			(out.Markets).UnmarshalEasyJSON(in)
 		case "bet_stop":
 			out.BetStop = bool(in.Bool())
-		case "sources":
-			if in.IsNull() {
-				in.Skip()
-				out.Sources = nil
-			} else {
-				in.Delim('[')
-				if out.Sources == nil {
-					if !in.IsDelim(']') {
-						out.Sources = make([]Source, 0, 2)
-					} else {
-						out.Sources = []Source{}
-					}
-				} else {
-					out.Sources = (out.Sources)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v3 Source
-					easyjson82c1e1aeDecodeDatabetGoSdkPkgSportevent1(in, &v3)
-					out.Sources = append(out.Sources, v3)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
 		case "updated_at":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.UpdatedAt).UnmarshalJSON(data))
@@ -118,7 +91,7 @@ func easyjson82c1e1aeDecodeDatabetGoSdkPkgSportevent(in *jlexer.Lexer, out *Spor
 		in.Consumed()
 	}
 }
-func easyjson82c1e1aeEncodeDatabetGoSdkPkgSportevent(out *jwriter.Writer, in SportEvent) {
+func easyjson82c1e1aeEncodeGithubComDatabetCloudDatabetGoSdkPkgSportevent(out *jwriter.Writer, in SportEvent) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -134,21 +107,21 @@ func easyjson82c1e1aeEncodeDatabetGoSdkPkgSportevent(out *jwriter.Writer, in Spo
 			out.RawString(`null`)
 		} else {
 			out.RawByte('{')
-			v4First := true
-			for v4Name, v4Value := range in.Meta {
-				if v4First {
-					v4First = false
+			v2First := true
+			for v2Name, v2Value := range in.Meta {
+				if v2First {
+					v2First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v4Name))
+				out.String(string(v2Name))
 				out.RawByte(':')
-				if m, ok := v4Value.(easyjson.Marshaler); ok {
+				if m, ok := v2Value.(easyjson.Marshaler); ok {
 					m.MarshalEasyJSON(out)
-				} else if m, ok := v4Value.(json.Marshaler); ok {
+				} else if m, ok := v2Value.(json.Marshaler); ok {
 					out.Raw(m.MarshalJSON())
 				} else {
-					out.Raw(json.Marshal(v4Value))
+					out.Raw(json.Marshal(v2Value))
 				}
 			}
 			out.RawByte('}')
@@ -160,46 +133,23 @@ func easyjson82c1e1aeEncodeDatabetGoSdkPkgSportevent(out *jwriter.Writer, in Spo
 		(in.Fixture).MarshalEasyJSON(out)
 	}
 	{
+		const prefix string = ",\"MarketIter\":"
+		out.RawString(prefix)
+		if in.MarketIter == nil {
+			out.RawString("null")
+		} else {
+			easyjson82c1e1aeEncodeGithubComDatabetCloudDatabetGoSdkPkgMarket(out, *in.MarketIter)
+		}
+	}
+	{
 		const prefix string = ",\"markets\":"
 		out.RawString(prefix)
-		if in.Markets == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
-			out.RawString(`null`)
-		} else {
-			out.RawByte('{')
-			v5First := true
-			for v5Name, v5Value := range in.Markets {
-				if v5First {
-					v5First = false
-				} else {
-					out.RawByte(',')
-				}
-				out.String(string(v5Name))
-				out.RawByte(':')
-				(v5Value).MarshalEasyJSON(out)
-			}
-			out.RawByte('}')
-		}
+		(in.Markets).MarshalEasyJSON(out)
 	}
 	{
 		const prefix string = ",\"bet_stop\":"
 		out.RawString(prefix)
 		out.Bool(bool(in.BetStop))
-	}
-	{
-		const prefix string = ",\"sources\":"
-		out.RawString(prefix)
-		if in.Sources == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
-			out.RawByte('[')
-			for v6, v7 := range in.Sources {
-				if v6 > 0 {
-					out.RawByte(',')
-				}
-				easyjson82c1e1aeEncodeDatabetGoSdkPkgSportevent1(out, v7)
-			}
-			out.RawByte(']')
-		}
 	}
 	{
 		const prefix string = ",\"updated_at\":"
@@ -212,27 +162,27 @@ func easyjson82c1e1aeEncodeDatabetGoSdkPkgSportevent(out *jwriter.Writer, in Spo
 // MarshalJSON supports json.Marshaler interface
 func (v SportEvent) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson82c1e1aeEncodeDatabetGoSdkPkgSportevent(&w, v)
+	easyjson82c1e1aeEncodeGithubComDatabetCloudDatabetGoSdkPkgSportevent(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v SportEvent) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson82c1e1aeEncodeDatabetGoSdkPkgSportevent(w, v)
+	easyjson82c1e1aeEncodeGithubComDatabetCloudDatabetGoSdkPkgSportevent(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *SportEvent) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson82c1e1aeDecodeDatabetGoSdkPkgSportevent(&r, v)
+	easyjson82c1e1aeDecodeGithubComDatabetCloudDatabetGoSdkPkgSportevent(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *SportEvent) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson82c1e1aeDecodeDatabetGoSdkPkgSportevent(l, v)
+	easyjson82c1e1aeDecodeGithubComDatabetCloudDatabetGoSdkPkgSportevent(l, v)
 }
-func easyjson82c1e1aeDecodeDatabetGoSdkPkgSportevent1(in *jlexer.Lexer, out *Source) {
+func easyjson82c1e1aeDecodeGithubComDatabetCloudDatabetGoSdkPkgMarket(in *jlexer.Lexer, out *market.Iterator) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -251,10 +201,6 @@ func easyjson82c1e1aeDecodeDatabetGoSdkPkgSportevent1(in *jlexer.Lexer, out *Sou
 			continue
 		}
 		switch key {
-		case "id":
-			out.ID = string(in.String())
-		case "type":
-			out.Type = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -265,182 +211,9 @@ func easyjson82c1e1aeDecodeDatabetGoSdkPkgSportevent1(in *jlexer.Lexer, out *Sou
 		in.Consumed()
 	}
 }
-func easyjson82c1e1aeEncodeDatabetGoSdkPkgSportevent1(out *jwriter.Writer, in Source) {
+func easyjson82c1e1aeEncodeGithubComDatabetCloudDatabetGoSdkPkgMarket(out *jwriter.Writer, in market.Iterator) {
 	out.RawByte('{')
 	first := true
 	_ = first
-	{
-		const prefix string = ",\"id\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.ID))
-	}
-	{
-		const prefix string = ",\"type\":"
-		out.RawString(prefix)
-		out.String(string(in.Type))
-	}
-	out.RawByte('}')
-}
-func easyjson82c1e1aeDecodeDatabetGoSdkPkgMarket(in *jlexer.Lexer, out *market.Market) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "id":
-			out.ID = string(in.String())
-		case "type_id":
-			out.TypeID = int(in.Int())
-		case "template":
-			out.Template = string(in.String())
-		case "status":
-			out.Status = market.Status(in.Int())
-		case "odds":
-			(out.Odds).UnmarshalEasyJSON(in)
-		case "specifiers":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				in.Delim('{')
-				out.Specifiers = make(map[string]string)
-				for !in.IsDelim('}') {
-					key := string(in.String())
-					in.WantColon()
-					var v8 string
-					v8 = string(in.String())
-					(out.Specifiers)[key] = v8
-					in.WantComma()
-				}
-				in.Delim('}')
-			}
-		case "meta":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				in.Delim('{')
-				out.Meta = make(map[string]interface{})
-				for !in.IsDelim('}') {
-					key := string(in.String())
-					in.WantColon()
-					var v9 interface{}
-					if m, ok := v9.(easyjson.Unmarshaler); ok {
-						m.UnmarshalEasyJSON(in)
-					} else if m, ok := v9.(json.Unmarshaler); ok {
-						_ = m.UnmarshalJSON(in.Raw())
-					} else {
-						v9 = in.Interface()
-					}
-					(out.Meta)[key] = v9
-					in.WantComma()
-				}
-				in.Delim('}')
-			}
-		case "flags":
-			out.Flags = int(in.Int())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson82c1e1aeEncodeDatabetGoSdkPkgMarket(out *jwriter.Writer, in market.Market) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"id\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.ID))
-	}
-	{
-		const prefix string = ",\"type_id\":"
-		out.RawString(prefix)
-		out.Int(int(in.TypeID))
-	}
-	{
-		const prefix string = ",\"template\":"
-		out.RawString(prefix)
-		out.String(string(in.Template))
-	}
-	{
-		const prefix string = ",\"status\":"
-		out.RawString(prefix)
-		out.Int(int(in.Status))
-	}
-	{
-		const prefix string = ",\"odds\":"
-		out.RawString(prefix)
-		(in.Odds).MarshalEasyJSON(out)
-	}
-	{
-		const prefix string = ",\"specifiers\":"
-		out.RawString(prefix)
-		if in.Specifiers == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
-			out.RawString(`null`)
-		} else {
-			out.RawByte('{')
-			v10First := true
-			for v10Name, v10Value := range in.Specifiers {
-				if v10First {
-					v10First = false
-				} else {
-					out.RawByte(',')
-				}
-				out.String(string(v10Name))
-				out.RawByte(':')
-				out.String(string(v10Value))
-			}
-			out.RawByte('}')
-		}
-	}
-	{
-		const prefix string = ",\"meta\":"
-		out.RawString(prefix)
-		if in.Meta == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
-			out.RawString(`null`)
-		} else {
-			out.RawByte('{')
-			v11First := true
-			for v11Name, v11Value := range in.Meta {
-				if v11First {
-					v11First = false
-				} else {
-					out.RawByte(',')
-				}
-				out.String(string(v11Name))
-				out.RawByte(':')
-				if m, ok := v11Value.(easyjson.Marshaler); ok {
-					m.MarshalEasyJSON(out)
-				} else if m, ok := v11Value.(json.Marshaler); ok {
-					out.Raw(m.MarshalJSON())
-				} else {
-					out.Raw(json.Marshal(v11Value))
-				}
-			}
-			out.RawByte('}')
-		}
-	}
-	{
-		const prefix string = ",\"flags\":"
-		out.RawString(prefix)
-		out.Int(int(in.Flags))
-	}
 	out.RawByte('}')
 }

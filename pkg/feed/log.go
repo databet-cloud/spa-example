@@ -7,8 +7,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/databet-cloud/databet-go-sdk/pkg/sportevent"
 )
 
 type LogType string
@@ -31,10 +29,10 @@ type LogEntry struct {
 	Timestamp    timestamp `json:"timestamp"`
 
 	// Patches filled for LogTypeMatchUpdate only
-	Patches map[string]json.RawMessage `json:"changes,omitempty"`
+	Patches json.RawMessage `json:"changes,omitempty"`
 
 	// SportEvent filled for LogTypeMatchNew only
-	SportEvent sportevent.SportEvent `json:"sport_event,omitempty"`
+	SportEvent json.RawMessage `json:"sport_event,omitempty"`
 
 	// The following fields are filled for LogTypeBetRollback only
 	MatchID   string    `json:"match_id,omitempty"`
