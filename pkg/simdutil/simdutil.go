@@ -53,7 +53,7 @@ func MapStrStrFromIter(iter *simdjson.Iter) (map[string]string, error) {
 	dst := map[string]string{}
 
 	for {
-		name, t, err := o.NextElement(iter)
+		name, t, err := o.NextElementBytes(iter)
 		if err != nil {
 			return nil, err
 		}
@@ -63,7 +63,7 @@ func MapStrStrFromIter(iter *simdjson.Iter) (map[string]string, error) {
 			break
 		}
 
-		dst[name], err = iter.String()
+		dst[*(*string)(unsafe.Pointer(&name))], err = UnsafeStrFromIter(iter)
 		if err != nil {
 			return nil, fmt.Errorf("parsing element %q: %w", name, err)
 		}
