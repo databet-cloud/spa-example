@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"unsafe"
 
 	"github.com/minio/simdjson-go"
 )
@@ -32,6 +33,15 @@ func IntFromIter(iter *simdjson.Iter) (int, error) {
 	i64, err := iter.Int()
 
 	return int(i64), err
+}
+
+func UnsafeStrFromIter(iter *simdjson.Iter) (string, error) {
+	b, err := iter.StringBytes()
+	if err != nil {
+		return "", err
+	}
+
+	return *(*string)(unsafe.Pointer(&b)), nil
 }
 
 func MapStrStrFromIter(iter *simdjson.Iter) (map[string]string, error) {
