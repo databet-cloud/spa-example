@@ -2,7 +2,6 @@ package feed
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -25,11 +24,7 @@ func NewClientHTTP(httpClient *http.Client, feedURL string) *ClientHTTP {
 	}
 }
 
-func (c *ClientHTTP) GetAll(
-	ctx context.Context,
-	bookmakerID string,
-	receiveCh chan<- json.RawMessage,
-) (lastVersion string, err error) {
+func (c *ClientHTTP) GetAll(ctx context.Context, bookmakerID string) (cursor *RawMessageCursor, lastVersion string, err error) {
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
@@ -37,43 +32,25 @@ func (c *ClientHTTP) GetAll(
 		http.NoBody,
 	)
 	if err != nil {
-		return "", fmt.Errorf("create http request: %w", err)
+		return nil, "", fmt.Errorf("create http request: %w", err)
 	}
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return "", fmt.Errorf("do http request: %w", err)
+		return nil, "", fmt.Errorf("do http request: %w", err)
 	}
 
-	defer resp.Body.Close()
-
 	if resp.StatusCode == http.StatusConflict {
-		return "", ErrVersionNotFound
+		return nil, "", ErrVersionNotFound
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("status code %q isn't ok", resp.Status)
+		return nil, "", fmt.Errorf("status code %q isn't ok", resp.Status)
 	}
 
 	lastVersion = resp.Header.Get(HeaderLastVersion)
 
-	decoder := json.NewDecoder(resp.Body)
-	for decoder.More() {
-		var msg json.RawMessage
-
-		err := decoder.Decode(&msg)
-		if err != nil {
-			return "", fmt.Errorf("decode message: %w", err)
-		}
-
-		select {
-		case receiveCh <- msg:
-		case <-ctx.Done():
-			return "", ctx.Err()
-		}
-	}
-
-	return lastVersion, nil
+	return NewRawMessageCursor(resp.Body), lastVersion, nil
 }
 
 func (c *ClientHTTP) GetFeedVersion(ctx context.Context, bookmakerID string) (string, error) {
@@ -97,12 +74,7 @@ func (c *ClientHTTP) GetFeedVersion(ctx context.Context, bookmakerID string) (st
 	return resp.Header.Get(HeaderLastVersion), nil
 }
 
-func (c *ClientHTTP) GetLogsFromVersion(
-	ctx context.Context,
-	bookmakerID string,
-	version string,
-	receiveCh chan<- json.RawMessage,
-) error {
+func (c *ClientHTTP) GetLogsFromVersion(ctx context.Context, bookmakerID string, version string) (*RawMessageCursor, error) {
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
@@ -110,7 +82,7 @@ func (c *ClientHTTP) GetLogsFromVersion(
 		http.NoBody,
 	)
 	if err != nil {
-		return fmt.Errorf("create http request: %w", err)
+		return nil, fmt.Errorf("create http request: %w", err)
 	}
 
 	req.Header.Add("Last-Version", version)
@@ -118,34 +90,16 @@ func (c *ClientHTTP) GetLogsFromVersion(
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("do http request: %w", err)
+		return nil, fmt.Errorf("do http request: %w", err)
 	}
 
-	defer resp.Body.Close()
-
 	if resp.StatusCode == http.StatusConflict {
-		return ErrVersionNotFound
+		return nil, ErrVersionNotFound
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("status code %q isn't ok", resp.Status)
+		return nil, fmt.Errorf("status code %q isn't ok", resp.Status)
 	}
 
-	decoder := json.NewDecoder(resp.Body)
-	for decoder.More() {
-		var msg json.RawMessage
-
-		err := decoder.Decode(&msg)
-		if err != nil {
-			return fmt.Errorf("decode message: %w", err)
-		}
-
-		select {
-		case receiveCh <- msg:
-		case <-ctx.Done():
-			return ctx.Err()
-		}
-	}
-
-	return nil
+	return NewRawMessageCursor(resp.Body), nil
 }
