@@ -237,7 +237,7 @@ func (o *Odd) UnmarshalSimdJSON(obj *simdjson.Object) error {
 	iter := new(simdjson.Iter)
 
 	for {
-		name, elementType, err := obj.NextElement(iter)
+		name, elementType, err := obj.NextElementBytes(iter)
 		if err != nil {
 			return err
 		}
@@ -246,7 +246,7 @@ func (o *Odd) UnmarshalSimdJSON(obj *simdjson.Object) error {
 			break
 		}
 
-		switch name {
+		switch string(name) {
 		case "id":
 			o.ID, err = simdutil.UnsafeStrFromIter(iter)
 		case "template":
