@@ -49,7 +49,9 @@ func (c *ClientHTTP) GetAll(
 
 	if resp.StatusCode == http.StatusConflict {
 		return "", ErrVersionNotFound
-	} else if resp.StatusCode != http.StatusOK {
+	}
+
+	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("status code %q isn't ok", resp.Status)
 	}
 
@@ -123,7 +125,9 @@ func (c *ClientHTTP) GetLogsFromVersion(
 
 	if resp.StatusCode == http.StatusConflict {
 		return ErrVersionNotFound
-	} else if resp.StatusCode != http.StatusOK {
+	}
+
+	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("status code %q isn't ok", resp.Status)
 	}
 
