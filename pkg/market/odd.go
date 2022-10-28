@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"github.com/minio/simdjson-go"
+
+	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
 
 const (
@@ -246,9 +248,9 @@ func (o *Odd) UnmarshalSimdJSON(obj *simdjson.Object) error {
 
 		switch name {
 		case "id":
-			o.ID, err = iter.String()
+			o.ID, err = simdutil.UnsafeStrFromIter(iter)
 		case "template":
-			o.Template, err = iter.String()
+			o.Template, err = simdutil.UnsafeStrFromIter(iter)
 		case "is_active":
 			o.IsActive, err = iter.Bool()
 		case "status":
@@ -256,9 +258,9 @@ func (o *Odd) UnmarshalSimdJSON(obj *simdjson.Object) error {
 			value, err = iter.Int()
 			o.Status = OddStatus(value)
 		case "value":
-			o.Value, err = iter.String()
+			o.Value, err = simdutil.UnsafeStrFromIter(iter)
 		case "status_reason":
-			o.StatusReason, err = iter.String()
+			o.StatusReason, err = simdutil.UnsafeStrFromIter(iter)
 		}
 
 		if err != nil {
