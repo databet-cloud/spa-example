@@ -58,23 +58,9 @@ func easyjson4f6d4409EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket(out *jwrit
 	}
 }
 
-// MarshalJSON supports json.Marshaler interface
-func (v Odds) MarshalJSON() ([]byte, error) {
-	w := jwriter.Writer{}
-	easyjson4f6d4409EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket(&w, v)
-	return w.Buffer.BuildBytes(), w.Error
-}
-
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Odds) MarshalEasyJSON(w *jwriter.Writer) {
 	easyjson4f6d4409EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket(w, v)
-}
-
-// UnmarshalJSON supports json.Unmarshaler interface
-func (v *Odds) UnmarshalJSON(data []byte) error {
-	r := jlexer.Lexer{Data: data}
-	easyjson4f6d4409DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket(&r, v)
-	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
@@ -159,23 +145,9 @@ func easyjson4f6d4409EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket1(out *jwri
 	out.RawByte('}')
 }
 
-// MarshalJSON supports json.Marshaler interface
-func (v Odd) MarshalJSON() ([]byte, error) {
-	w := jwriter.Writer{}
-	easyjson4f6d4409EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket1(&w, v)
-	return w.Buffer.BuildBytes(), w.Error
-}
-
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Odd) MarshalEasyJSON(w *jwriter.Writer) {
 	easyjson4f6d4409EncodeGithubComDatabetCloudDatabetGoSdkPkgMarket1(w, v)
-}
-
-// UnmarshalJSON supports json.Unmarshaler interface
-func (v *Odd) UnmarshalJSON(data []byte) error {
-	r := jlexer.Lexer{Data: data}
-	easyjson4f6d4409DecodeGithubComDatabetCloudDatabetGoSdkPkgMarket1(&r, v)
-	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface

@@ -1,4 +1,4 @@
-//go:generate go run github.com/mailru/easyjson/easyjson market.go
+//go:generate go run github.com/mailru/easyjson/easyjson -no_std_marshalers market.go
 package market
 
 import (

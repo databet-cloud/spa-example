@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/mailru/easyjson"
 	"github.com/minio/simdjson-go"
 
 	"github.com/databet-cloud/databet-go-sdk/pkg/fixture"
@@ -58,7 +59,7 @@ func (se *SportEventLazy) UnmarshalJSON(bytes []byte) error {
 				return err
 			}
 
-			err = se.Fixture.UnmarshalJSON(dst)
+			err = easyjson.Unmarshal(dst, &se.Fixture)
 		case "bet_stop":
 			se.BetStop, err = iter.Bool()
 		case "updated_at":

@@ -1,4 +1,4 @@
-//go:generate go run github.com/mailru/easyjson/easyjson odd.go
+//go:generate go run github.com/mailru/easyjson/easyjson -no_std_marshalers odd.go
 package market
 
 import (

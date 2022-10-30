@@ -1,4 +1,4 @@
-//go:generate go run github.com/mailru/easyjson/easyjson sportevent.go
+//go:generate go run github.com/mailru/easyjson/easyjson -no_std_marshalers sportevent.go
 package sportevent
 
 import (

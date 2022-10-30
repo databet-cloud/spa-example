@@ -159,23 +159,9 @@ func easyjson82c1e1aeEncodeGithubComDatabetCloudDatabetGoSdkPkgSportevent(out *j
 	out.RawByte('}')
 }
 
-// MarshalJSON supports json.Marshaler interface
-func (v SportEvent) MarshalJSON() ([]byte, error) {
-	w := jwriter.Writer{}
-	easyjson82c1e1aeEncodeGithubComDatabetCloudDatabetGoSdkPkgSportevent(&w, v)
-	return w.Buffer.BuildBytes(), w.Error
-}
-
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v SportEvent) MarshalEasyJSON(w *jwriter.Writer) {
 	easyjson82c1e1aeEncodeGithubComDatabetCloudDatabetGoSdkPkgSportevent(w, v)
-}
-
-// UnmarshalJSON supports json.Unmarshaler interface
-func (v *SportEvent) UnmarshalJSON(data []byte) error {
-	r := jlexer.Lexer{Data: data}
-	easyjson82c1e1aeDecodeGithubComDatabetCloudDatabetGoSdkPkgSportevent(&r, v)
-	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface

@@ -1,4 +1,4 @@
-//go:generate go run github.com/mailru/easyjson/easyjson fixture.go
+//go:generate go run github.com/mailru/easyjson/easyjson -no_std_marshalers fixture.go
 package fixture
 
 import (

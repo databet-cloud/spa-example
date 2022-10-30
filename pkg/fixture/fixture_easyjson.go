@@ -55,21 +55,7 @@ func easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture(in *jlexe
 		case "venue":
 			easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture2(in, &out.Venue)
 		case "competitors":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				in.Delim('{')
-				out.Competitors = make(Competitors)
-				for !in.IsDelim('}') {
-					key := string(in.String())
-					in.WantColon()
-					var v1 Competitor
-					easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture3(in, &v1)
-					(out.Competitors)[key] = v1
-					in.WantComma()
-				}
-				in.Delim('}')
-			}
+			(out.Competitors).UnmarshalEasyJSON(in)
 		case "streams":
 			if in.IsNull() {
 				in.Skip()
@@ -79,9 +65,9 @@ func easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture(in *jlexe
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v2 Stream
-					easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture4(in, &v2)
-					(out.Streams)[key] = v2
+					var v1 Stream
+					(v1).UnmarshalEasyJSON(in)
+					(out.Streams)[key] = v1
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -168,23 +154,7 @@ func easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture(out *jwri
 	{
 		const prefix string = ",\"competitors\":"
 		out.RawString(prefix)
-		if in.Competitors == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
-			out.RawString(`null`)
-		} else {
-			out.RawByte('{')
-			v3First := true
-			for v3Name, v3Value := range in.Competitors {
-				if v3First {
-					v3First = false
-				} else {
-					out.RawByte(',')
-				}
-				out.String(string(v3Name))
-				out.RawByte(':')
-				easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture3(out, v3Value)
-			}
-			out.RawByte('}')
-		}
+		(in.Competitors).MarshalEasyJSON(out)
 	}
 	{
 		const prefix string = ",\"streams\":"
@@ -193,16 +163,16 @@ func easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture(out *jwri
 			out.RawString(`null`)
 		} else {
 			out.RawByte('{')
-			v4First := true
-			for v4Name, v4Value := range in.Streams {
-				if v4First {
-					v4First = false
+			v2First := true
+			for v2Name, v2Value := range in.Streams {
+				if v2First {
+					v2First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v4Name))
+				out.String(string(v2Name))
 				out.RawByte(':')
-				easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture4(out, v4Value)
+				(v2Value).MarshalEasyJSON(out)
 			}
 			out.RawByte('}')
 		}
@@ -240,400 +210,14 @@ func easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture(out *jwri
 	out.RawByte('}')
 }
 
-// MarshalJSON supports json.Marshaler interface
-func (v Fixture) MarshalJSON() ([]byte, error) {
-	w := jwriter.Writer{}
-	easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture(&w, v)
-	return w.Buffer.BuildBytes(), w.Error
-}
-
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Fixture) MarshalEasyJSON(w *jwriter.Writer) {
 	easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture(w, v)
 }
 
-// UnmarshalJSON supports json.Unmarshaler interface
-func (v *Fixture) UnmarshalJSON(data []byte) error {
-	r := jlexer.Lexer{Data: data}
-	easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture(&r, v)
-	return r.Error()
-}
-
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Fixture) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture(l, v)
-}
-func easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture4(in *jlexer.Lexer, out *Stream) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "id":
-			out.ID = string(in.String())
-		case "locale":
-			out.Locale = string(in.String())
-		case "url":
-			out.URL = string(in.String())
-		case "platforms":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				in.Delim('{')
-				out.Platforms = make(Platforms)
-				for !in.IsDelim('}') {
-					key := string(in.String())
-					in.WantColon()
-					var v5 Platform
-					easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture5(in, &v5)
-					(out.Platforms)[key] = v5
-					in.WantComma()
-				}
-				in.Delim('}')
-			}
-		case "priority":
-			out.Priority = int(in.Int())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture4(out *jwriter.Writer, in Stream) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"id\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.ID))
-	}
-	{
-		const prefix string = ",\"locale\":"
-		out.RawString(prefix)
-		out.String(string(in.Locale))
-	}
-	{
-		const prefix string = ",\"url\":"
-		out.RawString(prefix)
-		out.String(string(in.URL))
-	}
-	{
-		const prefix string = ",\"platforms\":"
-		out.RawString(prefix)
-		if in.Platforms == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
-			out.RawString(`null`)
-		} else {
-			out.RawByte('{')
-			v6First := true
-			for v6Name, v6Value := range in.Platforms {
-				if v6First {
-					v6First = false
-				} else {
-					out.RawByte(',')
-				}
-				out.String(string(v6Name))
-				out.RawByte(':')
-				easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture5(out, v6Value)
-			}
-			out.RawByte('}')
-		}
-	}
-	{
-		const prefix string = ",\"priority\":"
-		out.RawString(prefix)
-		out.Int(int(in.Priority))
-	}
-	out.RawByte('}')
-}
-func easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture5(in *jlexer.Lexer, out *Platform) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "type":
-			out.Type = string(in.String())
-		case "allowed_countries":
-			if in.IsNull() {
-				in.Skip()
-				out.AllowedCountries = nil
-			} else {
-				in.Delim('[')
-				if out.AllowedCountries == nil {
-					if !in.IsDelim(']') {
-						out.AllowedCountries = make([]string, 0, 4)
-					} else {
-						out.AllowedCountries = []string{}
-					}
-				} else {
-					out.AllowedCountries = (out.AllowedCountries)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v7 string
-					v7 = string(in.String())
-					out.AllowedCountries = append(out.AllowedCountries, v7)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		case "enabled":
-			out.Enabled = bool(in.Bool())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture5(out *jwriter.Writer, in Platform) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"type\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.Type))
-	}
-	{
-		const prefix string = ",\"allowed_countries\":"
-		out.RawString(prefix)
-		if in.AllowedCountries == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
-			out.RawByte('[')
-			for v8, v9 := range in.AllowedCountries {
-				if v8 > 0 {
-					out.RawByte(',')
-				}
-				out.String(string(v9))
-			}
-			out.RawByte(']')
-		}
-	}
-	{
-		const prefix string = ",\"enabled\":"
-		out.RawString(prefix)
-		out.Bool(bool(in.Enabled))
-	}
-	out.RawByte('}')
-}
-func easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture3(in *jlexer.Lexer, out *Competitor) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "id":
-			out.ID = string(in.String())
-		case "type":
-			out.Type = int(in.Int())
-		case "home_away":
-			out.HomeAway = int(in.Int())
-		case "template_position":
-			out.TemplatePosition = int(in.Int())
-		case "scores":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				in.Delim('{')
-				out.Scores = make(Scores)
-				for !in.IsDelim('}') {
-					key := string(in.String())
-					in.WantColon()
-					var v10 Score
-					easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture6(in, &v10)
-					(out.Scores)[key] = v10
-					in.WantComma()
-				}
-				in.Delim('}')
-			}
-		case "name":
-			out.Name = string(in.String())
-		case "master_id":
-			out.MasterID = string(in.String())
-		case "country_code":
-			out.CountryCode = string(in.String())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture3(out *jwriter.Writer, in Competitor) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"id\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.ID))
-	}
-	{
-		const prefix string = ",\"type\":"
-		out.RawString(prefix)
-		out.Int(int(in.Type))
-	}
-	{
-		const prefix string = ",\"home_away\":"
-		out.RawString(prefix)
-		out.Int(int(in.HomeAway))
-	}
-	{
-		const prefix string = ",\"template_position\":"
-		out.RawString(prefix)
-		out.Int(int(in.TemplatePosition))
-	}
-	{
-		const prefix string = ",\"scores\":"
-		out.RawString(prefix)
-		if in.Scores == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
-			out.RawString(`null`)
-		} else {
-			out.RawByte('{')
-			v11First := true
-			for v11Name, v11Value := range in.Scores {
-				if v11First {
-					v11First = false
-				} else {
-					out.RawByte(',')
-				}
-				out.String(string(v11Name))
-				out.RawByte(':')
-				easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture6(out, v11Value)
-			}
-			out.RawByte('}')
-		}
-	}
-	{
-		const prefix string = ",\"name\":"
-		out.RawString(prefix)
-		out.String(string(in.Name))
-	}
-	{
-		const prefix string = ",\"master_id\":"
-		out.RawString(prefix)
-		out.String(string(in.MasterID))
-	}
-	{
-		const prefix string = ",\"country_code\":"
-		out.RawString(prefix)
-		out.String(string(in.CountryCode))
-	}
-	out.RawByte('}')
-}
-func easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture6(in *jlexer.Lexer, out *Score) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "id":
-			out.ID = string(in.String())
-		case "type":
-			out.Type = string(in.String())
-		case "points":
-			out.Points = string(in.String())
-		case "number":
-			out.Number = int(in.Int())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson8f177a29EncodeGithubComDatabetCloudDatabetGoSdkPkgFixture6(out *jwriter.Writer, in Score) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"id\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.ID))
-	}
-	{
-		const prefix string = ",\"type\":"
-		out.RawString(prefix)
-		out.String(string(in.Type))
-	}
-	{
-		const prefix string = ",\"points\":"
-		out.RawString(prefix)
-		out.String(string(in.Points))
-	}
-	{
-		const prefix string = ",\"number\":"
-		out.RawString(prefix)
-		out.Int(int(in.Number))
-	}
-	out.RawByte('}')
 }
 func easyjson8f177a29DecodeGithubComDatabetCloudDatabetGoSdkPkgFixture2(in *jlexer.Lexer, out *Venue) {
 	isTopLevel := in.IsStart()
