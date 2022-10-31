@@ -1,4 +1,3 @@
-//go:generate go run github.com/mailru/easyjson/easyjson score.go
 package fixture
 
 import (
@@ -11,7 +10,6 @@ import (
 	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
 
-//easyjson:json
 type Score struct {
 	ID     string `json:"id"`
 	Type   string `json:"type"`
@@ -77,7 +75,6 @@ func (s *Score) UnmarshalSimdJSON(obj *simdjson.Object, reuseIter *simdjson.Iter
 	return nil
 }
 
-//easyjson:json
 type Scores map[string]Score
 
 func (s Scores) Clone() Scores {

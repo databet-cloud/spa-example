@@ -1,4 +1,3 @@
-//go:generate go run github.com/mailru/easyjson/easyjson -no_std_marshalers market.go
 package market
 
 import (
@@ -42,7 +41,6 @@ func (s Status) IsValid() bool {
 	}
 }
 
-//easyjson:json
 type Markets map[string]Market
 
 func (c Markets) Clone() Markets {
@@ -101,7 +99,6 @@ func (c Markets) ApplyPatch(path string, value json.RawMessage) error {
 	return nil
 }
 
-//easyjson:json
 type Market struct {
 	ID          string                 `json:"id"`
 	Template    string                 `json:"template"`

@@ -1,4 +1,3 @@
-//go:generate go run github.com/mailru/easyjson/easyjson competitor.go
 package fixture
 
 import (
@@ -23,7 +22,6 @@ const (
 	CompetitorAway
 )
 
-//easyjson:json
 type Competitor struct {
 	ID               string `json:"id"`
 	Type             int    `json:"type"`
@@ -160,7 +158,6 @@ func (c Competitor) Clone() Competitor {
 	return result
 }
 
-//easyjson:json
 type Competitors map[string]Competitor
 
 func (c Competitors) Clone() Competitors {

@@ -1,4 +1,3 @@
-//go:generate go run github.com/mailru/easyjson/easyjson platform.go
 package fixture
 
 import (
@@ -11,7 +10,6 @@ import (
 	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
 
-//easyjson:json
 type Platform struct {
 	Type             string   `json:"type"`
 	AllowedCountries []string `json:"allowed_countries"`
@@ -83,7 +81,6 @@ func (p *Platform) UnmarshalSimdJSON(obj *simdjson.Object, reuseIter *simdjson.I
 	return nil
 }
 
-//easyjson:json
 type Platforms map[string]Platform
 
 func (p Platforms) Clone() Platforms {

@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/bytedance/sonic"
-	"github.com/mailru/easyjson"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -80,17 +79,6 @@ func BenchmarkSportEventApplyPatchSimdJSON(b *testing.B) {
 }
 
 func BenchmarkSportEvent_Unmarshal(b *testing.B) {
-	b.Run("easyjson", func(b *testing.B) {
-		b.ReportAllocs()
-
-		for i := 0; i < b.N; i++ {
-			var sportEvent sportevent.SportEvent
-
-			err := easyjson.Unmarshal(rawSportEventWithMarkets, &sportEvent)
-			require.NoError(b, err)
-		}
-	})
-
 	b.Run("simdjson", func(b *testing.B) {
 		b.ReportAllocs()
 

@@ -1,4 +1,3 @@
-//go:generate go run github.com/mailru/easyjson/easyjson stream.go
 package fixture
 
 import (
@@ -11,7 +10,6 @@ import (
 	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
 
-//easyjson:json
 type Stream struct {
 	ID        string    `json:"id"`
 	Locale    string    `json:"locale"`

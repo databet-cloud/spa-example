@@ -1,4 +1,3 @@
-//go:generate go run github.com/mailru/easyjson/easyjson venue.go
 package fixture
 
 import (
@@ -9,7 +8,6 @@ import (
 	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
 
-//easyjson:json
 type Venue struct {
 	ID string `json:"id"`
 }

@@ -1,4 +1,3 @@
-//go:generate go run github.com/mailru/easyjson/easyjson -no_std_marshalers odd.go
 package market
 
 import (
@@ -44,7 +43,6 @@ func (os OddStatus) IsResulted() bool {
 	return os != OddStatusNotResulted
 }
 
-//easyjson:json
 type Odds map[string]Odd
 
 func (c Odds) Equals(other Odds) bool {
@@ -102,7 +100,6 @@ func (c Odds) ApplyPatch(path string, value json.RawMessage) error {
 	return nil
 }
 
-//easyjson:json
 type Odd struct {
 	ID           string    `json:"id"`
 	Template     string    `json:"template"`

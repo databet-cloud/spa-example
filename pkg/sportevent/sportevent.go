@@ -1,4 +1,3 @@
-//go:generate go run github.com/mailru/easyjson/easyjson -no_std_marshalers sportevent.go
 package sportevent
 
 import (
@@ -13,7 +12,6 @@ import (
 	"github.com/databet-cloud/databet-go-sdk/pkg/market"
 )
 
-//easyjson:json
 type SportEvent struct {
 	ID         string                 `json:"id"`
 	Meta       map[string]interface{} `json:"meta"`

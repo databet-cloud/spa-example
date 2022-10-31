@@ -1,4 +1,3 @@
-//go:generate go run github.com/mailru/easyjson/easyjson log.go
 package feed
 
 import (
@@ -21,7 +20,6 @@ const (
 	LogTypeBetRollback LogType = "bet_rollback"
 )
 
-//easyjson:json
 type LogEntry struct {
 	Version      string    `json:"v"`
 	SportEventID string    `json:"sport_event_id"`

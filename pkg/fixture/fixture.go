@@ -1,4 +1,3 @@
-//go:generate go run github.com/mailru/easyjson/easyjson -no_std_marshalers fixture.go
 package fixture
 
 import (
@@ -17,7 +16,6 @@ func NewFixture() *Fixture {
 	}
 }
 
-// easyjson:json
 type Fixture struct {
 	ID           string      `json:"id"`
 	Version      int         `json:"version"`
