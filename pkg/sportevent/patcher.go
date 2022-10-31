@@ -14,11 +14,10 @@ import (
 )
 
 type Patcher interface {
-	ApplyPatches(rawPatches json.RawMessage) error
+	ApplyPatches(sportEvent *SportEvent, rawPatches json.RawMessage) error
 }
 
 type PatcherSimdJSON struct {
-	sportEvent *SportEvent
 	parsedJson *simdjson.ParsedJson
 	rootObj    *simdjson.Object
 	rootIter   *simdjson.Iter
@@ -38,9 +37,8 @@ type PatcherSimdJSON struct {
 	tmpOdd *market.Odd
 }
 
-func NewPatcherSimdJSON(sportEvent *SportEvent) *PatcherSimdJSON {
+func NewPatcherSimdJSON() *PatcherSimdJSON {
 	return &PatcherSimdJSON{
-		sportEvent: sportEvent,
 		parsedJson: new(simdjson.ParsedJson),
 		rootObj:    new(simdjson.Object),
 		rootIter:   new(simdjson.Iter),
@@ -53,7 +51,7 @@ func NewPatcherSimdJSON(sportEvent *SportEvent) *PatcherSimdJSON {
 	}
 }
 
-func (p *PatcherSimdJSON) ApplyPatches(rawPatches json.RawMessage) error {
+func (p *PatcherSimdJSON) ApplyPatches(sportEvent *SportEvent, rawPatches json.RawMessage) error {
 	parsedJson, err := simdjson.Parse(rawPatches, p.parsedJson, simdjson.WithCopyStrings(true))
 	if err != nil {
 		return fmt.Errorf("simdjson parse: %w", err)
@@ -89,17 +87,17 @@ func (p *PatcherSimdJSON) ApplyPatches(rawPatches json.RawMessage) error {
 				return fmt.Errorf("parse bet_stop: %w", err)
 			}
 
-			p.sportEvent.BetStop = value
+			sportEvent.BetStop = value
 
 		case "updated_at":
-			p.sportEvent.UpdatedAt, err = simdutil.TimeFromIter(p.rootIter)
+			sportEvent.UpdatedAt, err = simdutil.TimeFromIter(p.rootIter)
 			if err != nil {
 				return fmt.Errorf("parse updated_at: %w", err)
 			}
 
 		case "fixture":
 			if partialPatch {
-				err = p.applyFixturePatch(rest, p.rootIter)
+				err = p.applyFixturePatch(&sportEvent.Fixture, rest, p.rootIter)
 				if err != nil {
 					return err
 				}
@@ -112,7 +110,7 @@ func (p *PatcherSimdJSON) ApplyPatches(rawPatches json.RawMessage) error {
 				return err
 			}
 
-			err = p.sportEvent.Fixture.UnmarshalSimdJSON(
+			err = sportEvent.Fixture.UnmarshalSimdJSON(
 				obj,
 				p.tmpIter,
 				p.tmpObj,
@@ -128,7 +126,7 @@ func (p *PatcherSimdJSON) ApplyPatches(rawPatches json.RawMessage) error {
 
 		case "markets":
 			if partialPatch {
-				err = p.applyMarketsPatch(rest, p.rootIter)
+				err = p.applyMarketsPatch(sportEvent.Markets, rest, p.rootIter)
 				if err != nil {
 					return err
 				}
@@ -136,14 +134,14 @@ func (p *PatcherSimdJSON) ApplyPatches(rawPatches json.RawMessage) error {
 				continue
 			}
 
-			p.sportEvent.Markets = make(market.Markets, 128)
+			sportEvent.Markets = make(market.Markets, 128)
 
 			bb, err := p.rootIter.MarshalJSON()
 			if err != nil {
 				return fmt.Errorf("marshal markets: %w", err)
 			}
 
-			err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(bb), &p.sportEvent.Markets)
+			err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(bb), &sportEvent.Markets)
 			if err != nil {
 				return fmt.Errorf("sonic unmarshal markets: %w", err)
 			}
@@ -153,7 +151,7 @@ func (p *PatcherSimdJSON) ApplyPatches(rawPatches json.RawMessage) error {
 	return nil
 }
 
-func (p *PatcherSimdJSON) applyFixturePatch(path string, iter *simdjson.Iter) error {
+func (p *PatcherSimdJSON) applyFixturePatch(f *fixture.Fixture, path string, iter *simdjson.Iter) error {
 	var (
 		err                     error
 		key, rest, partialPatch = strings.Cut(path, "/")
@@ -161,20 +159,20 @@ func (p *PatcherSimdJSON) applyFixturePatch(path string, iter *simdjson.Iter) er
 
 	switch key {
 	case "status":
-		p.sportEvent.Fixture.Status, err = simdutil.IntFromIter(iter)
+		f.Status, err = simdutil.IntFromIter(iter)
 	case "type":
-		p.sportEvent.Fixture.Type, err = simdutil.IntFromIter(iter)
+		f.Type, err = simdutil.IntFromIter(iter)
 	case "start_time":
-		p.sportEvent.Fixture.StartTime, err = simdutil.TimeFromIter(iter)
+		f.StartTime, err = simdutil.TimeFromIter(iter)
 	case "live_coverage":
-		p.sportEvent.Fixture.LiveCoverage, err = iter.Bool()
+		f.LiveCoverage, err = iter.Bool()
 	case "competitors":
 		if partialPatch {
-			if p.sportEvent.Fixture.Competitors == nil {
+			if f.Competitors == nil {
 				return fmt.Errorf("patch nil competitors")
 			}
 
-			return p.applyCompetitorsPatch(rest, iter)
+			return p.applyCompetitorsPatch(f.Competitors, rest, iter)
 		}
 
 		obj, err := iter.Object(p.tmpObj)
@@ -182,9 +180,9 @@ func (p *PatcherSimdJSON) applyFixturePatch(path string, iter *simdjson.Iter) er
 			return fmt.Errorf("create competitors obj: %w", err)
 		}
 
-		p.sportEvent.Fixture.Competitors = make(fixture.Competitors, 4)
+		f.Competitors = make(fixture.Competitors, 4)
 
-		return p.sportEvent.Fixture.Competitors.UnmarshalSimdJSON(
+		return f.Competitors.UnmarshalSimdJSON(
 			obj,
 			p.tmpIter,
 			p.competitorObj,
@@ -196,7 +194,7 @@ func (p *PatcherSimdJSON) applyFixturePatch(path string, iter *simdjson.Iter) er
 
 	case "tournament":
 		if partialPatch {
-			return p.applyTournamentPatch(rest, iter)
+			return p.applyTournamentPatch(&f.Tournament, rest, iter)
 		}
 
 		tournamentObj, err := iter.Object(p.tmpObj)
@@ -204,19 +202,19 @@ func (p *PatcherSimdJSON) applyFixturePatch(path string, iter *simdjson.Iter) er
 			return fmt.Errorf("create tournament obj: %w", err)
 		}
 
-		return p.sportEvent.Fixture.Tournament.UnmarshalSimdJSON(tournamentObj, p.tmpIter)
+		return f.Tournament.UnmarshalSimdJSON(tournamentObj, p.tmpIter)
 
 	case "streams":
 		if partialPatch {
-			if p.sportEvent.Fixture.Streams == nil {
+			if f.Streams == nil {
 				return fmt.Errorf("patch nil streams")
 			}
 
-			return p.applyStreamsPatch(rest, iter)
+			return p.applyStreamsPatch(f.Streams, rest, iter)
 		}
 
-		p.sportEvent.Fixture.Streams = make(fixture.Streams)
-		return p.sportEvent.Fixture.Streams.FromIter(iter, p.tmpObj)
+		f.Streams = make(fixture.Streams)
+		return f.Streams.FromIter(iter, p.tmpObj)
 
 	case "venue":
 		if partialPatch {
@@ -224,11 +222,11 @@ func (p *PatcherSimdJSON) applyFixturePatch(path string, iter *simdjson.Iter) er
 				return fmt.Errorf("invalid venue patch: %s", rest)
 			}
 
-			p.sportEvent.Fixture.Venue.ID, err = simdutil.UnsafeStrFromIter(iter)
+			f.Venue.ID, err = simdutil.UnsafeStrFromIter(iter)
 			return err
 		}
 
-		return p.sportEvent.Fixture.Venue.FromIter(iter, p.tmpObj)
+		return f.Venue.FromIter(iter, p.tmpObj)
 	}
 
 	if err != nil {
@@ -238,9 +236,9 @@ func (p *PatcherSimdJSON) applyFixturePatch(path string, iter *simdjson.Iter) er
 	return nil
 }
 
-func (p *PatcherSimdJSON) applyCompetitorsPatch(path string, iter *simdjson.Iter) error {
+func (p *PatcherSimdJSON) applyCompetitorsPatch(competitors fixture.Competitors, path string, iter *simdjson.Iter) error {
 	key, rest, partialPatch := strings.Cut(path, "/")
-	competitor, ok := p.sportEvent.Fixture.Competitors[key]
+	competitor, ok := competitors[key]
 
 	if !partialPatch {
 		obj, err := iter.Object(p.tmpObj)
@@ -253,7 +251,7 @@ func (p *PatcherSimdJSON) applyCompetitorsPatch(path string, iter *simdjson.Iter
 			return fmt.Errorf("competitor %q unmarshal simdjson: %w", key, err)
 		}
 
-		p.sportEvent.Fixture.Competitors[key] = competitor
+		competitors[key] = competitor
 		return nil
 	}
 
@@ -266,7 +264,7 @@ func (p *PatcherSimdJSON) applyCompetitorsPatch(path string, iter *simdjson.Iter
 		return fmt.Errorf("apply competitor %q patch: %w", path, err)
 	}
 
-	p.sportEvent.Fixture.Competitors[key] = competitor
+	competitors[key] = competitor
 	return nil
 }
 
@@ -376,18 +374,18 @@ func (p *PatcherSimdJSON) applyScorePatch(s *fixture.Score, path string, iter *s
 	return nil
 }
 
-func (p *PatcherSimdJSON) applyTournamentPatch(path string, iter *simdjson.Iter) error {
+func (p *PatcherSimdJSON) applyTournamentPatch(tournament *fixture.Tournament, path string, iter *simdjson.Iter) error {
 	var err error
 
 	switch path {
 	case "id":
-		p.sportEvent.Fixture.Tournament.ID, err = simdutil.UnsafeStrFromIter(iter)
+		tournament.ID, err = simdutil.UnsafeStrFromIter(iter)
 	case "name":
-		p.sportEvent.Fixture.Tournament.Name, err = simdutil.UnsafeStrFromIter(iter)
+		tournament.Name, err = simdutil.UnsafeStrFromIter(iter)
 	case "master_id":
-		p.sportEvent.Fixture.Tournament.MasterID, err = simdutil.UnsafeStrFromIter(iter)
+		tournament.MasterID, err = simdutil.UnsafeStrFromIter(iter)
 	case "country_code":
-		p.sportEvent.Fixture.Tournament.CountryCode, err = simdutil.UnsafeStrFromIter(iter)
+		tournament.CountryCode, err = simdutil.UnsafeStrFromIter(iter)
 	}
 
 	if err != nil {
@@ -397,9 +395,9 @@ func (p *PatcherSimdJSON) applyTournamentPatch(path string, iter *simdjson.Iter)
 	return nil
 }
 
-func (p *PatcherSimdJSON) applyStreamsPatch(path string, iter *simdjson.Iter) error {
+func (p *PatcherSimdJSON) applyStreamsPatch(streams fixture.Streams, path string, iter *simdjson.Iter) error {
 	key, rest, partialPatch := strings.Cut(path, "/")
-	stream, ok := p.sportEvent.Fixture.Streams[key]
+	stream, ok := streams[key]
 
 	if !partialPatch {
 		obj, err := iter.Object(p.tmpObj)
@@ -412,7 +410,7 @@ func (p *PatcherSimdJSON) applyStreamsPatch(path string, iter *simdjson.Iter) er
 			return fmt.Errorf("stream %q unmarshal simdjson: %w", key, err)
 		}
 
-		p.sportEvent.Fixture.Streams[key] = stream
+		streams[key] = stream
 		return nil
 	}
 
@@ -425,7 +423,7 @@ func (p *PatcherSimdJSON) applyStreamsPatch(path string, iter *simdjson.Iter) er
 		return fmt.Errorf("apply stream patch: %w", err)
 	}
 
-	p.sportEvent.Fixture.Streams[key] = stream
+	streams[key] = stream
 	return nil
 }
 
@@ -531,9 +529,9 @@ func (p *PatcherSimdJSON) applyPlatformPatch(platform *fixture.Platform, path st
 	return nil
 }
 
-func (p *PatcherSimdJSON) applyMarketsPatch(path string, iter *simdjson.Iter) error {
+func (p *PatcherSimdJSON) applyMarketsPatch(markets market.Markets, path string, iter *simdjson.Iter) error {
 	key, rest, partialPatch := strings.Cut(path, "/")
-	m, ok := p.sportEvent.Markets[key]
+	m, ok := markets[key]
 
 	if !partialPatch {
 		obj, err := iter.Object(p.marketObj)
@@ -546,7 +544,7 @@ func (p *PatcherSimdJSON) applyMarketsPatch(path string, iter *simdjson.Iter) er
 			return fmt.Errorf("market %q unmarshal simdjson: %w", key, err)
 		}
 
-		p.sportEvent.Markets[key] = m
+		markets[key] = m
 
 		return nil
 	}
@@ -560,7 +558,7 @@ func (p *PatcherSimdJSON) applyMarketsPatch(path string, iter *simdjson.Iter) er
 		return fmt.Errorf("apply market patch: %w", err)
 	}
 
-	p.sportEvent.Markets[key] = m
+	markets[key] = m
 	return nil
 }
 

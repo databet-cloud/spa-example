@@ -61,7 +61,7 @@ func BenchmarkSportEventApplyPatchSimdJSON(b *testing.B) {
 	err := json.Unmarshal(rawSportEvent, &sportEvent)
 	require.NoError(b, err)
 
-	patcher := sportevent.NewPatcherSimdJSON(&sportEvent)
+	patcher := sportevent.NewPatcherSimdJSON()
 
 	b.StartTimer()
 
@@ -73,7 +73,7 @@ func BenchmarkSportEventApplyPatchSimdJSON(b *testing.B) {
 			err := decoder.Decode(&log)
 			require.NoError(b, err)
 
-			err = patcher.ApplyPatches(log.Patches)
+			err = patcher.ApplyPatches(&sportEvent, log.Patches)
 			require.NoError(b, err)
 		}
 	}
@@ -129,14 +129,14 @@ func TestSportEventPatcher_ApplyPatches(t *testing.T) {
 
 	var log feed.LogEntry
 
-	patcher := sportevent.NewPatcherSimdJSON(&sportEvent)
+	patcher := sportevent.NewPatcherSimdJSON()
 
 	decoder := json.NewDecoder(bytes.NewReader(rawLogs))
 	for decoder.More() {
 		err := decoder.Decode(&log)
 		require.NoError(t, err)
 
-		err = patcher.ApplyPatches(log.Patches)
+		err = patcher.ApplyPatches(&sportEvent, log.Patches)
 		assert.NoError(t, err)
 	}
 
