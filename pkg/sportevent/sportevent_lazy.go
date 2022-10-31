@@ -49,7 +49,7 @@ func (se *SportEventLazy) UnmarshalJSON(bytes []byte) error {
 
 		switch name {
 		case "id":
-			se.ID, err = iter.String()
+			se.ID, err = simdutil.UnsafeStrFromIter(iter)
 		case "markets":
 			tmpIter := *iter // cloning iter
 			se.MarketIter, err = market.NewIterator(&tmpIter)

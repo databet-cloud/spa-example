@@ -211,7 +211,7 @@ func (m *Market) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
 
 	switch key {
 	case "name":
-		m.Template, err = iter.String()
+		m.Template, err = simdutil.UnsafeStrFromIter(iter)
 	case "status":
 		var value int64
 

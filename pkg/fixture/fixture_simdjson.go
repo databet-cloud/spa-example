@@ -14,7 +14,7 @@ func (f *Fixture) UnmarshalSimdJSON(obj *simdjson.Object) error {
 	tmpObj := new(simdjson.Object)
 
 	for {
-		name, elementType, err := obj.NextElement(iter)
+		name, elementType, err := obj.NextElementBytes(iter)
 		if err != nil {
 			return err
 		}
@@ -23,21 +23,21 @@ func (f *Fixture) UnmarshalSimdJSON(obj *simdjson.Object) error {
 			break
 		}
 
-		switch name {
+		switch string(name) {
 		case "id":
-			f.ID, err = iter.String()
+			f.ID, err = simdutil.UnsafeStrFromIter(iter)
 		case "version":
 			f.Version, err = simdutil.IntFromIter(iter)
 		case "owner_id":
-			f.OwnerID, err = iter.String()
+			f.OwnerID, err = simdutil.UnsafeStrFromIter(iter)
 		case "template":
-			f.Template, err = iter.String()
+			f.Template, err = simdutil.UnsafeStrFromIter(iter)
 		case "status":
 			f.Status, err = simdutil.IntFromIter(iter)
 		case "type":
 			f.Type, err = simdutil.IntFromIter(iter)
 		case "sport_id":
-			f.SportID, err = iter.String()
+			f.SportID, err = simdutil.UnsafeStrFromIter(iter)
 		case "tournament":
 			err = f.Tournament.FromIter(iter, tmpObj)
 		case "venue":

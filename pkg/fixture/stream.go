@@ -62,7 +62,7 @@ func (s *Stream) UnmarshalSimdJSON(obj *simdjson.Object) error {
 	iter := new(simdjson.Iter)
 
 	for {
-		name, elementType, err := obj.NextElement(iter)
+		name, elementType, err := obj.NextElementBytes(iter)
 		if err != nil {
 			return err
 		}
@@ -71,13 +71,13 @@ func (s *Stream) UnmarshalSimdJSON(obj *simdjson.Object) error {
 			break
 		}
 
-		switch name {
+		switch string(name) {
 		case "id":
-			s.ID, err = iter.String()
+			s.ID, err = simdutil.UnsafeStrFromIter(iter)
 		case "locale":
-			s.Locale, err = iter.String()
+			s.Locale, err = simdutil.UnsafeStrFromIter(iter)
 		case "url":
-			s.URL, err = iter.String()
+			s.URL, err = simdutil.UnsafeStrFromIter(iter)
 		case "platforms":
 			obj, err := iter.Object(nil)
 			if err != nil {
@@ -108,11 +108,11 @@ func (s *Stream) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
 
 	switch path {
 	case "id":
-		s.ID, err = iter.String()
+		s.ID, err = simdutil.UnsafeStrFromIter(iter)
 	case "locale":
-		s.Locale, err = iter.String()
+		s.Locale, err = simdutil.UnsafeStrFromIter(iter)
 	case "url":
-		s.URL, err = iter.String()
+		s.URL, err = simdutil.UnsafeStrFromIter(iter)
 	case "platforms":
 		if partialPatch {
 			if s.Platforms == nil {

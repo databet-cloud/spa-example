@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 
 	"github.com/minio/simdjson-go"
+
+	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
 
 //easyjson:json
@@ -49,7 +51,7 @@ func (v *Venue) ApplyPatchSimdJSON(key string, iter *simdjson.Iter) error {
 		return nil
 	}
 
-	id, err := iter.String()
+	id, err := simdutil.UnsafeStrFromIter(iter)
 	if err != nil {
 		return err
 	}

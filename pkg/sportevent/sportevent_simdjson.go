@@ -50,7 +50,7 @@ func (se *SportEvent) ApplyPatches(rawPatches json.RawMessage) error {
 			se.BetStop = value
 
 		case "updated_at":
-			value, err := iter.String()
+			value, err := simdutil.UnsafeStrFromIter(&iter)
 			if err != nil {
 				return err
 			}

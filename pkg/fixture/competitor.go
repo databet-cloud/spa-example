@@ -102,7 +102,7 @@ func (c *Competitor) UnmarshalSimdJSON(obj *simdjson.Object) error {
 
 		switch name {
 		case "id":
-			c.ID, err = iter.String()
+			c.ID, err = simdutil.UnsafeStrFromIter(iter)
 		case "type":
 			c.Type, err = simdutil.IntFromIter(iter)
 		case "home_away":
@@ -118,11 +118,11 @@ func (c *Competitor) UnmarshalSimdJSON(obj *simdjson.Object) error {
 			c.Scores = make(Scores)
 			err = c.Scores.UnmarshalSimdJSON(obj)
 		case "name":
-			c.Name, err = iter.String()
+			c.Name, err = simdutil.UnsafeStrFromIter(iter)
 		case "master_id":
-			c.MasterID, err = iter.String()
+			c.MasterID, err = simdutil.UnsafeStrFromIter(iter)
 		case "country_code":
-			c.CountryCode, err = iter.String()
+			c.CountryCode, err = simdutil.UnsafeStrFromIter(iter)
 		}
 
 		if err != nil {
@@ -141,7 +141,7 @@ func (c *Competitor) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error 
 
 	switch key {
 	case "id":
-		c.ID, err = iter.String()
+		c.ID, err = simdutil.UnsafeStrFromIter(iter)
 	case "type":
 		c.Type, err = simdutil.IntFromIter(iter)
 	case "home_away":
@@ -149,11 +149,11 @@ func (c *Competitor) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error 
 	case "template_position":
 		c.TemplatePosition, err = simdutil.IntFromIter(iter)
 	case "name":
-		c.Name, err = iter.String()
+		c.Name, err = simdutil.UnsafeStrFromIter(iter)
 	case "master_id":
-		c.MasterID, err = iter.String()
+		c.MasterID, err = simdutil.UnsafeStrFromIter(iter)
 	case "country_code":
-		c.CountryCode, err = iter.String()
+		c.CountryCode, err = simdutil.UnsafeStrFromIter(iter)
 	case "scores":
 		if partialPatch {
 			if c.Scores == nil {

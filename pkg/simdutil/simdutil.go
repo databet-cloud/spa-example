@@ -109,7 +109,7 @@ func MapStrAnyFromIter(iter *simdjson.Iter) (map[string]any, error) {
 }
 
 func TimeFromIter(iter *simdjson.Iter) (time.Time, error) {
-	rawTime, err := iter.String()
+	rawTime, err := UnsafeStrFromIter(iter)
 	if err != nil {
 		return time.Time{}, err
 	}
@@ -139,7 +139,7 @@ func CreateRootIter(parsedJson *simdjson.ParsedJson) (*simdjson.Iter, error) {
 }
 
 func JSONToRootIter(eventData []byte) (*simdjson.Iter, error) {
-	parsedJson, err := simdjson.Parse(eventData, nil)
+	parsedJson, err := simdjson.Parse(eventData, nil, simdjson.WithCopyStrings(false))
 	if err != nil {
 		return nil, err
 	}

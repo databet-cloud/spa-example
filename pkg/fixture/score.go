@@ -47,7 +47,7 @@ func (s *Score) UnmarshalSimdJSON(obj *simdjson.Object) error {
 	iter := new(simdjson.Iter)
 
 	for {
-		name, elementType, err := obj.NextElement(iter)
+		name, elementType, err := obj.NextElementBytes(iter)
 		if err != nil {
 			return err
 		}
@@ -56,13 +56,13 @@ func (s *Score) UnmarshalSimdJSON(obj *simdjson.Object) error {
 			break
 		}
 
-		switch name {
+		switch string(name) {
 		case "id":
-			s.ID, err = iter.String()
+			s.ID, err = simdutil.UnsafeStrFromIter(iter)
 		case "type":
-			s.Type, err = iter.String()
+			s.Type, err = simdutil.UnsafeStrFromIter(iter)
 		case "points":
-			s.Points, err = iter.String()
+			s.Points, err = simdutil.UnsafeStrFromIter(iter)
 		case "number":
 			s.Number, err = simdutil.IntFromIter(iter)
 		}
@@ -80,11 +80,11 @@ func (s *Score) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
 
 	switch path {
 	case "id":
-		s.ID, err = iter.String()
+		s.ID, err = simdutil.UnsafeStrFromIter(iter)
 	case "type":
-		s.Type, err = iter.String()
+		s.Type, err = simdutil.UnsafeStrFromIter(iter)
 	case "points":
-		s.Points, err = iter.String()
+		s.Points, err = simdutil.UnsafeStrFromIter(iter)
 	case "number":
 		s.Number, err = simdutil.IntFromIter(iter)
 	}

@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"github.com/minio/simdjson-go"
+
+	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
 
 //easyjson:json
@@ -69,7 +71,7 @@ func (p *Platform) unmarshalFieldSimdJSON(key string, iter *simdjson.Iter) error
 
 	switch key {
 	case "type":
-		p.Type, err = iter.String()
+		p.Type, err = simdutil.UnsafeStrFromIter(iter)
 	case "allowed_countries":
 		array, err := iter.Array(nil)
 		if err != nil {

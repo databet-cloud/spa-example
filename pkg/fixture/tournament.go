@@ -3,8 +3,11 @@ package fixture
 import (
 	"encoding/json"
 	"fmt"
+	"unsafe"
 
 	"github.com/minio/simdjson-go"
+
+	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
 
 type Tournament struct {
@@ -42,7 +45,7 @@ func (t *Tournament) UnmarshalSimdJSON(obj *simdjson.Object) error {
 	iter := new(simdjson.Iter)
 
 	for {
-		name, elementType, err := obj.NextElement(iter)
+		name, elementType, err := obj.NextElementBytes(iter)
 		if err != nil {
 			return err
 		}
@@ -51,7 +54,7 @@ func (t *Tournament) UnmarshalSimdJSON(obj *simdjson.Object) error {
 			break
 		}
 
-		err = t.unmarshalFieldSimdJSON(name, iter)
+		err = t.unmarshalFieldSimdJSON(*(*string)(unsafe.Pointer(&name)), iter)
 		if err != nil {
 			return err
 		}
@@ -78,13 +81,13 @@ func (t *Tournament) unmarshalFieldSimdJSON(key string, iter *simdjson.Iter) err
 
 	switch key {
 	case "id":
-		t.ID, err = iter.String()
+		t.ID, err = simdutil.UnsafeStrFromIter(iter)
 	case "name":
-		t.Name, err = iter.String()
+		t.Name, err = simdutil.UnsafeStrFromIter(iter)
 	case "master_id":
-		t.MasterID, err = iter.String()
+		t.MasterID, err = simdutil.UnsafeStrFromIter(iter)
 	case "country_code":
-		t.CountryCode, err = iter.String()
+		t.CountryCode, err = simdutil.UnsafeStrFromIter(iter)
 	}
 
 	if err != nil {

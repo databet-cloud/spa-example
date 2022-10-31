@@ -210,9 +210,9 @@ func (o *Odd) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
 
 	switch path {
 	case "name":
-		o.Template, err = iter.String()
+		o.Template, err = simdutil.UnsafeStrFromIter(iter)
 	case "value":
-		o.Value, err = iter.String()
+		o.Value, err = simdutil.UnsafeStrFromIter(iter)
 	case "is_active":
 		o.IsActive, err = iter.Bool()
 	case "status":
@@ -221,7 +221,7 @@ func (o *Odd) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
 		value, err = iter.Int()
 		o.Status = OddStatus(value)
 	case "status_reason":
-		o.StatusReason, err = iter.String()
+		o.StatusReason, err = simdutil.UnsafeStrFromIter(iter)
 	default:
 		return nil
 	}
