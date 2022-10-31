@@ -1,8 +1,6 @@
 package fixture
 
 import (
-	"encoding/json"
-
 	"github.com/minio/simdjson-go"
 
 	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
@@ -10,14 +8,6 @@ import (
 
 type Venue struct {
 	ID string `json:"id"`
-}
-
-func (v *Venue) ApplyPatch(path string, value json.RawMessage) error {
-	if path == "id" {
-		return json.Unmarshal(value, &v.ID)
-	}
-
-	return nil
 }
 
 func (v *Venue) UnmarshalSimdJSON(obj *simdjson.Object) error {

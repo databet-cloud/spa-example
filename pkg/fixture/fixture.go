@@ -1,9 +1,6 @@
 package fixture
 
 import (
-	"encoding/json"
-	"fmt"
-	"strings"
 	"time"
 )
 
@@ -34,66 +31,6 @@ type Fixture struct {
 	CreatedAt    time.Time   `json:"created_at"`
 	UpdatedAt    time.Time   `json:"updated_at"`
 	PublishedAt  time.Time   `json:"published_at"`
-}
-
-func (f *Fixture) ApplyPatch(path string, value json.RawMessage) error {
-	var (
-		unmarshaller     any
-		key, rest, found = strings.Cut(path, "/")
-		partialPatch     = found
-	)
-
-	switch key {
-	case "status":
-		unmarshaller = &f.Status
-	case "type":
-		unmarshaller = &f.Type
-	case "start_time":
-		unmarshaller = &f.StartTime
-	case "live_coverage":
-		unmarshaller = &f.LiveCoverage
-	case "competitors":
-		if partialPatch {
-			if f.Competitors == nil {
-				return fmt.Errorf("patch nil competitors")
-			}
-
-			return f.Competitors.ApplyPatch(rest, value)
-		}
-
-		unmarshaller = &f.Competitors
-	case "tournament":
-		if partialPatch {
-			return f.Tournament.ApplyPatch(rest, value)
-		}
-
-		unmarshaller = &f.Tournament
-	case "streams":
-		if partialPatch {
-			if f.Streams == nil {
-				return fmt.Errorf("patch nil streams")
-			}
-
-			return f.Streams.ApplyPatch(rest, value)
-		}
-
-		unmarshaller = &f.Streams
-	case "venue":
-		if partialPatch {
-			return f.Venue.ApplyPatch(rest, value)
-		}
-
-		unmarshaller = &f.Venue
-	default:
-		return nil
-	}
-
-	err := json.Unmarshal(value, &unmarshaller)
-	if err != nil {
-		return fmt.Errorf("%q unmarshal: %w", path, err)
-	}
-
-	return nil
 }
 
 func (f Fixture) Clone() Fixture {

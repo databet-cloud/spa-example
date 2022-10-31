@@ -1,10 +1,7 @@
 package market
 
 import (
-	"encoding/json"
-	"fmt"
 	"strconv"
-	"strings"
 
 	"golang.org/x/exp/maps"
 )
@@ -72,33 +69,6 @@ func (c Markets) Has(id string) bool {
 	return ok
 }
 
-func (c Markets) ApplyPatch(path string, value json.RawMessage) error {
-	key, rest, found := strings.Cut(path, "/")
-	market, ok := c[key]
-
-	if !found {
-		err := json.Unmarshal(value, &market)
-		if err != nil {
-			return fmt.Errorf("market %q unmarshal: %w", key, err)
-		}
-
-		c[key] = market
-		return nil
-	}
-
-	if !ok {
-		return fmt.Errorf("partial patch non-existent market: %q", key)
-	}
-
-	err := market.ApplyPatch(rest, value)
-	if err != nil {
-		return fmt.Errorf("apply market patch: %w", err)
-	}
-
-	c[key] = market
-	return nil
-}
-
 type Market struct {
 	ID          string                 `json:"id"`
 	Template    string                 `json:"template"`
@@ -109,42 +79,6 @@ type Market struct {
 	IsDefective bool                   `json:"is_defective"`
 	Meta        map[string]interface{} `json:"meta"`
 	Flags       int                    `json:"flags"`
-}
-
-func (m *Market) ApplyPatch(path string, value json.RawMessage) error {
-	var (
-		unmarshaller     any
-		key, rest, found = strings.Cut(path, "/")
-		partialPatch     = found
-	)
-
-	switch key {
-	case "name":
-		unmarshaller = &m.Template
-	case "status":
-		unmarshaller = &m.Status
-	case "type_id":
-		unmarshaller = &m.TypeID
-	case "odds":
-		if partialPatch {
-			if m.Odds == nil {
-				return fmt.Errorf("patch nil odds")
-			}
-
-			return m.Odds.ApplyPatch(rest, value)
-		}
-
-		unmarshaller = &m.Odds
-	default:
-		return nil
-	}
-
-	err := json.Unmarshal(value, unmarshaller)
-	if err != nil {
-		return fmt.Errorf("%q unmarshal: %w", key, err)
-	}
-
-	return nil
 }
 
 func (m Market) Clone() Market {

@@ -27,30 +27,6 @@ var rawLogs []byte
 //go:embed testdata/patched_sport_event.json
 var patchedSportEvent []byte
 
-func BenchmarkSportEventApplyPatch(b *testing.B) {
-	b.StopTimer()
-	b.ReportAllocs()
-
-	var sportEvent sportevent.SportEvent
-
-	err := json.Unmarshal(rawSportEvent, &sportEvent)
-	require.NoError(b, err)
-
-	b.StartTimer()
-	for i := 0; i < b.N; i++ {
-		var log feed.LogEntry
-
-		decoder := json.NewDecoder(bytes.NewReader(rawLogs))
-		for decoder.More() {
-			err := decoder.Decode(&log)
-			require.NoError(b, err)
-
-			err = sportEvent.ApplyPatchesV1(log.Patches)
-			require.NoError(b, err)
-		}
-	}
-}
-
 func BenchmarkSportEventApplyPatchSimdJSON(b *testing.B) {
 	b.StopTimer()
 	b.ReportAllocs()
