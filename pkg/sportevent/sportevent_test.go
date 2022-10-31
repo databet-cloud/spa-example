@@ -8,6 +8,7 @@ import (
 
 	"github.com/bytedance/sonic"
 	"github.com/mailru/easyjson"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/databet-cloud/databet-go-sdk/pkg/feed"
@@ -23,6 +24,9 @@ var rawSportEventWithMarkets []byte
 
 //go:embed testdata/benchmark/feed_logs.json
 var rawLogs []byte
+
+//go:embed testdata/patched_sport_event.json
+var patchedSportEvent []byte
 
 func BenchmarkSportEventApplyPatch(b *testing.B) {
 	b.StopTimer()
@@ -57,7 +61,10 @@ func BenchmarkSportEventApplyPatchSimdJSON(b *testing.B) {
 	err := json.Unmarshal(rawSportEvent, &sportEvent)
 	require.NoError(b, err)
 
+	patcher := sportevent.NewPatcherSimdJSON(&sportEvent)
+
 	b.StartTimer()
+
 	for i := 0; i < b.N; i++ {
 		var log feed.LogEntry
 
@@ -66,7 +73,7 @@ func BenchmarkSportEventApplyPatchSimdJSON(b *testing.B) {
 			err := decoder.Decode(&log)
 			require.NoError(b, err)
 
-			err = sportEvent.ApplyPatches(log.Patches)
+			err = patcher.ApplyPatches(log.Patches)
 			require.NoError(b, err)
 		}
 	}
@@ -108,4 +115,30 @@ func BenchmarkSportEvent_Unmarshal(b *testing.B) {
 			require.NoError(b, err)
 		}
 	})
+}
+
+func TestSportEventPatcher_ApplyPatches(t *testing.T) {
+	var sportEvent sportevent.SportEvent
+	var expectedSportEvent sportevent.SportEvent
+
+	err := sonic.Unmarshal(rawSportEvent, &sportEvent)
+	require.NoError(t, err)
+
+	err = sonic.Unmarshal(patchedSportEvent, &expectedSportEvent)
+	require.NoError(t, err)
+
+	var log feed.LogEntry
+
+	patcher := sportevent.NewPatcherSimdJSON(&sportEvent)
+
+	decoder := json.NewDecoder(bytes.NewReader(rawLogs))
+	for decoder.More() {
+		err := decoder.Decode(&log)
+		require.NoError(t, err)
+
+		err = patcher.ApplyPatches(log.Patches)
+		assert.NoError(t, err)
+	}
+
+	assert.Equal(t, expectedSportEvent, sportEvent)
 }

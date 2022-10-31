@@ -6,12 +6,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/minio/simdjson-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/databet-cloud/databet-go-sdk/pkg/market"
-	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
 
 //go:embed testdata/market_patch.json
@@ -136,26 +134,6 @@ func TestMarkets_ApplyPatch(t *testing.T) {
 				assert.NoError(t, err)
 			}
 
-			assert.Equal(t, tc.expected, tc.markets)
-		})
-	}
-}
-
-func TestMarkets_ApplyPatchSimdJSON(t *testing.T) {
-	for _, tc := range marketTestCases {
-		t.Run(tc.name, func(t *testing.T) {
-			rootIter, err := simdutil.JSONToRootIter(tc.rawPatches)
-			require.NoError(t, err)
-
-			obj, err := rootIter.Object(nil)
-			require.NoError(t, err)
-			//
-			_ = obj.ForEach(func(key []byte, i simdjson.Iter) {
-				err = tc.markets.ApplyPatchSimdJSON(string(key), &i)
-				assert.NoError(t, err)
-			}, nil)
-
-			assert.NoError(t, err)
 			assert.Equal(t, tc.expected, tc.markets)
 		})
 	}

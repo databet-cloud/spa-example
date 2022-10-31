@@ -3,7 +3,6 @@ package fixture
 import (
 	"encoding/json"
 	"fmt"
-	"unsafe"
 
 	"github.com/minio/simdjson-go"
 
@@ -41,11 +40,13 @@ func (t *Tournament) ApplyPatch(key string, value json.RawMessage) error {
 	return nil
 }
 
-func (t *Tournament) UnmarshalSimdJSON(obj *simdjson.Object) error {
-	iter := new(simdjson.Iter)
+func (t *Tournament) UnmarshalSimdJSON(obj *simdjson.Object, reuseIter *simdjson.Iter) error {
+	if reuseIter == nil {
+		reuseIter = new(simdjson.Iter)
+	}
 
 	for {
-		name, elementType, err := obj.NextElementBytes(iter)
+		name, elementType, err := obj.NextElementBytes(reuseIter)
 		if err != nil {
 			return err
 		}
@@ -54,44 +55,20 @@ func (t *Tournament) UnmarshalSimdJSON(obj *simdjson.Object) error {
 			break
 		}
 
-		err = t.unmarshalFieldSimdJSON(*(*string)(unsafe.Pointer(&name)), iter)
-		if err != nil {
-			return err
+		switch string(name) {
+		case "id":
+			t.ID, err = simdutil.UnsafeStrFromIter(reuseIter)
+		case "name":
+			t.Name, err = simdutil.UnsafeStrFromIter(reuseIter)
+		case "master_id":
+			t.MasterID, err = simdutil.UnsafeStrFromIter(reuseIter)
+		case "country_code":
+			t.CountryCode, err = simdutil.UnsafeStrFromIter(reuseIter)
 		}
-	}
 
-	return nil
-}
-
-func (t *Tournament) FromIter(iter *simdjson.Iter, dst *simdjson.Object) error {
-	obj, err := iter.Object(dst)
-	if err != nil {
-		return err
-	}
-
-	return t.UnmarshalSimdJSON(obj)
-}
-
-func (t *Tournament) ApplyPatchSimdJSON(key string, iter *simdjson.Iter) error {
-	return t.unmarshalFieldSimdJSON(key, iter)
-}
-
-func (t *Tournament) unmarshalFieldSimdJSON(key string, iter *simdjson.Iter) error {
-	var err error
-
-	switch key {
-	case "id":
-		t.ID, err = simdutil.UnsafeStrFromIter(iter)
-	case "name":
-		t.Name, err = simdutil.UnsafeStrFromIter(iter)
-	case "master_id":
-		t.MasterID, err = simdutil.UnsafeStrFromIter(iter)
-	case "country_code":
-		t.CountryCode, err = simdutil.UnsafeStrFromIter(iter)
-	}
-
-	if err != nil {
-		return fmt.Errorf("%q unmarshal: %w", key, err)
+		if err != nil {
+			return fmt.Errorf("%q unmarshal: %w", string(name), err)
+		}
 	}
 
 	return nil

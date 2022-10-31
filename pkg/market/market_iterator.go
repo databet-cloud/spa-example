@@ -14,12 +14,19 @@ type Iterator struct {
 
 	embeddedObjIter *simdjson.Iter
 	embeddedObjRoot *simdjson.Object
+
+	reuseOddsObj *simdjson.Object
+	reuseOddObj  *simdjson.Object
+	reuseOdd     *Odd
 }
 
 func NewIterator(rootIter *simdjson.Iter, marketsPath ...string) (*Iterator, error) {
 	var err error
 	result := &Iterator{
-		embeddedObjRoot: &simdjson.Object{},
+		embeddedObjRoot: new(simdjson.Object),
+		reuseOddsObj:    new(simdjson.Object),
+		reuseOddObj:     new(simdjson.Object),
+		reuseOdd:        new(Odd),
 	}
 
 	if result.embeddedObjIter, err = simdutil.RewindIterToPath(rootIter, marketsPath...); err != nil {
@@ -56,7 +63,7 @@ func (i *Iterator) Next(dst *Market) (*Market, error) {
 		return nil, err
 	}
 
-	err = dst.UnmarshalSimdJSON(obj)
+	err = dst.UnmarshalSimdJSON(obj, &i.tmpIter, i.reuseOddsObj, i.reuseOddObj, i.reuseOdd)
 	if err != nil {
 		return nil, fmt.Errorf("unmarshal market simdjson: %w", err)
 	}

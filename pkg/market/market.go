@@ -104,38 +104,6 @@ func (c Markets) ApplyPatch(path string, value json.RawMessage) error {
 	return nil
 }
 
-func (c Markets) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
-	key, rest, partialPatch := strings.Cut(path, "/")
-	market, ok := c[key]
-
-	if !partialPatch {
-		obj, err := iter.Object(nil)
-		if err != nil {
-			return err
-		}
-
-		err = market.UnmarshalSimdJSON(obj)
-		if err != nil {
-			return fmt.Errorf("market %q unmarshal simdjson: %w", key, err)
-		}
-
-		c[key] = market
-		return nil
-	}
-
-	if !ok {
-		return fmt.Errorf("partial patch non-existent market: %q", key)
-	}
-
-	err := market.ApplyPatchSimdJSON(rest, iter)
-	if err != nil {
-		return fmt.Errorf("apply market patch: %w", err)
-	}
-
-	c[key] = market
-	return nil
-}
-
 //easyjson:json
 type Market struct {
 	ID          string                 `json:"id"`
@@ -149,12 +117,31 @@ type Market struct {
 	Flags       int                    `json:"flags"`
 }
 
-func (m *Market) UnmarshalSimdJSON(obj *simdjson.Object) error {
-	tmpIter := new(simdjson.Iter)
-	tmpObj := new(simdjson.Object)
+func (m *Market) UnmarshalSimdJSON(
+	obj *simdjson.Object,
+	reuseIter *simdjson.Iter,
+	reuseOddsObj *simdjson.Object,
+	reuseOddObj *simdjson.Object,
+	reuseOdd *Odd,
+) error {
+	if reuseIter == nil {
+		reuseIter = new(simdjson.Iter)
+	}
+
+	if reuseOddsObj == nil {
+		reuseOddsObj = new(simdjson.Object)
+	}
+
+	if reuseOddObj == nil {
+		reuseOddObj = new(simdjson.Object)
+	}
+
+	if reuseOdd == nil {
+		reuseOdd = new(Odd)
+	}
 
 	for {
-		name, elementType, err := obj.NextElement(tmpIter)
+		name, elementType, err := obj.NextElementBytes(reuseIter)
 		if err != nil {
 			return fmt.Errorf("next element: %w", err)
 		}
@@ -163,34 +150,35 @@ func (m *Market) UnmarshalSimdJSON(obj *simdjson.Object) error {
 			break
 		}
 
-		switch name {
+		switch string(name) {
 		case "id":
-			m.ID, err = tmpIter.String()
+			m.ID, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "status":
 			var value int64
 
-			value, err = tmpIter.Int()
+			value, err = reuseIter.Int()
 			m.Status = Status(value)
 		case "type_id":
-			m.TypeID, err = simdutil.IntFromIter(tmpIter)
+			m.TypeID, err = simdutil.IntFromIter(reuseIter)
 		case "template":
-			m.Template, err = tmpIter.String()
+			m.Template, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "flags":
-			m.Flags, err = simdutil.IntFromIter(tmpIter)
+			m.Flags, err = simdutil.IntFromIter(reuseIter)
 		case "is_defective":
-			m.IsDefective, err = tmpIter.Bool()
+			m.IsDefective, err = reuseIter.Bool()
 		case "specifiers":
-			m.Specifiers, err = simdutil.MapStrStrFromIter(tmpIter)
+			m.Specifiers, err = simdutil.MapStrStrFromIter(reuseIter)
 		case "odds":
 			m.Odds = make(Odds, 4)
-			oddsObj, err := tmpIter.Object(tmpObj)
+
+			oddsObj, err := reuseIter.Object(reuseOddsObj)
 			if err != nil {
 				return fmt.Errorf("create %q object: %w", name, err)
 			}
 
-			err = m.Odds.UnmarshalSimdJSON(oddsObj)
+			err = m.Odds.UnmarshalSimdJSON(oddsObj, reuseIter, reuseOddObj, reuseOdd)
 		case "meta":
-			m.Meta, err = simdutil.MapStrAnyFromIter(tmpIter)
+			m.Meta, err = simdutil.MapStrAnyFromIter(reuseIter)
 		default:
 			continue
 		}
@@ -198,47 +186,6 @@ func (m *Market) UnmarshalSimdJSON(obj *simdjson.Object) error {
 		if err != nil {
 			return fmt.Errorf("%q unmarshal: %w", name, err)
 		}
-	}
-
-	return nil
-}
-
-func (m *Market) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
-	var (
-		err                     error
-		key, rest, partialPatch = strings.Cut(path, "/")
-	)
-
-	switch key {
-	case "name":
-		m.Template, err = simdutil.UnsafeStrFromIter(iter)
-	case "status":
-		var value int64
-
-		value, err = iter.Int()
-		m.Status = Status(value)
-	case "type_id":
-		m.TypeID, err = simdutil.IntFromIter(iter)
-	case "odds":
-		if !partialPatch {
-			obj, err := iter.Object(nil)
-			if err != nil {
-				return fmt.Errorf("create %q object: %w", key, err)
-			}
-
-			m.Odds = make(Odds)
-			return m.Odds.UnmarshalSimdJSON(obj)
-		}
-
-		if m.Odds == nil {
-			return fmt.Errorf("patch nil odds")
-		}
-
-		return m.Odds.ApplyPatchSimdJSON(rest, iter)
-	}
-
-	if err != nil {
-		return fmt.Errorf("%q unmarshal: %w", key, err)
 	}
 
 	return nil

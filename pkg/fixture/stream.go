@@ -58,11 +58,13 @@ func (s *Stream) ApplyPatch(path string, value json.RawMessage) error {
 	return nil
 }
 
-func (s *Stream) UnmarshalSimdJSON(obj *simdjson.Object) error {
-	iter := new(simdjson.Iter)
+func (s *Stream) UnmarshalSimdJSON(obj *simdjson.Object, reuseIter *simdjson.Iter) error {
+	if reuseIter == nil {
+		reuseIter = new(simdjson.Iter)
+	}
 
 	for {
-		name, elementType, err := obj.NextElementBytes(iter)
+		name, elementType, err := obj.NextElementBytes(reuseIter)
 		if err != nil {
 			return err
 		}
@@ -73,62 +75,28 @@ func (s *Stream) UnmarshalSimdJSON(obj *simdjson.Object) error {
 
 		switch string(name) {
 		case "id":
-			s.ID, err = simdutil.UnsafeStrFromIter(iter)
+			s.ID, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "locale":
-			s.Locale, err = simdutil.UnsafeStrFromIter(iter)
+			s.Locale, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "url":
-			s.URL, err = simdutil.UnsafeStrFromIter(iter)
+			s.URL, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "platforms":
-			obj, err := iter.Object(nil)
+			obj, err := reuseIter.Object(nil)
 			if err != nil {
 				return err
 			}
 
 			s.Platforms = make(Platforms)
 
-			err = s.Platforms.UnmarshalSimdJSON(obj)
+			err = s.Platforms.UnmarshalSimdJSON(obj, reuseIter)
 
 		case "priority":
-			s.Priority, err = simdutil.IntFromIter(iter)
+			s.Priority, err = simdutil.IntFromIter(reuseIter)
 		}
 
 		if err != nil {
 			return fmt.Errorf("%q unmarshal: %w", name, err)
 		}
-	}
-
-	return nil
-}
-
-func (s *Stream) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
-	var (
-		err                     error
-		key, rest, partialPatch = strings.Cut(path, "/")
-	)
-
-	switch path {
-	case "id":
-		s.ID, err = simdutil.UnsafeStrFromIter(iter)
-	case "locale":
-		s.Locale, err = simdutil.UnsafeStrFromIter(iter)
-	case "url":
-		s.URL, err = simdutil.UnsafeStrFromIter(iter)
-	case "platforms":
-		if partialPatch {
-			if s.Platforms == nil {
-				return fmt.Errorf("partial patch nil platforms")
-			}
-
-			s.Platforms.ApplyPatchSimdJSON(rest, iter)
-		}
-
-		s.Platforms.FromIter(iter)
-	case "priority":
-		s.Priority, err = simdutil.IntFromIter(iter)
-	}
-
-	if err != nil {
-		return fmt.Errorf("%q unmarshal: %w", key, err)
 	}
 
 	return nil
@@ -183,7 +151,7 @@ func (s Streams) UnmarshalSimdJSON(obj *simdjson.Object) error {
 			return fmt.Errorf("create %q object: %w", name, err)
 		}
 
-		err = tmpStream.UnmarshalSimdJSON(streamObj)
+		err = tmpStream.UnmarshalSimdJSON(streamObj, tmpIter)
 		if err != nil {
 			return fmt.Errorf("unmarshal %q odd: %w", name, err)
 		}
@@ -201,36 +169,4 @@ func (s Streams) FromIter(iter *simdjson.Iter, dst *simdjson.Object) error {
 	}
 
 	return s.UnmarshalSimdJSON(obj)
-}
-
-func (s Streams) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
-	key, rest, partialPatch := strings.Cut(path, "/")
-	stream, ok := s[key]
-
-	if !partialPatch {
-		obj, err := iter.Object(nil)
-		if err != nil {
-			return err
-		}
-
-		err = stream.UnmarshalSimdJSON(obj)
-		if err != nil {
-			return fmt.Errorf("stream %q unmarshal simdjson: %w", key, err)
-		}
-
-		s[key] = stream
-		return nil
-	}
-
-	if !ok {
-		return fmt.Errorf("partial patch non-existent stream: %q", key)
-	}
-
-	err := stream.ApplyPatchSimdJSON(rest, iter)
-	if err != nil {
-		return fmt.Errorf("apply stream patch: %w", err)
-	}
-
-	s[key] = stream
-	return nil
 }

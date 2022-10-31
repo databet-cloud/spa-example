@@ -87,11 +87,31 @@ func (c *Competitor) ApplyPatch(path string, value json.RawMessage) error {
 	return nil
 }
 
-func (c *Competitor) UnmarshalSimdJSON(obj *simdjson.Object) error {
-	iter := new(simdjson.Iter)
+func (c *Competitor) UnmarshalSimdJSON(
+	obj *simdjson.Object,
+	reuseIter *simdjson.Iter,
+	reuseScoresObj *simdjson.Object,
+	reuseScoreObj *simdjson.Object,
+	reuseScore *Score,
+) error {
+	if reuseIter == nil {
+		reuseIter = new(simdjson.Iter)
+	}
+
+	if reuseScoresObj == nil {
+		reuseScoresObj = new(simdjson.Object)
+	}
+
+	if reuseScoreObj == nil {
+		reuseScoreObj = new(simdjson.Object)
+	}
+
+	if reuseScore == nil {
+		reuseScore = new(Score)
+	}
 
 	for {
-		name, elementType, err := obj.NextElement(iter)
+		name, elementType, err := obj.NextElement(reuseIter)
 		if err != nil {
 			return err
 		}
@@ -102,83 +122,32 @@ func (c *Competitor) UnmarshalSimdJSON(obj *simdjson.Object) error {
 
 		switch name {
 		case "id":
-			c.ID, err = simdutil.UnsafeStrFromIter(iter)
+			c.ID, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "type":
-			c.Type, err = simdutil.IntFromIter(iter)
+			c.Type, err = simdutil.IntFromIter(reuseIter)
 		case "home_away":
-			c.HomeAway, err = simdutil.IntFromIter(iter)
+			c.HomeAway, err = simdutil.IntFromIter(reuseIter)
 		case "template_position":
-			c.TemplatePosition, err = simdutil.IntFromIter(iter)
+			c.TemplatePosition, err = simdutil.IntFromIter(reuseIter)
 		case "scores":
-			obj, err := iter.Object(nil)
+			scoresObj, err := reuseIter.Object(reuseScoresObj)
 			if err != nil {
 				return err
 			}
 
-			c.Scores = make(Scores)
-			err = c.Scores.UnmarshalSimdJSON(obj)
+			c.Scores = make(Scores, 4)
+			err = c.Scores.UnmarshalSimdJSON(scoresObj, reuseIter, reuseScoreObj, reuseScore)
 		case "name":
-			c.Name, err = simdutil.UnsafeStrFromIter(iter)
+			c.Name, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "master_id":
-			c.MasterID, err = simdutil.UnsafeStrFromIter(iter)
+			c.MasterID, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "country_code":
-			c.CountryCode, err = simdutil.UnsafeStrFromIter(iter)
+			c.CountryCode, err = simdutil.UnsafeStrFromIter(reuseIter)
 		}
 
 		if err != nil {
 			return fmt.Errorf("%q unmarshal: %w", name, err)
 		}
-	}
-
-	return nil
-}
-
-func (c *Competitor) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
-	var (
-		err                     error
-		key, rest, partialPatch = strings.Cut(path, "/")
-	)
-
-	switch key {
-	case "id":
-		c.ID, err = simdutil.UnsafeStrFromIter(iter)
-	case "type":
-		c.Type, err = simdutil.IntFromIter(iter)
-	case "home_away":
-		c.HomeAway, err = simdutil.IntFromIter(iter)
-	case "template_position":
-		c.TemplatePosition, err = simdutil.IntFromIter(iter)
-	case "name":
-		c.Name, err = simdutil.UnsafeStrFromIter(iter)
-	case "master_id":
-		c.MasterID, err = simdutil.UnsafeStrFromIter(iter)
-	case "country_code":
-		c.CountryCode, err = simdutil.UnsafeStrFromIter(iter)
-	case "scores":
-		if partialPatch {
-			if c.Scores == nil {
-				return fmt.Errorf("partial patch nil scores")
-			}
-
-			return c.Scores.ApplyPatchSimdJSON(rest, iter)
-		}
-
-		obj, err := iter.Object(nil)
-		if err != nil {
-			return err
-		}
-
-		c.Scores = make(Scores)
-		return c.Scores.UnmarshalSimdJSON(obj)
-
-	case "score":
-		if c.Scores == nil {
-			return fmt.Errorf("partial patch nil scores")
-		}
-	}
-
-	if err != nil {
-		return fmt.Errorf("%q unmarshal: %w", key, err)
 	}
 
 	return nil
@@ -230,13 +199,41 @@ func (c Competitors) ApplyPatch(path string, value json.RawMessage) error {
 	return nil
 }
 
-func (c Competitors) UnmarshalSimdJSON(obj *simdjson.Object) error {
-	tmpIter := new(simdjson.Iter)
-	competitorObj := new(simdjson.Object)
-	tmpCompetitor := new(Competitor)
+func (c Competitors) UnmarshalSimdJSON(
+	obj *simdjson.Object,
+	reuseIter *simdjson.Iter,
+	reuseCompetitorObj *simdjson.Object,
+	reuseCompetitor *Competitor,
+	reuseScoresObj *simdjson.Object,
+	reuseScoreObj *simdjson.Object,
+	reuseScore *Score,
+) error {
+	if reuseIter == nil {
+		reuseIter = new(simdjson.Iter)
+	}
+
+	if reuseCompetitorObj == nil {
+		reuseCompetitorObj = new(simdjson.Object)
+	}
+
+	if reuseCompetitor == nil {
+		reuseCompetitor = new(Competitor)
+	}
+
+	if reuseScoresObj == nil {
+		reuseScoresObj = new(simdjson.Object)
+	}
+
+	if reuseScoreObj == nil {
+		reuseScoreObj = new(simdjson.Object)
+	}
+
+	if reuseScore == nil {
+		reuseScore = new(Score)
+	}
 
 	for {
-		name, elementType, err := obj.NextElement(tmpIter)
+		name, elementType, err := obj.NextElement(reuseIter)
 		if err != nil {
 			return err
 		}
@@ -245,59 +242,18 @@ func (c Competitors) UnmarshalSimdJSON(obj *simdjson.Object) error {
 			break
 		}
 
-		competitorObj, err = tmpIter.Object(competitorObj)
+		competitorObj, err := reuseIter.Object(reuseCompetitorObj)
 		if err != nil {
 			return fmt.Errorf("create %q object: %w", name, err)
 		}
 
-		err = tmpCompetitor.UnmarshalSimdJSON(competitorObj)
+		err = reuseCompetitor.UnmarshalSimdJSON(competitorObj, reuseIter, reuseScoresObj, reuseScoreObj, reuseScore)
 		if err != nil {
 			return fmt.Errorf("unmarshal %q odd: %w", name, err)
 		}
 
-		c[name] = *tmpCompetitor
+		c[name] = *reuseCompetitor
 	}
 
-	return nil
-}
-
-func (c Competitors) FromIter(iter *simdjson.Iter, dst *simdjson.Object) error {
-	obj, err := iter.Object(dst)
-	if err != nil {
-		return err
-	}
-
-	return c.UnmarshalSimdJSON(obj)
-}
-
-func (c Competitors) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
-	key, rest, partialPatch := strings.Cut(path, "/")
-	competitor, ok := c[key]
-
-	if !partialPatch {
-		obj, err := iter.Object(nil)
-		if err != nil {
-			return err
-		}
-
-		err = competitor.UnmarshalSimdJSON(obj)
-		if err != nil {
-			return fmt.Errorf("competitor %q unmarshal simdjson: %w", key, err)
-		}
-
-		c[key] = competitor
-		return nil
-	}
-
-	if !ok {
-		return fmt.Errorf("partial patch non-existent competitor: %q", key)
-	}
-
-	err := competitor.ApplyPatchSimdJSON(rest, iter)
-	if err != nil {
-		return fmt.Errorf("apply competitor patch: %w", err)
-	}
-
-	c[key] = competitor
 	return nil
 }

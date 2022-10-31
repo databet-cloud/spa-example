@@ -28,7 +28,7 @@ func (v *Venue) UnmarshalSimdJSON(obj *simdjson.Object) error {
 		return nil
 	}
 
-	id, err := element.Iter.String()
+	id, err := simdutil.UnsafeStrFromIter(&element.Iter)
 	if err != nil {
 		return err
 	}
@@ -44,18 +44,4 @@ func (v *Venue) FromIter(iter *simdjson.Iter, dst *simdjson.Object) error {
 	}
 
 	return v.UnmarshalSimdJSON(obj)
-}
-
-func (v *Venue) ApplyPatchSimdJSON(key string, iter *simdjson.Iter) error {
-	if key != "id" {
-		return nil
-	}
-
-	id, err := simdutil.UnsafeStrFromIter(iter)
-	if err != nil {
-		return err
-	}
-
-	v.ID = id
-	return nil
 }

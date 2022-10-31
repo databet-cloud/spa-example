@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mailru/easyjson"
 	"github.com/minio/simdjson-go"
 
 	"github.com/databet-cloud/databet-go-sdk/pkg/fixture"
@@ -35,9 +34,14 @@ func (se *SportEventLazy) UnmarshalJSON(bytes []byte) error {
 	}
 
 	iter := new(simdjson.Iter)
+	reuseObj := new(simdjson.Object)
+	reuseCompetitorObj := new(simdjson.Object)
+	reuseCompetitor := new(fixture.Competitor)
+	reuseScoreObj := new(simdjson.Object)
+	reuseScore := new(fixture.Score)
 
 	for {
-		name, t, err := obj.NextElement(iter)
+		name, t, err := obj.NextElementBytes(iter)
 		if err != nil {
 			return err
 		}
@@ -47,19 +51,19 @@ func (se *SportEventLazy) UnmarshalJSON(bytes []byte) error {
 			break
 		}
 
-		switch name {
+		switch string(name) {
 		case "id":
 			se.ID, err = simdutil.UnsafeStrFromIter(iter)
 		case "markets":
 			tmpIter := *iter // cloning iter
 			se.MarketIter, err = market.NewIterator(&tmpIter)
 		case "fixture":
-			dst, err := iter.MarshalJSON()
+			obj, err := iter.Object(nil)
 			if err != nil {
 				return err
 			}
 
-			err = easyjson.Unmarshal(dst, &se.Fixture)
+			err = se.Fixture.UnmarshalSimdJSON(obj, iter, reuseObj, reuseCompetitorObj, reuseCompetitor, nil, reuseScoreObj, reuseScore)
 		case "bet_stop":
 			se.BetStop, err = iter.Bool()
 		case "updated_at":

@@ -2,19 +2,52 @@ package fixture
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/minio/simdjson-go"
 
 	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
 
-func (f *Fixture) UnmarshalSimdJSON(obj *simdjson.Object) error {
-	iter := new(simdjson.Iter)
-	tmpObj := new(simdjson.Object)
+func (f *Fixture) UnmarshalSimdJSON(
+	obj *simdjson.Object,
+	reuseIter *simdjson.Iter,
+	reuseObj *simdjson.Object,
+	reuseCompetitorObj *simdjson.Object,
+	reuseCompetitor *Competitor,
+	reuseScoresObj *simdjson.Object,
+	reuseScoreObj *simdjson.Object,
+	reuseScore *Score,
+) error {
+	if reuseIter == nil {
+		reuseIter = new(simdjson.Iter)
+	}
+
+	if reuseObj == nil {
+		reuseObj = new(simdjson.Object)
+	}
+
+	if reuseCompetitorObj == nil {
+		reuseCompetitorObj = new(simdjson.Object)
+	}
+
+	if reuseCompetitor == nil {
+		reuseCompetitor = new(Competitor)
+	}
+
+	if reuseScoresObj == nil {
+		reuseScoresObj = new(simdjson.Object)
+	}
+
+	if reuseScoreObj == nil {
+		reuseScoreObj = new(simdjson.Object)
+	}
+
+	if reuseScore == nil {
+		reuseScore = new(Score)
+	}
 
 	for {
-		name, elementType, err := obj.NextElementBytes(iter)
+		name, elementType, err := obj.NextElementBytes(reuseIter)
 		if err != nil {
 			return err
 		}
@@ -25,108 +58,57 @@ func (f *Fixture) UnmarshalSimdJSON(obj *simdjson.Object) error {
 
 		switch string(name) {
 		case "id":
-			f.ID, err = simdutil.UnsafeStrFromIter(iter)
+			f.ID, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "version":
-			f.Version, err = simdutil.IntFromIter(iter)
+			f.Version, err = simdutil.IntFromIter(reuseIter)
 		case "owner_id":
-			f.OwnerID, err = simdutil.UnsafeStrFromIter(iter)
+			f.OwnerID, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "template":
-			f.Template, err = simdutil.UnsafeStrFromIter(iter)
+			f.Template, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "status":
-			f.Status, err = simdutil.IntFromIter(iter)
+			f.Status, err = simdutil.IntFromIter(reuseIter)
 		case "type":
-			f.Type, err = simdutil.IntFromIter(iter)
+			f.Type, err = simdutil.IntFromIter(reuseIter)
 		case "sport_id":
-			f.SportID, err = simdutil.UnsafeStrFromIter(iter)
+			f.SportID, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "tournament":
-			err = f.Tournament.FromIter(iter, tmpObj)
-		case "venue":
-			err = f.Venue.FromIter(iter, tmpObj)
-		case "competitors":
-			f.Competitors = make(Competitors)
-			err = f.Competitors.FromIter(iter, tmpObj)
+			tournamentObj, err := reuseIter.Object(reuseObj)
+			if err != nil {
+				return fmt.Errorf("create tournament obj: %w", err)
+			}
 
+			err = f.Tournament.UnmarshalSimdJSON(tournamentObj, reuseIter)
+		case "venue":
+			err = f.Venue.FromIter(reuseIter, reuseObj)
+		case "competitors":
+			f.Competitors = make(Competitors, 4)
+
+			obj, err := reuseIter.Object(reuseObj)
+			if err != nil {
+				return fmt.Errorf("create competitors obj: %w", err)
+			}
+
+			err = f.Competitors.UnmarshalSimdJSON(obj, reuseIter, reuseCompetitorObj, reuseCompetitor, reuseScoresObj, reuseScoreObj, reuseScore)
 		case "streams":
 			f.Streams = make(Streams)
-			err = f.Streams.FromIter(iter, tmpObj)
+			err = f.Streams.FromIter(reuseIter, reuseObj)
 		case "live_coverage":
-			f.LiveCoverage, err = iter.Bool()
+			f.LiveCoverage, err = reuseIter.Bool()
 		case "start_time":
-			f.StartTime, err = simdutil.TimeFromIter(iter)
+			f.StartTime, err = simdutil.TimeFromIter(reuseIter)
 		case "flags":
-			f.Flags, err = simdutil.IntFromIter(iter)
+			f.Flags, err = simdutil.IntFromIter(reuseIter)
 		case "created_at":
-			f.CreatedAt, err = simdutil.TimeFromIter(iter)
+			f.CreatedAt, err = simdutil.TimeFromIter(reuseIter)
 		case "updated_at":
-			f.UpdatedAt, err = simdutil.TimeFromIter(iter)
+			f.UpdatedAt, err = simdutil.TimeFromIter(reuseIter)
 		case "published_at":
-			f.PublishedAt, err = simdutil.TimeFromIter(iter)
+			f.PublishedAt, err = simdutil.TimeFromIter(reuseIter)
 		}
 
 		if err != nil {
 			return fmt.Errorf("%q unmarshal: %w", name, err)
 		}
-	}
-
-	return nil
-}
-
-func (f *Fixture) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
-	var (
-		err                     error
-		key, rest, partialPatch = strings.Cut(path, "/")
-	)
-
-	switch key {
-	case "status":
-		f.Status, err = simdutil.IntFromIter(iter)
-	case "type":
-		f.Type, err = simdutil.IntFromIter(iter)
-	case "start_time":
-		f.StartTime, err = simdutil.TimeFromIter(iter)
-	case "live_coverage":
-		f.LiveCoverage, err = iter.Bool()
-	case "competitors":
-		if partialPatch {
-			if f.Competitors == nil {
-				return fmt.Errorf("patch nil competitors")
-			}
-
-			return f.Competitors.ApplyPatchSimdJSON(rest, iter)
-		}
-
-		f.Competitors = make(Competitors)
-		return f.Competitors.FromIter(iter, nil)
-
-	case "tournament":
-		if partialPatch {
-			return f.Tournament.ApplyPatchSimdJSON(rest, iter)
-		}
-
-		return f.Tournament.FromIter(iter, nil)
-
-	case "streams":
-		if partialPatch {
-			if f.Streams == nil {
-				return fmt.Errorf("patch nil streams")
-			}
-
-			return f.Streams.ApplyPatchSimdJSON(rest, iter)
-		}
-
-		f.Streams = make(Streams)
-		return f.Streams.FromIter(iter, nil)
-
-	case "venue":
-		if partialPatch {
-			return f.Venue.ApplyPatchSimdJSON(rest, iter)
-		}
-
-		return f.Venue.FromIter(iter, nil)
-	}
-
-	if err != nil {
-		return fmt.Errorf("%q unmarshal: %w", key, err)
 	}
 
 	return nil

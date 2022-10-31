@@ -44,6 +44,10 @@ func UnsafeStrFromIter(iter *simdjson.Iter) (string, error) {
 	return *(*string)(unsafe.Pointer(&b)), nil
 }
 
+func UnsafeStrFromBytes(b []byte) string {
+	return *(*string)(unsafe.Pointer(&b))
+}
+
 func MapStrStrFromIter(iter *simdjson.Iter) (map[string]string, error) {
 	o, err := iter.Object(nil)
 	if err != nil {

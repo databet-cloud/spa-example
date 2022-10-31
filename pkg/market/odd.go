@@ -79,13 +79,21 @@ func (c Odds) Clone() Odds {
 	return newC
 }
 
-func (c Odds) UnmarshalSimdJSON(obj *simdjson.Object) error {
-	tmpIter := new(simdjson.Iter)
-	oddObj := new(simdjson.Object)
-	tmpOdd := new(Odd)
+func (c Odds) UnmarshalSimdJSON(obj *simdjson.Object, reuseIter *simdjson.Iter, reuseOddObj *simdjson.Object, reuseOdd *Odd) error {
+	if reuseIter == nil {
+		reuseIter = new(simdjson.Iter)
+	}
+
+	if reuseOddObj == nil {
+		reuseOddObj = new(simdjson.Object)
+	}
+
+	if reuseOdd == nil {
+		reuseOdd = new(Odd)
+	}
 
 	for {
-		name, elementType, err := obj.NextElement(tmpIter)
+		name, elementType, err := obj.NextElement(reuseIter)
 		if err != nil {
 			return err
 		}
@@ -94,17 +102,17 @@ func (c Odds) UnmarshalSimdJSON(obj *simdjson.Object) error {
 			break
 		}
 
-		oddObj, err = tmpIter.Object(oddObj)
+		oddObj, err := reuseIter.Object(reuseOddObj)
 		if err != nil {
 			return fmt.Errorf("create %q object: %w", name, err)
 		}
 
-		err = tmpOdd.UnmarshalSimdJSON(oddObj)
+		err = reuseOdd.UnmarshalSimdJSON(oddObj, reuseIter)
 		if err != nil {
 			return fmt.Errorf("unmarshal %q odd: %w", name, err)
 		}
 
-		c[name] = *tmpOdd
+		c[name] = *reuseOdd
 	}
 
 	return nil
@@ -129,38 +137,6 @@ func (c Odds) ApplyPatch(path string, value json.RawMessage) error {
 	}
 
 	err := odd.ApplyPatch(rest, value)
-	if err != nil {
-		return fmt.Errorf("apply odd patch: %w", err)
-	}
-
-	c[key] = odd
-	return nil
-}
-
-func (c Odds) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
-	key, rest, partialPatch := strings.Cut(path, "/")
-	odd, ok := c[key]
-
-	if !partialPatch {
-		obj, err := iter.Object(nil)
-		if err != nil {
-			return err
-		}
-
-		err = odd.UnmarshalSimdJSON(obj)
-		if err != nil {
-			return fmt.Errorf("odd %q unmarshal simdjson: %w", key, err)
-		}
-
-		c[key] = odd
-		return nil
-	}
-
-	if !ok {
-		return fmt.Errorf("partial patch non-existent odd: %q", key)
-	}
-
-	err := odd.ApplyPatchSimdJSON(rest, iter)
 	if err != nil {
 		return fmt.Errorf("apply odd patch: %w", err)
 	}
@@ -205,39 +181,13 @@ func (o *Odd) ApplyPatch(path string, value json.RawMessage) error {
 	return nil
 }
 
-func (o *Odd) ApplyPatchSimdJSON(path string, iter *simdjson.Iter) error {
-	var err error
-
-	switch path {
-	case "name":
-		o.Template, err = simdutil.UnsafeStrFromIter(iter)
-	case "value":
-		o.Value, err = simdutil.UnsafeStrFromIter(iter)
-	case "is_active":
-		o.IsActive, err = iter.Bool()
-	case "status":
-		var value int64
-
-		value, err = iter.Int()
-		o.Status = OddStatus(value)
-	case "status_reason":
-		o.StatusReason, err = simdutil.UnsafeStrFromIter(iter)
-	default:
-		return nil
+func (o *Odd) UnmarshalSimdJSON(obj *simdjson.Object, reuseIter *simdjson.Iter) error {
+	if reuseIter == nil {
+		reuseIter = new(simdjson.Iter)
 	}
-
-	if err != nil {
-		return fmt.Errorf("patch %q: %w", path, err)
-	}
-
-	return nil
-}
-
-func (o *Odd) UnmarshalSimdJSON(obj *simdjson.Object) error {
-	iter := new(simdjson.Iter)
 
 	for {
-		name, elementType, err := obj.NextElementBytes(iter)
+		name, elementType, err := obj.NextElementBytes(reuseIter)
 		if err != nil {
 			return err
 		}
@@ -248,19 +198,19 @@ func (o *Odd) UnmarshalSimdJSON(obj *simdjson.Object) error {
 
 		switch string(name) {
 		case "id":
-			o.ID, err = simdutil.UnsafeStrFromIter(iter)
+			o.ID, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "template":
-			o.Template, err = simdutil.UnsafeStrFromIter(iter)
+			o.Template, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "is_active":
-			o.IsActive, err = iter.Bool()
+			o.IsActive, err = reuseIter.Bool()
 		case "status":
 			var value int64
-			value, err = iter.Int()
+			value, err = reuseIter.Int()
 			o.Status = OddStatus(value)
 		case "value":
-			o.Value, err = simdutil.UnsafeStrFromIter(iter)
+			o.Value, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "status_reason":
-			o.StatusReason, err = simdutil.UnsafeStrFromIter(iter)
+			o.StatusReason, err = reuseIter.String()
 		}
 
 		if err != nil {

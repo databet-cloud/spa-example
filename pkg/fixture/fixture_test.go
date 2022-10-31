@@ -6,12 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/minio/simdjson-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/databet-cloud/databet-go-sdk/pkg/fixture"
-	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
 
 var fixtureTestCases = []struct {
@@ -128,27 +126,6 @@ func TestFixture_ApplyPatch(t *testing.T) {
 				err := f.ApplyPatch(path, value)
 				assert.NoError(t, err)
 			}
-
-			assert.Equal(t, tc.expected, f)
-		})
-	}
-}
-
-func TestFixture_ApplyPatchSimdJSON(t *testing.T) {
-	for _, tc := range fixtureTestCases {
-		t.Run(tc.name, func(t *testing.T) {
-			var f fixture.Fixture
-
-			rootIter, err := simdutil.JSONToRootIter(tc.rawPatches)
-			require.NoError(t, err)
-
-			obj, err := rootIter.Object(nil)
-			require.NoError(t, err)
-			//
-			_ = obj.ForEach(func(key []byte, i simdjson.Iter) {
-				err := f.ApplyPatchSimdJSON(string(key), &i)
-				assert.NoError(t, err)
-			}, nil)
 
 			assert.Equal(t, tc.expected, f)
 		})
