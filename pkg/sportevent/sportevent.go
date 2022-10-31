@@ -10,23 +10,21 @@ import (
 )
 
 type SportEvent struct {
-	ID         string                 `json:"id"`
-	Meta       map[string]interface{} `json:"meta"`
-	Fixture    fixture.Fixture        `json:"fixture"`
-	MarketIter *market.Iterator
-	Markets    market.Markets `json:"markets"`
-	BetStop    bool           `json:"bet_stop"`
-	UpdatedAt  time.Time      `json:"updated_at"`
+	ID        string                 `json:"id"`
+	Meta      map[string]interface{} `json:"meta"`
+	Fixture   fixture.Fixture        `json:"fixture"`
+	Markets   market.Markets         `json:"markets"`
+	BetStop   bool                   `json:"bet_stop"`
+	UpdatedAt time.Time              `json:"updated_at"`
 }
 
 func (se *SportEvent) Clone() *SportEvent {
 	return &SportEvent{
-		ID:         se.ID,
-		Meta:       maps.Clone(se.Meta),
-		Fixture:    se.Fixture.Clone(),
-		MarketIter: se.MarketIter,
-		Markets:    se.Markets.Clone(),
-		BetStop:    se.BetStop,
-		UpdatedAt:  se.UpdatedAt,
+		ID:        se.ID,
+		Meta:      maps.Clone(se.Meta),
+		Fixture:   se.Fixture.Clone(),
+		Markets:   se.Markets.Clone(),
+		BetStop:   se.BetStop,
+		UpdatedAt: se.UpdatedAt,
 	}
 }

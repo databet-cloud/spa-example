@@ -141,12 +141,3 @@ func CreateRootIter(parsedJson *simdjson.ParsedJson) (*simdjson.Iter, error) {
 
 	return rootIter, nil
 }
-
-func JSONToRootIter(eventData []byte) (*simdjson.Iter, error) {
-	parsedJson, err := simdjson.Parse(eventData, nil, simdjson.WithCopyStrings(false))
-	if err != nil {
-		return nil, err
-	}
-
-	return CreateRootIter(parsedJson)
-}

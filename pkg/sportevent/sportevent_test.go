@@ -7,11 +7,14 @@ import (
 	"testing"
 
 	"github.com/bytedance/sonic"
+	"github.com/minio/simdjson-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/databet-cloud/databet-go-sdk/pkg/feed"
+	"github.com/databet-cloud/databet-go-sdk/pkg/fixture"
 	"github.com/databet-cloud/databet-go-sdk/pkg/market"
+	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 	"github.com/databet-cloud/databet-go-sdk/pkg/sportevent"
 )
 
@@ -64,8 +67,54 @@ func BenchmarkSportEvent_Unmarshal(b *testing.B) {
 			err := sportEvent.UnmarshalJSON(rawSportEventWithMarkets)
 			require.NoError(b, err)
 
-			sportEvent.Markets, err = market.MarketsFromMarketIter(sportEvent.MarketIter)
+			markets, err := market.MarketsFromMarketIter(sportEvent.MarketIter)
 			require.NoError(b, err)
+
+			_ = markets
+		}
+	})
+
+	b.Run("simdjson with reuse", func(b *testing.B) {
+		b.ReportAllocs()
+
+		reuseIter := new(simdjson.Iter)
+		reuseObj := new(simdjson.Object)
+		fixtureObj := new(simdjson.Object)
+		competitorObj := new(simdjson.Object)
+		competitor := new(fixture.Competitor)
+		scoresObj := new(simdjson.Object)
+		scoreObj := new(simdjson.Object)
+		score := new(fixture.Score)
+
+		for i := 0; i < b.N; i++ {
+			var sportEvent sportevent.SportEventLazy
+
+			parsedJson, err := simdjson.Parse(rawSportEventWithMarkets, nil, simdjson.WithCopyStrings(false))
+			require.NoError(b, err)
+
+			rootIter, err := simdutil.CreateRootIter(parsedJson)
+			require.NoError(b, err)
+
+			rootObj, err := rootIter.Object(nil)
+			require.NoError(b, err)
+
+			err = sportEvent.UnmarshalSimdJSON(
+				rootObj,
+				reuseIter,
+				reuseObj,
+				fixtureObj,
+				competitorObj,
+				competitor,
+				scoresObj,
+				scoreObj,
+				score,
+			)
+			require.NoError(b, err)
+
+			markets, err := market.MarketsFromMarketIter(sportEvent.MarketIter)
+			require.NoError(b, err)
+
+			_ = markets
 		}
 	})
 
@@ -105,4 +154,36 @@ func TestSportEventPatcher_ApplyPatches(t *testing.T) {
 	}
 
 	assert.Equal(t, expectedSportEvent, sportEvent)
+}
+
+func TestSportEventLazy_UnmarshalJSON(t *testing.T) {
+	var sportEvent sportevent.SportEventLazy
+	var expected sportevent.SportEvent
+
+	err := json.Unmarshal(rawSportEventWithMarkets, &expected)
+	require.NoError(t, err)
+
+	err = sportEvent.UnmarshalJSON(rawSportEventWithMarkets)
+	require.NoError(t, err)
+
+	markets, err := market.MarketsFromMarketIter(sportEvent.MarketIter)
+	require.NoError(t, err)
+
+	actual := sportevent.SportEvent{
+		ID:        sportEvent.ID,
+		Meta:      sportEvent.Meta,
+		Fixture:   sportEvent.Fixture,
+		Markets:   markets,
+		BetStop:   sportEvent.BetStop,
+		UpdatedAt: sportEvent.UpdatedAt,
+	}
+
+	// Convert ints to floats, because various libs unmarshal num to any different
+	for k, v := range actual.Meta {
+		if num, ok := v.(int64); ok {
+			actual.Meta[k] = float64(num)
+		}
+	}
+
+	assert.Equal(t, expected, actual)
 }
