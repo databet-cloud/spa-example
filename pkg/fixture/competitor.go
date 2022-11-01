@@ -25,10 +25,9 @@ type Competitor struct {
 }
 
 func (c Competitor) Clone() Competitor {
-	result := c
 	c.Scores = c.Scores.Clone()
 
-	return result
+	return c
 }
 
 type Competitors map[string]Competitor

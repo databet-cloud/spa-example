@@ -16,6 +16,11 @@ type Stream struct {
 	Priority  int       `json:"priority"`
 }
 
+func (s Stream) Clone() Stream {
+	s.Platforms = s.Platforms.Clone()
+	return s
+}
+
 func (s *Stream) UnmarshalSimdJSON(obj *simdjson.Object, reuseIter *simdjson.Iter) error {
 	if reuseIter == nil {
 		reuseIter = new(simdjson.Iter)
@@ -61,6 +66,16 @@ func (s *Stream) UnmarshalSimdJSON(obj *simdjson.Object, reuseIter *simdjson.Ite
 }
 
 type Streams map[string]Stream
+
+func (s Streams) Clone() Streams {
+	res := make(Streams, len(s))
+
+	for k, v := range s {
+		res[k] = v.Clone()
+	}
+
+	return res
+}
 
 func (s Streams) UnmarshalSimdJSON(obj *simdjson.Object) error {
 	tmpIter := new(simdjson.Iter)

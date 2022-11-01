@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/minio/simdjson-go"
+	"golang.org/x/exp/slices"
 
 	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
@@ -12,6 +13,11 @@ type Platform struct {
 	Type             string   `json:"type"`
 	AllowedCountries []string `json:"allowed_countries"`
 	Enabled          bool     `json:"enabled"`
+}
+
+func (p Platform) Clone() Platform {
+	p.AllowedCountries = slices.Clone(p.AllowedCountries)
+	return p
 }
 
 func (p *Platform) UnmarshalSimdJSON(obj *simdjson.Object, reuseIter *simdjson.Iter) error {
@@ -61,8 +67,9 @@ type Platforms map[string]Platform
 
 func (p Platforms) Clone() Platforms {
 	result := make(Platforms, len(p))
+
 	for k, v := range p {
-		result[k] = v
+		result[k] = v.Clone()
 	}
 
 	return result

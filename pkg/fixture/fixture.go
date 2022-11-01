@@ -34,8 +34,8 @@ type Fixture struct {
 }
 
 func (f Fixture) Clone() Fixture {
-	result := f
-	result.Competitors = f.Competitors.Clone()
+	f.Competitors = f.Competitors.Clone()
+	f.Streams = f.Streams.Clone()
 
-	return result
+	return f
 }
