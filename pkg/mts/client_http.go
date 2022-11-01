@@ -29,10 +29,10 @@ func NewClientHTTP(httpClient *http.Client, mtsURL string) *ClientHTTP {
 	}
 }
 
-func (c *ClientHTTP) PlaceBet(ctx context.Context, req *PlaceBetRequest) (*Bet, []restriction.Restriction, error) {
+func (c *ClientHTTP) PlaceBet(ctx context.Context, req *PlaceBetRequest) (*PlaceBetResponse, error) {
 	rawBody, err := sonic.Marshal(req)
 	if err != nil {
-		return nil, nil, fmt.Errorf("marshal request: %w", err)
+		return nil, fmt.Errorf("marshal request: %w", err)
 	}
 
 	httpReq, err := http.NewRequestWithContext(
@@ -42,32 +42,35 @@ func (c *ClientHTTP) PlaceBet(ctx context.Context, req *PlaceBetRequest) (*Bet, 
 		bytes.NewReader(rawBody),
 	)
 	if err != nil {
-		return nil, nil, fmt.Errorf("create http request: %w", err)
+		return nil, fmt.Errorf("create http request: %w", err)
 	}
 
 	httpResp, err := c.httpClient.Do(httpReq)
 	if err != nil {
-		return nil, nil, fmt.Errorf("do http request: %w", err)
+		return nil, fmt.Errorf("do http request: %w", err)
 	}
 
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode == http.StatusForbidden {
-		return nil, nil, apierror.NewUser(ErrCodeAccessForIPDenied, nil)
+		return nil, apierror.NewUser(ErrCodeAccessForIPDenied, nil)
 	}
 
 	var resp placeBetResponse
 
 	err = json.NewDecoder(httpResp.Body).Decode(&resp)
 	if err != nil {
-		return nil, nil, fmt.Errorf("unmarshal response: %w, status code: %s", err, httpResp.Status)
+		return nil, fmt.Errorf("unmarshal response: %w, status code: %s", err, httpResp.Status)
 	}
 
 	if resp.Error != nil {
-		return nil, nil, resp.Error
+		return nil, resp.Error
 	}
 
-	return resp.Bet, resp.Restrictions, nil
+	return &PlaceBetResponse{
+		Bet:          resp.Bet,
+		Restrictions: resp.Restrictions,
+	}, nil
 }
 
 func (c *ClientHTTP) DeclineBet(ctx context.Context, req *DeclineBetRequest) error {
@@ -115,10 +118,10 @@ func (c *ClientHTTP) DeclineBet(ctx context.Context, req *DeclineBetRequest) err
 	return nil
 }
 
-func (c *ClientHTTP) CalculateCashOut(ctx context.Context, req *CalculateCashOutRequest) (*CashOutAmount, []restriction.Restriction, error) {
+func (c *ClientHTTP) CalculateCashOut(ctx context.Context, req *CalculateCashOutRequest) (*CalculateCashOutResponse, error) {
 	rawBody, err := sonic.Marshal(req)
 	if err != nil {
-		return nil, nil, fmt.Errorf("marshal request: %s", err)
+		return nil, fmt.Errorf("marshal request: %s", err)
 	}
 
 	httpReq, err := http.NewRequestWithContext(
@@ -128,41 +131,44 @@ func (c *ClientHTTP) CalculateCashOut(ctx context.Context, req *CalculateCashOut
 		bytes.NewReader(rawBody),
 	)
 	if err != nil {
-		return nil, nil, fmt.Errorf("create http request: %w", err)
+		return nil, fmt.Errorf("create http request: %w", err)
 	}
 
 	httpResp, err := c.httpClient.Do(httpReq)
 	if err != nil {
-		return nil, nil, fmt.Errorf("do http request: %w", err)
+		return nil, fmt.Errorf("do http request: %w", err)
 	}
 
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode == http.StatusForbidden {
-		return nil, nil, apierror.NewUser(ErrCodeAccessForIPDenied, nil)
+		return nil, apierror.NewUser(ErrCodeAccessForIPDenied, nil)
 	}
 
 	var resp calculateCashOutResponse
 
 	err = json.NewDecoder(httpResp.Body).Decode(&resp)
 	if err != nil {
-		return nil, nil, fmt.Errorf("unmarshal response: %w, status code: %s", err, httpResp.Status)
+		return nil, fmt.Errorf("unmarshal response: %w, status code: %s", err, httpResp.Status)
 	}
 
 	if resp.Error != nil {
-		return nil, nil, resp.Error
+		return nil, resp.Error
 	}
 
-	return resp.Amount, resp.Restrictions, nil
+	return &CalculateCashOutResponse{
+		Amount:       resp.Amount,
+		Restrictions: resp.Restrictions,
+	}, nil
 }
 
 func (c *ClientHTTP) PlaceCashOutOrder(
 	ctx context.Context,
 	req *PlaceCashOutOrderRequest,
-) (*Bet, *CashOutOrder, []restriction.Restriction, error) {
+) (*PlaceCashOutOrderResponse, error) {
 	rawBody, err := sonic.Marshal(req)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("marshal request: %s", err)
+		return nil, fmt.Errorf("marshal request: %s", err)
 	}
 
 	httpReq, err := http.NewRequestWithContext(
@@ -172,37 +178,41 @@ func (c *ClientHTTP) PlaceCashOutOrder(
 		bytes.NewReader(rawBody),
 	)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("create http request: %w", err)
+		return nil, fmt.Errorf("create http request: %w", err)
 	}
 
 	httpResp, err := c.httpClient.Do(httpReq)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("do http request: %w", err)
+		return nil, fmt.Errorf("do http request: %w", err)
 	}
 
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode == http.StatusForbidden {
-		return nil, nil, nil, apierror.NewUser(ErrCodeAccessForIPDenied, nil)
+		return nil, apierror.NewUser(ErrCodeAccessForIPDenied, nil)
 	}
 
 	var resp placeCashOutOrderResponse
 
 	rawBody, err = io.ReadAll(httpResp.Body)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("read response body: %w", err)
+		return nil, fmt.Errorf("read response body: %w", err)
 	}
 
 	err = sonic.Unmarshal(rawBody, &resp)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("unmarshal response: %w, status code: %s", err, httpResp.Status)
+		return nil, fmt.Errorf("unmarshal response: %w, status code: %s", err, httpResp.Status)
 	}
 
 	if resp.Error != nil {
-		return nil, nil, nil, resp.Error
+		return nil, resp.Error
 	}
 
-	return resp.Bet, resp.CashOutOrder, resp.Restrictions, nil
+	return &PlaceCashOutOrderResponse{
+		Bet:          resp.Bet,
+		CashOutOrder: resp.CashOutOrder,
+		Restrictions: resp.Restrictions,
+	}, nil
 }
 
 func (c *ClientHTTP) CancelCashOutOrder(ctx context.Context, req *CancelCashOutOrderRequest) error {

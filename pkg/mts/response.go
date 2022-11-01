@@ -15,10 +15,20 @@ type placeBetResponse struct {
 	Restrictions []restriction.Restriction `json:"restrictions,omitempty"`
 }
 
+type PlaceBetResponse struct {
+	Bet          *Bet                      `json:"bet,omitempty"`
+	Restrictions []restriction.Restriction `json:"restrictions,omitempty"`
+}
+
 type calculateCashOutResponse struct {
 	Amount       *CashOutAmount            `json:"amount,omitempty"`
 	Restrictions []restriction.Restriction `json:"restrictions,omitempty"`
 	Error        *apierror.Error           `json:"error,omitempty"`
+}
+
+type CalculateCashOutResponse struct {
+	Amount       *CashOutAmount            `json:"amount,omitempty"`
+	Restrictions []restriction.Restriction `json:"restrictions,omitempty"`
 }
 
 type placeCashOutOrderResponse struct {
@@ -26,6 +36,12 @@ type placeCashOutOrderResponse struct {
 	CashOutOrder *CashOutOrder             `json:"cash_out_order,omitempty"`
 	Restrictions []restriction.Restriction `json:"restrictions,omitempty"`
 	Error        *apierror.Error           `json:"error,omitempty"`
+}
+
+type PlaceCashOutOrderResponse struct {
+	Bet          *Bet                      `json:"bet,omitempty"`
+	CashOutOrder *CashOutOrder             `json:"cash_out_order,omitempty"`
+	Restrictions []restriction.Restriction `json:"restrictions,omitempty"`
 }
 
 type getRestrictionsResponse struct {

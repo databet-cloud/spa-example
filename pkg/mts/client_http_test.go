@@ -87,29 +87,30 @@ var rawPlaceBetReq []byte
 
 func (s *ClientHTTPTestSuite) TestPlaceBet() {
 	testCases := []struct {
-		name                 string
-		input                []byte
-		httpResp             *http.Response
-		expectedBet          *mts.Bet
-		expectedRestrictions []restriction.Restriction
-		expectedErr          error
+		name        string
+		input       []byte
+		httpResp    *http.Response
+		expected    *mts.PlaceBetResponse
+		expectedErr error
 	}{
 		{
 			name:     "succeed",
 			input:    rawPlaceBetReq,
 			httpResp: s.makeResponse(http.StatusOK, "place-bet/response-success.json"),
-			expectedBet: &mts.Bet{
-				ID:          "bh5cppigcvvoqss2htfg",
-				BookmakerID: "1",
-				Status:      mts.BetStatus{Code: 0, Reason: ""},
-				Type:        mts.BetType{Code: 0, Size: []int(nil)},
-				Stake:       mts.MultiMoney{Base: mts.Money{Value: "3.554952", CurrencyCode: "USD"}, Origin: mts.Money{Value: "3.000000", CurrencyCode: "EUR"}},
-				Refund:      mts.MultiMoney{Base: mts.Money{Value: "3.554952", CurrencyCode: "USD"}, Origin: mts.Money{Value: "3.000000", CurrencyCode: "EUR"}},
-				RefundBase:  mts.MultiMoney{Base: mts.Money{Value: "3.554952", CurrencyCode: "USD"}, Origin: mts.Money{Value: "3.000000", CurrencyCode: "EUR"}},
-				PlayerInfo:  mts.PlayerInfo{PlayerID: "", RiskGroupID: "", ClientIP: net.IP(nil), CountryCode: ""},
-				CreatedAt:   time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
-				Selections: []*mts.Selection{
-					{SportEventID: "1", MarketID: "1", OddID: "1", Value: "1.5", Marge: "0.06"},
+			expected: &mts.PlaceBetResponse{
+				Bet: &mts.Bet{
+					ID:          "bh5cppigcvvoqss2htfg",
+					BookmakerID: "1",
+					Status:      mts.BetStatus{Code: 0, Reason: ""},
+					Type:        mts.BetType{Code: 0, Size: []int(nil)},
+					Stake:       mts.MultiMoney{Base: mts.Money{Value: "3.554952", CurrencyCode: "USD"}, Origin: mts.Money{Value: "3.000000", CurrencyCode: "EUR"}},
+					Refund:      mts.MultiMoney{Base: mts.Money{Value: "3.554952", CurrencyCode: "USD"}, Origin: mts.Money{Value: "3.000000", CurrencyCode: "EUR"}},
+					RefundBase:  mts.MultiMoney{Base: mts.Money{Value: "3.554952", CurrencyCode: "USD"}, Origin: mts.Money{Value: "3.000000", CurrencyCode: "EUR"}},
+					PlayerInfo:  mts.PlayerInfo{PlayerID: "", RiskGroupID: "", ClientIP: net.IP(nil), CountryCode: ""},
+					CreatedAt:   time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
+					Selections: []*mts.Selection{
+						{SportEventID: "1", MarketID: "1", OddID: "1", Value: "1.5", Marge: "0.06"},
+					},
 				},
 			},
 		},
@@ -117,8 +118,10 @@ func (s *ClientHTTPTestSuite) TestPlaceBet() {
 			name:     "got restrictions",
 			input:    rawPlaceBetReq,
 			httpResp: s.makeResponse(http.StatusBadRequest, "response-restrictions.json"),
-			expectedRestrictions: []restriction.Restriction{
-				{Type: "test_restriction"},
+			expected: &mts.PlaceBetResponse{
+				Restrictions: []restriction.Restriction{
+					{Type: "test_restriction"},
+				},
 			},
 		},
 		{
@@ -149,10 +152,9 @@ func (s *ClientHTTPTestSuite) TestPlaceBet() {
 			var req *mts.PlaceBetRequest
 			s.NoError(json.Unmarshal(tc.input, &req))
 
-			bet, restrictions, err := s.mtsClient.PlaceBet(context.Background(), req)
+			resp, err := s.mtsClient.PlaceBet(context.Background(), req)
 
-			s.Equal(tc.expectedBet, bet)
-			s.Equal(tc.expectedRestrictions, restrictions)
+			s.Equal(tc.expected, resp)
 			s.ErrorIs(err, tc.expectedErr)
 		})
 	}
@@ -220,33 +222,37 @@ func (s *ClientHTTPTestSuite) TestCalculateCashOut() {
 	}
 
 	testCases := []struct {
-		name                 string
-		input                *mts.CalculateCashOutRequest
-		httpResp             *http.Response
-		expectedAmount       *mts.CashOutAmount
-		expectedRestrictions []restriction.Restriction
-		expectedErr          error
+		name        string
+		input       *mts.CalculateCashOutRequest
+		httpResp    *http.Response
+		expected    *mts.CalculateCashOutResponse
+		expectedErr error
 	}{
 		{
 			name:     "succeed",
 			input:    defaultReq,
 			httpResp: s.makeResponse(http.StatusOK, "calculate-cash-out/response-success.json"),
-			expectedAmount: &mts.CashOutAmount{
-				RefundAmount:    "refund1",
-				MinAmount:       "min1",
-				MinRefundAmount: "min_refund1",
-				MaxAmount:       "max1",
-				MaxRefundAmount: "max_refund1",
-				Ranges: []mts.CashOutRange{
-					{FromAmount: "from1", ToAmount: "to1", RefundRatio: "ratio1"},
+			expected: &mts.CalculateCashOutResponse{
+				Amount: &mts.CashOutAmount{
+					RefundAmount:    "refund1",
+					MinAmount:       "min1",
+					MinRefundAmount: "min_refund1",
+					MaxAmount:       "max1",
+					MaxRefundAmount: "max_refund1",
+					Ranges: []mts.CashOutRange{
+						{FromAmount: "from1", ToAmount: "to1", RefundRatio: "ratio1"},
+					},
 				},
+				Restrictions: nil,
 			},
 		},
 		{
-			name:                 "got restrictions",
-			input:                defaultReq,
-			httpResp:             s.makeResponse(http.StatusBadRequest, "response-restrictions.json"),
-			expectedRestrictions: []restriction.Restriction{{Type: "test_restriction"}},
+			name:     "got restrictions",
+			input:    defaultReq,
+			httpResp: s.makeResponse(http.StatusBadRequest, "response-restrictions.json"),
+			expected: &mts.CalculateCashOutResponse{
+				Restrictions: []restriction.Restriction{{Type: "test_restriction"}},
+			},
 		},
 		{
 			name:        "api error",
@@ -280,10 +286,9 @@ func (s *ClientHTTPTestSuite) TestCalculateCashOut() {
 			)
 			roundTripper.EXPECT().RoundTrip(s.newReqMatcher(httpReq)).Return(tc.httpResp, nil)
 
-			amount, restrictions, err := s.mtsClient.CalculateCashOut(context.Background(), tc.input)
+			resp, err := s.mtsClient.CalculateCashOut(context.Background(), tc.input)
 
-			s.Equal(tc.expectedAmount, amount)
-			s.Equal(tc.expectedRestrictions, restrictions)
+			s.Equal(tc.expected, resp)
 			s.ErrorIs(err, tc.expectedErr)
 		})
 	}
@@ -307,53 +312,55 @@ func (s *ClientHTTPTestSuite) TestPlaceCashOutOrder() {
 	}
 
 	testCases := []struct {
-		name                 string
-		input                *mts.PlaceCashOutOrderRequest
-		httpResp             *http.Response
-		expectedBet          *mts.Bet
-		expectedCashOutOrder *mts.CashOutOrder
-		expectedRestrictions []restriction.Restriction
-		expectedErr          error
+		name        string
+		input       *mts.PlaceCashOutOrderRequest
+		httpResp    *http.Response
+		expected    *mts.PlaceCashOutOrderResponse
+		expectedErr error
 	}{
 		{
 			name:     "succeed",
 			input:    defaultReq,
 			httpResp: s.makeResponse(http.StatusOK, "place-cash-out-order/response-success.json"),
-			expectedBet: &mts.Bet{
-				ID:          "bh5cppigcvvoqss2htfg",
-				BookmakerID: "1",
-				Status:      mts.BetStatus{Code: 0, Reason: ""},
-				Type:        mts.BetType{Code: 0, Size: []int(nil)},
-				Stake:       mts.MultiMoney{Base: mts.Money{Value: "3.554952", CurrencyCode: "USD"}, Origin: mts.Money{Value: "3.000000", CurrencyCode: "EUR"}},
-				Refund:      mts.MultiMoney{Base: mts.Money{Value: "3.554952", CurrencyCode: "USD"}, Origin: mts.Money{Value: "3.000000", CurrencyCode: "EUR"}},
-				RefundBase:  mts.MultiMoney{Base: mts.Money{Value: "3.554952", CurrencyCode: "USD"}, Origin: mts.Money{Value: "3.000000", CurrencyCode: "EUR"}},
-				PlayerInfo:  mts.PlayerInfo{PlayerID: "", RiskGroupID: "", ClientIP: net.IP(nil), CountryCode: ""},
-				CreatedAt:   time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
-				Selections: []*mts.Selection{
-					{SportEventID: "1", MarketID: "1", OddID: "1", Value: "1.5", Marge: "0.06"},
+			expected: &mts.PlaceCashOutOrderResponse{
+				Bet: &mts.Bet{
+					ID:          "bh5cppigcvvoqss2htfg",
+					BookmakerID: "1",
+					Status:      mts.BetStatus{Code: 0, Reason: ""},
+					Type:        mts.BetType{Code: 0, Size: []int(nil)},
+					Stake:       mts.MultiMoney{Base: mts.Money{Value: "3.554952", CurrencyCode: "USD"}, Origin: mts.Money{Value: "3.000000", CurrencyCode: "EUR"}},
+					Refund:      mts.MultiMoney{Base: mts.Money{Value: "3.554952", CurrencyCode: "USD"}, Origin: mts.Money{Value: "3.000000", CurrencyCode: "EUR"}},
+					RefundBase:  mts.MultiMoney{Base: mts.Money{Value: "3.554952", CurrencyCode: "USD"}, Origin: mts.Money{Value: "3.000000", CurrencyCode: "EUR"}},
+					PlayerInfo:  mts.PlayerInfo{PlayerID: "", RiskGroupID: "", ClientIP: net.IP(nil), CountryCode: ""},
+					CreatedAt:   time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
+					Selections: []*mts.Selection{
+						{SportEventID: "1", MarketID: "1", OddID: "1", Value: "1.5", Marge: "0.06"},
+					},
 				},
-			},
-			expectedCashOutOrder: &mts.CashOutOrder{
-				ID: "order1",
-				Amount: mts.MultiMoney{
-					Base:   mts.Money{Value: "100", CurrencyCode: "USD"},
-					Origin: mts.Money{Value: "100", CurrencyCode: "USD"},
-				},
-				RefundAmount: mts.MultiMoney{
-					Base:   mts.Money{Value: "113.56", CurrencyCode: "USD"},
-					Origin: mts.Money{Value: "113.56", CurrencyCode: "USD"},
-				},
-				CreatedAt: mustParseTime(s.T(), "2006-01-02T15:04:05+07:00"),
-				Selections: []mts.CashOutOrderSelection{
-					{OddID: "1", MarketID: "1", SportEventID: "1", Value: "8"},
+				CashOutOrder: &mts.CashOutOrder{
+					ID: "order1",
+					Amount: mts.MultiMoney{
+						Base:   mts.Money{Value: "100", CurrencyCode: "USD"},
+						Origin: mts.Money{Value: "100", CurrencyCode: "USD"},
+					},
+					RefundAmount: mts.MultiMoney{
+						Base:   mts.Money{Value: "113.56", CurrencyCode: "USD"},
+						Origin: mts.Money{Value: "113.56", CurrencyCode: "USD"},
+					},
+					CreatedAt: mustParseTime(s.T(), "2006-01-02T15:04:05+07:00"),
+					Selections: []mts.CashOutOrderSelection{
+						{OddID: "1", MarketID: "1", SportEventID: "1", Value: "8"},
+					},
 				},
 			},
 		},
 		{
-			name:                 "got restrictions",
-			input:                defaultReq,
-			httpResp:             s.makeResponse(http.StatusBadRequest, "response-restrictions.json"),
-			expectedRestrictions: []restriction.Restriction{{Type: "test_restriction"}},
+			name:     "got restrictions",
+			input:    defaultReq,
+			httpResp: s.makeResponse(http.StatusBadRequest, "response-restrictions.json"),
+			expected: &mts.PlaceCashOutOrderResponse{
+				Restrictions: []restriction.Restriction{{Type: "test_restriction"}},
+			},
 		},
 		{
 			name:        "api error",
@@ -387,11 +394,9 @@ func (s *ClientHTTPTestSuite) TestPlaceCashOutOrder() {
 			)
 			roundTripper.EXPECT().RoundTrip(s.newReqMatcher(httpReq)).Return(tc.httpResp, nil)
 
-			bet, order, restrictions, err := s.mtsClient.PlaceCashOutOrder(context.Background(), tc.input)
+			resp, err := s.mtsClient.PlaceCashOutOrder(context.Background(), tc.input)
 
-			s.Equal(tc.expectedBet, bet)
-			s.Equal(tc.expectedCashOutOrder, order)
-			s.Equal(tc.expectedRestrictions, restrictions)
+			s.Equal(tc.expected, resp)
 			s.ErrorIs(err, tc.expectedErr)
 		})
 	}
