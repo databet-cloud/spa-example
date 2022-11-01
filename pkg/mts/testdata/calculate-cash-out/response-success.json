@@ -1,0 +1,16 @@
+{
+  "amount": {
+    "refund_amount":  "refund1",
+    "min_amount": "min1",
+    "min_refund_amount":  "min_refund1",
+    "max_amount": "max1",
+    "max_refund_amount":  "max_refund1",
+    "ranges": [
+      {
+        "from_amount": "from1",
+        "to_amount": "to1",
+        "refund_ratio":  "ratio1"
+      }
+    ]
+  }
+}

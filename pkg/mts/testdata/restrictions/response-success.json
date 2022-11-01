@@ -1,0 +1,39 @@
+{
+  "restrictions": [
+    {
+      "type": "max_bet",
+      "context": {
+        "max_bet": "240.96"
+      }
+    },
+    {
+      "type": "market_status",
+      "context": {
+        "market_id": "20",
+        "sport_event_id": "85d130b1-6c8f-4170-bb4f-f80343b55c01",
+        "status": 3
+      }
+    },
+    {
+      "type": "odd_status",
+      "context": {
+        "is_active": true,
+        "market_id": "20",
+        "odd_id": "1",
+        "sport_event_id": "85d130b1-6c8f-4170-bb4f-f80343b55c01",
+        "status": 1
+      }
+    },
+
+    {
+      "type": "selection_value",
+      "context": {
+        "market_id": "20",
+        "odd_id": "1",
+        "sport_event_id": "85d130b1-6c8f-4170-bb4f-f80343b55c01",
+        "value": "1.00"
+      }
+    }
+  ]
+
+}

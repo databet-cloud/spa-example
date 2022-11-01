@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/bytedance/sonic v1.5.0
+	github.com/golang/mock v1.6.0
 	github.com/minio/simdjson-go v0.4.2
 	github.com/stretchr/testify v1.8.0
 	golang.org/x/exp v0.0.0-20221012211006-4de253d81b95

@@ -1,0 +1,71 @@
+{
+  "bet": {
+    "version": "",
+    "id": "bh5cppigcvvoqss2htfg",
+    "foreign_id": "",
+    "bookmaker_id": "1",
+    "status": {
+      "code": 0,
+      "reason": ""
+    },
+    "type": {
+      "code": 0,
+      "size": null
+    },
+    "stake": {
+      "base": {
+        "value": "3.554952",
+        "currency_code": "USD"
+      },
+      "origin": {
+        "value": "3.000000",
+        "currency_code": "EUR"
+      }
+    },
+    "refund": {
+      "base": {
+        "value": "3.554952",
+        "currency_code": "USD"
+      },
+      "origin": {
+        "value": "3.000000",
+        "currency_code": "EUR"
+      }
+    },
+    "refund_base": {
+      "base": {
+        "value": "3.554952",
+        "currency_code": "USD"
+      },
+      "origin": {
+        "value": "3.000000",
+        "currency_code": "EUR"
+      }
+    },
+    "selections": [
+      {
+        "sport_event_is_live": false,
+        "sport_event_id": "1",
+        "market_id": "1",
+        "odd_id": "1",
+        "value": "1.5",
+        "marge": "0.06",
+        "status": 0,
+        "trader_id": "",
+        "market_type": 0,
+        "sport_id": "",
+        "tournament_id": ""
+      }
+    ],
+    "player_info": {
+      "id": "",
+      "risk_group_id": "",
+      "client_ip": "",
+      "country_code": ""
+    },
+    "created_at": "0001-01-01T00:00:00Z",
+    "events": null,
+    "markers": null,
+    "cash_out_orders": null
+  }
+}

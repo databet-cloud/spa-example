@@ -1,0 +1,6 @@
+{
+  "error": {
+    "level": "user",
+    "code": "test.error"
+  }
+}
