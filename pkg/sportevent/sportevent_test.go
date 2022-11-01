@@ -31,30 +31,61 @@ var rawLogs []byte
 var patchedSportEvent []byte
 
 func BenchmarkSportEventApplyPatchSimdJSON(b *testing.B) {
-	b.StopTimer()
 	b.ReportAllocs()
 
-	var sportEvent sportevent.SportEvent
+	b.Run("with copy strings", func(b *testing.B) {
+		b.StopTimer()
 
-	err := json.Unmarshal(rawSportEvent, &sportEvent)
-	require.NoError(b, err)
+		var sportEvent sportevent.SportEvent
 
-	patcher := sportevent.NewPatcherSimdJSON()
+		err := json.Unmarshal(rawSportEvent, &sportEvent)
+		require.NoError(b, err)
 
-	b.StartTimer()
+		patcher := sportevent.NewPatcherSimdJSON()
 
-	for i := 0; i < b.N; i++ {
-		var log feed.LogEntry
+		b.StartTimer()
+		b.ReportAllocs()
 
-		decoder := json.NewDecoder(bytes.NewReader(rawLogs))
-		for decoder.More() {
-			err := decoder.Decode(&log)
-			require.NoError(b, err)
+		for i := 0; i < b.N; i++ {
+			var log feed.LogEntry
 
-			err = patcher.ApplyPatches(&sportEvent, log.Patches)
-			require.NoError(b, err)
+			decoder := json.NewDecoder(bytes.NewReader(rawLogs))
+			for decoder.More() {
+				err := decoder.Decode(&log)
+				require.NoError(b, err)
+
+				err = patcher.ApplyPatches(&sportEvent, log.Patches)
+				require.NoError(b, err)
+			}
 		}
-	}
+	})
+
+	b.Run("without copy strings", func(b *testing.B) {
+		b.StopTimer()
+
+		var sportEvent sportevent.SportEvent
+
+		err := json.Unmarshal(rawSportEvent, &sportEvent)
+		require.NoError(b, err)
+
+		patcher := sportevent.NewPatcherSimdJSON(simdjson.WithCopyStrings(false))
+
+		b.StartTimer()
+		b.ReportAllocs()
+
+		for i := 0; i < b.N; i++ {
+			decoder := json.NewDecoder(bytes.NewReader(rawLogs))
+			for decoder.More() {
+				var log feed.LogEntry
+
+				err := decoder.Decode(&log)
+				require.NoError(b, err)
+
+				err = patcher.ApplyPatches(&sportEvent, log.Patches)
+				require.NoError(b, err)
+			}
+		}
+	})
 }
 
 func BenchmarkSportEvent_Unmarshal(b *testing.B) {
@@ -77,6 +108,8 @@ func BenchmarkSportEvent_Unmarshal(b *testing.B) {
 	b.Run("simdjson with reuse", func(b *testing.B) {
 		b.ReportAllocs()
 
+		reuseParsedJSON := new(simdjson.ParsedJson)
+		rootObj := new(simdjson.Object)
 		reuseIter := new(simdjson.Iter)
 		reuseObj := new(simdjson.Object)
 		fixtureObj := new(simdjson.Object)
@@ -89,13 +122,13 @@ func BenchmarkSportEvent_Unmarshal(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			var sportEvent sportevent.SportEventLazy
 
-			parsedJson, err := simdjson.Parse(rawSportEventWithMarkets, nil, simdjson.WithCopyStrings(false))
+			parsedJson, err := simdjson.Parse(rawSportEventWithMarkets, reuseParsedJSON, simdjson.WithCopyStrings(false))
 			require.NoError(b, err)
 
 			rootIter, err := simdutil.CreateRootIter(parsedJson)
 			require.NoError(b, err)
 
-			rootObj, err := rootIter.Object(nil)
+			rootObj, err := rootIter.Object(rootObj)
 			require.NoError(b, err)
 
 			err = sportEvent.UnmarshalSimdJSON(
@@ -140,12 +173,12 @@ func TestSportEventPatcher_ApplyPatches(t *testing.T) {
 	err = sonic.Unmarshal(patchedSportEvent, &expectedSportEvent)
 	require.NoError(t, err)
 
-	var log feed.LogEntry
-
-	patcher := sportevent.NewPatcherSimdJSON()
+	patcher := sportevent.NewPatcherSimdJSON(simdjson.WithCopyStrings(false))
 
 	decoder := json.NewDecoder(bytes.NewReader(rawLogs))
 	for decoder.More() {
+		var log feed.LogEntry
+
 		err := decoder.Decode(&log)
 		require.NoError(t, err)
 

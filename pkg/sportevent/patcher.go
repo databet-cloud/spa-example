@@ -18,6 +18,8 @@ type Patcher interface {
 }
 
 type PatcherSimdJSON struct {
+	parserOptions []simdjson.ParserOption
+
 	parsedJson *simdjson.ParsedJson
 	rootObj    *simdjson.Object
 	rootIter   *simdjson.Iter
@@ -37,22 +39,26 @@ type PatcherSimdJSON struct {
 	tmpOdd *market.Odd
 }
 
-func NewPatcherSimdJSON() *PatcherSimdJSON {
+// NewPatcherSimdJSON creates new simdjson applier implementation.
+// Hint: to reduce allocations, you can use simdjson.WithCopyStrings(false),
+// but you won't be able to reuse the same []byte for rawPatches
+func NewPatcherSimdJSON(simdJSONParserOptions ...simdjson.ParserOption) *PatcherSimdJSON {
 	return &PatcherSimdJSON{
-		parsedJson: new(simdjson.ParsedJson),
-		rootObj:    new(simdjson.Object),
-		rootIter:   new(simdjson.Iter),
-		tmpIter:    new(simdjson.Iter),
-		tmpObj:     new(simdjson.Object),
-		marketObj:  new(simdjson.Object),
-		oddsObj:    new(simdjson.Object),
-		oddObj:     new(simdjson.Object),
-		tmpOdd:     new(market.Odd),
+		parserOptions: simdJSONParserOptions,
+		parsedJson:    new(simdjson.ParsedJson),
+		rootObj:       new(simdjson.Object),
+		rootIter:      new(simdjson.Iter),
+		tmpIter:       new(simdjson.Iter),
+		tmpObj:        new(simdjson.Object),
+		marketObj:     new(simdjson.Object),
+		oddsObj:       new(simdjson.Object),
+		oddObj:        new(simdjson.Object),
+		tmpOdd:        new(market.Odd),
 	}
 }
 
 func (p *PatcherSimdJSON) ApplyPatches(sportEvent *SportEvent, rawPatches json.RawMessage) error {
-	parsedJson, err := simdjson.Parse(rawPatches, p.parsedJson, simdjson.WithCopyStrings(true))
+	parsedJson, err := simdjson.Parse(rawPatches, p.parsedJson, p.parserOptions...)
 	if err != nil {
 		return fmt.Errorf("simdjson parse: %w", err)
 	}
