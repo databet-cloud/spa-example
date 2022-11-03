@@ -74,7 +74,7 @@ func (p *PatcherSimdJSON) ApplyPatches(sportEvent *SportEvent, rawPatches json.R
 	}
 
 	for {
-		path, elementType, err := rootObj.NextElement(p.rootIter)
+		rawPath, elementType, err := rootObj.NextElementBytes(p.rootIter)
 		if err != nil {
 			return fmt.Errorf("next element: %w", err)
 		}
@@ -84,6 +84,7 @@ func (p *PatcherSimdJSON) ApplyPatches(sportEvent *SportEvent, rawPatches json.R
 			break
 		}
 
+		path := simdutil.UnsafeStrFromBytes(rawPath)
 		key, rest, partialPatch := strings.Cut(path, "/")
 
 		switch key {
