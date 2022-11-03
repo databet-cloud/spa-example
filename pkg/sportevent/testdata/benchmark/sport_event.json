@@ -1,0 +1,100 @@
+{
+  "id": "c8c0795a-0ee7-476f-95a8-d06defe97bc5",
+  "meta": {
+    "bo": 1,
+    "round": 5,
+    "side_away": "t",
+    "side_home": "ct",
+    "game_state": "map",
+    "match_format": "default",
+    "state_number": 1,
+    "timer_running": false
+  },
+  "fixture": {
+    "id": "c8c0795a-0ee7-476f-95a8-d06defe97bc5",
+    "meta": {
+      "bo": 1,
+      "round": 5,
+      "side_away": "t",
+      "side_home": "ct",
+      "game_state": "map",
+      "match_format": "default",
+      "state_number": 1,
+      "timer_running": false
+    },
+    "type": 0,
+    "flags": 1,
+    "venue": {
+      "id": ""
+    },
+    "status": 8,
+    "streams": {},
+    "version": 161,
+    "owner_id": "373fa5ad-580b-4d96-8200-f841a2124428",
+    "sport_id": "esports_counter_strike",
+    "template": "{$competitor1} vs {$competitor2}",
+    "created_at": "2022-10-26T14:40:15Z",
+    "start_time": "2022-10-26T14:39:00Z",
+    "tournament": {
+      "id": "betting:0:other-esports_counter_strike-esports_counter_strike",
+      "name": "Other",
+      "master_id": "betting:0:other-esports_counter_strike-esports_counter_strike",
+      "country_code": "AL"
+    },
+    "updated_at": "2022-10-26T14:40:58Z",
+    "competitors": {
+      "gin:b8a11d78-0d2f-4507-90cc-fa1d2516e9ec": {
+        "id": "gin:b8a11d78-0d2f-4507-90cc-fa1d2516e9ec",
+        "meta": {},
+        "name": "Test 1",
+        "type": 2,
+        "scores": {
+          "map:1": {
+            "id": "map:1",
+            "type": "map",
+            "number": 1,
+            "points": "3"
+          },
+          "total": {
+            "id": "total",
+            "type": "total",
+            "number": 0,
+            "points": "0"
+          }
+        },
+        "home_away": 1,
+        "master_id": "gin:b8a11d78-0d2f-4507-90cc-fa1d2516e9ec",
+        "country_code": "",
+        "template_position": 1
+      },
+      "gin:c079c808-28cd-4cab-9abb-31bfdcb0a7c9": {
+        "id": "gin:c079c808-28cd-4cab-9abb-31bfdcb0a7c9",
+        "meta": {},
+        "name": "Test 2",
+        "type": 2,
+        "scores": {
+          "map:1": {
+            "id": "map:1",
+            "type": "map",
+            "number": 1,
+            "points": "1"
+          },
+          "total": {
+            "id": "total",
+            "type": "total",
+            "number": 0,
+            "points": "0"
+          }
+        },
+        "home_away": 2,
+        "master_id": "gin:c079c808-28cd-4cab-9abb-31bfdcb0a7c9",
+        "country_code": "",
+        "template_position": 2
+      }
+    },
+    "published_at": "2022-10-26T14:40:58Z",
+    "live_coverage": false
+  },
+  "markets": {},
+  "updated_at": "2022-10-26T14:40:58Z"
+}

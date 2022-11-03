@@ -1,0 +1,100 @@
+{
+  "v": "1z3EdlkApk8000004gfJ41",
+  "sport_event_id": "62abfe7e-eab5-4915-962a-825218721a5d",
+  "type": "match_new",
+  "timestamp": 1665768227,
+  "sport_event": {
+    "id": "62abfe7e-eab5-4915-962a-825218721a5d",
+    "meta": {
+      "bo": 1,
+      "game_state": "map",
+      "match_format": "default",
+      "state_number": 1,
+      "timer_running": false
+    },
+    "fixture": {
+      "id": "62abfe7e-eab5-4915-962a-825218721a5d",
+      "meta": {
+        "bo": 1,
+        "game_state": "map",
+        "match_format": "default",
+        "state_number": 1,
+        "timer_running": false
+      },
+      "type": 0,
+      "flags": 1,
+      "venue": {
+        "id": ""
+      },
+      "status": 8,
+      "streams": {},
+      "version": 15,
+      "owner_id": "373fa5ad-580b-4d96-8200-f841a2124428",
+      "sport_id": "esports_counter_strike",
+      "template": "{$competitor1} vs {$competitor2}",
+      "created_at": "2022-10-14T17:23:28Z",
+      "start_time": "2022-10-14T17:23:00Z",
+      "tournament": {
+        "id": "betting:0:dsd-esports_counter_strike-esports_counter_strike",
+        "name": "",
+        "master_id": "betting:0:dsd-esports_counter_strike-esports_counter_strike",
+        "country_code": ""
+      },
+      "updated_at": "2022-10-14T17:23:47Z",
+      "competitors": {
+        "betting:0:10-esports_counter_strike": {
+          "id": "betting:0:10-esports_counter_strike",
+          "meta": {},
+          "name": "team1",
+          "type": 2,
+          "scores": {
+            "map:1": {
+              "id": "map:1",
+              "type": "map",
+              "number": 1,
+              "points": "0"
+            },
+            "total": {
+              "id": "total",
+              "type": "total",
+              "number": 0,
+              "points": "1"
+            }
+          },
+          "home_away": 1,
+          "master_id": "betting:0:10-esports_counter_strike",
+          "country_code": "",
+          "template_position": 1
+        },
+        "betting:0:16-esports_counter_strike": {
+          "id": "betting:0:16-esports_counter_strike",
+          "meta": {},
+          "name": "hmm",
+          "type": 2,
+          "scores": {
+            "map:1": {
+              "id": "map:1",
+              "type": "map",
+              "number": 1,
+              "points": "0"
+            },
+            "total": {
+              "id": "total",
+              "type": "total",
+              "number": 0,
+              "points": "0"
+            }
+          },
+          "home_away": 2,
+          "master_id": "betting:0:16-esports_counter_strike",
+          "country_code": "",
+          "template_position": 2
+        }
+      },
+      "published_at": "2022-10-14T17:23:47Z",
+      "live_coverage": false
+    },
+    "markets": {},
+    "updated_at": "2022-10-14T17:23:47Z"
+  }
+}
