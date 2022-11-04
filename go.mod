@@ -1,6 +1,6 @@
 module github.com/databet-cloud/databet-go-sdk
 
-go 1.18
+go 1.19
 
 require (
 	github.com/bytedance/sonic v1.5.0
