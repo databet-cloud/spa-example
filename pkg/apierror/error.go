@@ -26,6 +26,7 @@ func Wrap(err error, code string, level Level, data map[string]any) error {
 	if data == nil {
 		data = make(map[string]any)
 	}
+
 	return &Error{code: code, level: level, data: data, error: err}
 }
 
@@ -33,6 +34,7 @@ func New(code string, level Level, data map[string]any) error {
 	if data == nil {
 		data = make(map[string]any)
 	}
+
 	return &Error{code: code, level: level, data: data}
 }
 
@@ -55,7 +57,7 @@ type Error struct {
 	data  map[string]any
 }
 
-type err struct {
+type errorJSON struct {
 	Code  string         `json:"code"`
 	Level Level          `json:"level"`
 	Data  map[string]any `json:"data"`
@@ -73,11 +75,11 @@ func (e *Error) MarshalJSON() ([]byte, error) {
 		}
 	}
 
-	return json.Marshal(err{Code: e.code, Level: e.level, Data: data})
+	return json.Marshal(errorJSON{Code: e.code, Level: e.level, Data: data})
 }
 
 func (e *Error) UnmarshalJSON(data []byte) error {
-	var err *err
+	var err errorJSON
 
 	if err := json.Unmarshal(data, &err); err != nil {
 		return err
@@ -124,14 +126,7 @@ func (e *Error) Is(target error) bool {
 func (e *Error) String() string {
 	marshaledErr, err := e.MarshalJSON()
 	if err != nil {
-		return fmt.Sprintf(
-			`{"code":"failed_convert_error_to_string","level":"%s",`+
-				`"data":{"error": "%v", "origin_error":{"code":"%s","level":"%s"}}}`,
-			LevelSystem,
-			err,
-			e.Code(),
-			e.Level(),
-		)
+		return fmt.Sprintf("error: %s, code: %s, level: %s, data: %v", e.error, e.code, e.level, e.data)
 	}
 
 	return string(marshaledErr)
