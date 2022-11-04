@@ -84,7 +84,7 @@ type Selection struct {
 	MarketID         string          `json:"market_id"`
 	OddID            string          `json:"odd_id"`
 	Value            string          `json:"value"`
-	Marge            string          `json:"marge,omitempty"`
+	Marge            string          `json:"marge"`
 	Status           SelectionStatus `json:"status"`
 	TraderID         string          `json:"trader_id"`
 	MarketType       int             `json:"market_type"`
@@ -101,13 +101,8 @@ const (
 	SelectionHalfWin
 	SelectionHalfLoss
 	SelectionRefunded
-	// Deprecated: added for supports old bet, use only SelectionRefunded or SelectionRefundedManually statuses
-	SelectionOldCancelled
 	SelectionRefundedManually
 )
-
-// Deprecated: added for backward compatibility, instead use SelectionRefunded
-const SelectionCancelled = SelectionRefunded
 
 type PlayerInfo struct {
 	PlayerID    string `json:"id"`
@@ -136,9 +131,9 @@ const (
 )
 
 type Event struct {
-	Name    string      `json:"name"`
-	Time    time.Time   `json:"time"`
-	Payload interface{} `json:"payload"`
+	Name    string    `json:"name"`
+	Time    time.Time `json:"time"`
+	Payload any       `json:"payload"`
 }
 
 type MarkerType string

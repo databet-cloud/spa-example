@@ -15,11 +15,11 @@ import (
 type SportEventLazy struct {
 	MarketIter *market.Iterator `json:"-"`
 
-	ID        string                 `json:"id"`
-	Meta      map[string]interface{} `json:"meta"`
-	Fixture   fixture.Fixture        `json:"fixture"`
-	BetStop   bool                   `json:"bet_stop"`
-	UpdatedAt time.Time              `json:"updated_at"`
+	ID        string          `json:"id"`
+	Meta      map[string]any  `json:"meta"`
+	Fixture   fixture.Fixture `json:"fixture"`
+	BetStop   bool            `json:"bet_stop"`
+	UpdatedAt time.Time       `json:"updated_at"`
 }
 
 func (se *SportEventLazy) UnmarshalJSON(data []byte) error {

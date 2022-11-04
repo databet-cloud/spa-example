@@ -1,7 +1,7 @@
 package mts
 
 import (
-	apierror "github.com/databet-cloud/databet-go-sdk/pkg/error"
+	"github.com/databet-cloud/databet-go-sdk/pkg/apierror"
 	"github.com/databet-cloud/databet-go-sdk/pkg/restriction"
 )
 

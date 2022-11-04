@@ -70,15 +70,15 @@ func (c Markets) Has(id string) bool {
 }
 
 type Market struct {
-	ID          string                 `json:"id"`
-	Template    string                 `json:"template"`
-	Status      Status                 `json:"status"`
-	Odds        Odds                   `json:"odds"`
-	TypeID      int                    `json:"type_id"`
-	Specifiers  map[string]string      `json:"specifiers"`
-	IsDefective bool                   `json:"is_defective"`
-	Meta        map[string]interface{} `json:"meta"`
-	Flags       int                    `json:"flags"`
+	ID          string            `json:"id"`
+	Template    string            `json:"template"`
+	Status      Status            `json:"status"`
+	Odds        Odds              `json:"odds"`
+	TypeID      int               `json:"type_id"`
+	Specifiers  map[string]string `json:"specifiers"`
+	IsDefective bool              `json:"is_defective"`
+	Meta        map[string]any    `json:"meta"`
+	Flags       int               `json:"flags"`
 }
 
 func (m Market) Clone() Market {

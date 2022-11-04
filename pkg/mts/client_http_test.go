@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
-	apierror "github.com/databet-cloud/databet-go-sdk/pkg/error"
+	"github.com/databet-cloud/databet-go-sdk/pkg/apierror"
 	"github.com/databet-cloud/databet-go-sdk/pkg/mts"
 	"github.com/databet-cloud/databet-go-sdk/pkg/mts/mocks"
 	"github.com/databet-cloud/databet-go-sdk/pkg/restriction"
@@ -31,7 +31,7 @@ type reqMatcher struct {
 	expectedReq *http.Request
 }
 
-func (r reqMatcher) Matches(x interface{}) bool {
+func (r reqMatcher) Matches(x any) bool {
 	actualReq, ok := x.(*http.Request)
 	if !ok {
 		return false
@@ -515,7 +515,7 @@ func (s *ClientHTTPTestSuite) TestGetRestrictions() {
 			expected: []restriction.Restriction{
 				{
 					Type: restriction.MaxBet,
-					Context: map[string]interface{}{
+					Context: map[string]any{
 						restriction.CtxKeyMaxBet: "240.96",
 					},
 				},

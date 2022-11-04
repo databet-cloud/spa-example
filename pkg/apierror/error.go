@@ -22,29 +22,29 @@ func Convert(err error) *Error {
 	return e
 }
 
-func Wrap(err error, code string, level Level, data map[string]interface{}) error {
+func Wrap(err error, code string, level Level, data map[string]any) error {
 	if data == nil {
-		data = make(map[string]interface{})
+		data = make(map[string]any)
 	}
 	return &Error{code: code, level: level, data: data, error: err}
 }
 
-func New(code string, level Level, data map[string]interface{}) error {
+func New(code string, level Level, data map[string]any) error {
 	if data == nil {
-		data = make(map[string]interface{})
+		data = make(map[string]any)
 	}
 	return &Error{code: code, level: level, data: data}
 }
 
-func NewUser(code string, data map[string]interface{}) error {
+func NewUser(code string, data map[string]any) error {
 	return New(code, LevelUser, data)
 }
 
-func NewSystem(code string, data map[string]interface{}) error {
+func NewSystem(code string, data map[string]any) error {
 	return New(code, LevelSystem, data)
 }
 
-func NewUnknown(err error, data map[string]interface{}) error {
+func NewUnknown(err error, data map[string]any) error {
 	return Wrap(err, CodeUnknown, LevelSystem, data)
 }
 
@@ -52,13 +52,13 @@ type Error struct {
 	error error
 	code  string
 	level Level
-	data  map[string]interface{}
+	data  map[string]any
 }
 
 type err struct {
-	Code  string                 `json:"code"`
-	Level Level                  `json:"level"`
-	Data  map[string]interface{} `json:"data"`
+	Code  string         `json:"code"`
+	Level Level          `json:"level"`
+	Data  map[string]any `json:"data"`
 }
 
 func (e *Error) MarshalJSON() ([]byte, error) {
@@ -86,7 +86,7 @@ func (e *Error) UnmarshalJSON(data []byte) error {
 	e.code = err.Code
 	e.level = err.Level
 	if err.Data == nil {
-		err.Data = make(map[string]interface{})
+		err.Data = make(map[string]any)
 	}
 	e.data = err.Data
 
@@ -101,7 +101,7 @@ func (e *Error) Level() Level {
 	return e.level
 }
 
-func (e *Error) Data() map[string]interface{} {
+func (e *Error) Data() map[string]any {
 	return e.data
 }
 

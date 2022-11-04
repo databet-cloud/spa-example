@@ -62,10 +62,10 @@ const (
 )
 
 type Restriction struct {
-	Type    Type                   `json:"type"`
-	Context map[string]interface{} `json:"context"`
+	Type    Type           `json:"type"`
+	Context map[string]any `json:"context"`
 }
 
-func NewRestriction(restrictionType Type, context map[string]interface{}) Restriction {
+func NewRestriction(restrictionType Type, context map[string]any) Restriction {
 	return Restriction{Type: restrictionType, Context: context}
 }
