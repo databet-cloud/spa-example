@@ -10,7 +10,6 @@ const (
 	LocaleEnglish         Locale = "en"
 	LocaleEnglishCanadian Locale = "en_CA"
 	LocaleRussian         Locale = "ru"
-	LocaleRussianRF       Locale = "ru_RF"
 	LocalePortuguese      Locale = "pt"
 	LocaleBrazilian       Locale = "pt_BR"
 	LocaleChinese         Locale = "zh"
