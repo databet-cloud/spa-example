@@ -21,13 +21,13 @@ func NewMarketFilters() *MarketFilters {
 
 func (f *MarketFilters) WithSportIDs(sportIDs ...string) *MarketFilters {
 	newFilters := *f
-	newFilters.SportIds = sportIDs
+	newFilters.SportIds = append(newFilters.SportIds, sportIDs...)
 	return &newFilters
 }
 
 func (f *MarketFilters) WithTags(tags ...string) *MarketFilters {
 	newFilters := *f
-	newFilters.Tags = tags
+	newFilters.Tags = append(newFilters.Tags, tags...)
 	return &newFilters
 }
 
