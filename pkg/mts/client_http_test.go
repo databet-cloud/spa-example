@@ -234,13 +234,13 @@ func (s *ClientHTTPTestSuite) TestCalculateCashOut() {
 			httpResp: s.makeResponse(http.StatusOK, "calculate-cash-out/response-success.json"),
 			expected: &mts.CalculateCashOutResponse{
 				Amount: &mts.CashOutAmount{
-					RefundAmount:    "refund1",
-					MinAmount:       "min1",
-					MinRefundAmount: "min_refund1",
-					MaxAmount:       "max1",
-					MaxRefundAmount: "max_refund1",
+					RefundAmount:    "10.01",
+					MinAmount:       "10",
+					MinRefundAmount: "10",
+					MaxAmount:       "20.01",
+					MaxRefundAmount: "20.01",
 					Ranges: []mts.CashOutRange{
-						{FromAmount: "from1", ToAmount: "to1", RefundRatio: "ratio1"},
+						{FromAmount: "10.1", ToAmount: "20.1", RefundRatio: "1.5"},
 					},
 				},
 				Restrictions: nil,
