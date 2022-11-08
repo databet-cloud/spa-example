@@ -11,7 +11,6 @@ import (
 
 	"github.com/bytedance/sonic"
 
-	"github.com/databet-cloud/databet-go-sdk/pkg/apierror"
 	"github.com/databet-cloud/databet-go-sdk/pkg/restriction"
 )
 
@@ -53,7 +52,7 @@ func (c *ClientHTTP) PlaceBet(ctx context.Context, req *PlaceBetRequest) (*Place
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode == http.StatusForbidden {
-		return nil, apierror.NewUser(ErrCodeAccessForIPDenied, nil)
+		return nil, ErrAccessForIPDenied
 	}
 
 	var resp placeBetResponse
@@ -64,7 +63,7 @@ func (c *ClientHTTP) PlaceBet(ctx context.Context, req *PlaceBetRequest) (*Place
 	}
 
 	if resp.Error != nil {
-		return nil, resp.Error
+		return nil, c.convertApiErr(resp.Error)
 	}
 
 	return &PlaceBetResponse{
@@ -97,7 +96,7 @@ func (c *ClientHTTP) DeclineBet(ctx context.Context, req *DeclineBetRequest) err
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode == http.StatusForbidden {
-		return apierror.NewUser(ErrCodeAccessForIPDenied, nil)
+		return ErrAccessForIPDenied
 	}
 
 	if httpResp.StatusCode == http.StatusNoContent {
@@ -112,7 +111,7 @@ func (c *ClientHTTP) DeclineBet(ctx context.Context, req *DeclineBetRequest) err
 	}
 
 	if resp.Error != nil {
-		return resp.Error
+		return c.convertApiErr(resp.Error)
 	}
 
 	return nil
@@ -142,7 +141,7 @@ func (c *ClientHTTP) CalculateCashOut(ctx context.Context, req *CalculateCashOut
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode == http.StatusForbidden {
-		return nil, apierror.NewUser(ErrCodeAccessForIPDenied, nil)
+		return nil, ErrAccessForIPDenied
 	}
 
 	var resp calculateCashOutResponse
@@ -153,7 +152,7 @@ func (c *ClientHTTP) CalculateCashOut(ctx context.Context, req *CalculateCashOut
 	}
 
 	if resp.Error != nil {
-		return nil, resp.Error
+		return nil, c.convertApiErr(resp.Error)
 	}
 
 	return &CalculateCashOutResponse{
@@ -189,7 +188,7 @@ func (c *ClientHTTP) PlaceCashOutOrder(
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode == http.StatusForbidden {
-		return nil, apierror.NewUser(ErrCodeAccessForIPDenied, nil)
+		return nil, ErrAccessForIPDenied
 	}
 
 	var resp placeCashOutOrderResponse
@@ -205,7 +204,7 @@ func (c *ClientHTTP) PlaceCashOutOrder(
 	}
 
 	if resp.Error != nil {
-		return nil, resp.Error
+		return nil, c.convertApiErr(resp.Error)
 	}
 
 	return &PlaceCashOutOrderResponse{
@@ -239,7 +238,7 @@ func (c *ClientHTTP) CancelCashOutOrder(ctx context.Context, req *CancelCashOutO
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode == http.StatusForbidden {
-		return apierror.NewUser(ErrCodeAccessForIPDenied, nil)
+		return ErrAccessForIPDenied
 	}
 
 	if httpResp.StatusCode == http.StatusNoContent {
@@ -254,7 +253,7 @@ func (c *ClientHTTP) CancelCashOutOrder(ctx context.Context, req *CancelCashOutO
 	}
 
 	if resp.Error != nil {
-		return resp.Error
+		return c.convertApiErr(resp.Error)
 	}
 
 	return nil
@@ -294,7 +293,7 @@ func (c *ClientHTTP) GetRestrictions(ctx context.Context, req *GetRestrictionsRe
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode == http.StatusForbidden {
-		return nil, apierror.NewUser(ErrCodeAccessForIPDenied, nil)
+		return nil, ErrAccessForIPDenied
 	}
 
 	var resp getRestrictionsResponse
@@ -310,7 +309,7 @@ func (c *ClientHTTP) GetRestrictions(ctx context.Context, req *GetRestrictionsRe
 	}
 
 	if resp.Error != nil {
-		return nil, resp.Error
+		return nil, c.convertApiErr(resp.Error)
 	}
 
 	return resp.Restrictions, nil
@@ -343,7 +342,7 @@ func (c *ClientHTTP) GetMaxBet(ctx context.Context, req *GetMaxBetRequest) (stri
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode == http.StatusForbidden {
-		return "", apierror.NewUser(ErrCodeAccessForIPDenied, nil)
+		return "", ErrAccessForIPDenied
 	}
 
 	var resp getMaxBetResponse
@@ -354,8 +353,25 @@ func (c *ClientHTTP) GetMaxBet(ctx context.Context, req *GetMaxBetRequest) (stri
 	}
 
 	if resp.Error != nil {
-		return "", resp.Error
+		return "", c.convertApiErr(resp.Error)
 	}
 
 	return resp.MaxBet, nil
+}
+
+func (c *ClientHTTP) convertApiErr(err *apiError) error {
+	switch err.Code {
+	case errCodeAuthInvalidCertificate:
+		return ErrInvalidCertificate
+	case errCodeInvalidRequest:
+		return fmt.Errorf("%w, extra data: %v", ErrBadRequest, err.Data)
+	case errCodeUnknownSportEvent:
+		return fmt.Errorf("%w, extra data: %v", ErrUnknownSportEvent, err.Data)
+	case errCodeUnknownMarket:
+		return fmt.Errorf("%w, extra data: %v", ErrUnknownMarket, err.Data)
+	case errCodeInternalError:
+		return fmt.Errorf("%w, extra data: %v", ErrInternal, err.Data)
+	default:
+		return fmt.Errorf("%w, extra data: %v", ErrUnknown, err.Data)
+	}
 }

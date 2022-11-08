@@ -18,7 +18,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/databet-cloud/databet-go-sdk/pkg/apierror"
 	"github.com/databet-cloud/databet-go-sdk/pkg/mts"
 	"github.com/databet-cloud/databet-go-sdk/pkg/mts/mocks"
 	"github.com/databet-cloud/databet-go-sdk/pkg/restriction"
@@ -125,16 +124,28 @@ func (s *ClientHTTPTestSuite) TestPlaceBet() {
 			},
 		},
 		{
-			name:        "api error",
+			name:        "bad request error",
+			input:       rawPlaceBetReq,
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-bad-request-response.json"),
+			expectedErr: mts.ErrBadRequest,
+		},
+		{
+			name:        "certificate error",
+			input:       rawPlaceBetReq,
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-certificate-response.json"),
+			expectedErr: mts.ErrInvalidCertificate,
+		},
+		{
+			name:        "unknown api error",
 			input:       rawPlaceBetReq,
 			httpResp:    s.makeResponse(http.StatusBadRequest, "error-response.json"),
-			expectedErr: apierror.NewUser("test.error", nil),
+			expectedErr: mts.ErrUnknown,
 		},
 		{
 			name:        "ip forbidden",
 			input:       rawPlaceBetReq,
 			httpResp:    s.makeResponse(http.StatusForbidden, ""),
-			expectedErr: apierror.NewUser(mts.ErrCodeAccessForIPDenied, nil),
+			expectedErr: mts.ErrAccessForIPDenied,
 		},
 	}
 
@@ -173,16 +184,28 @@ func (s *ClientHTTPTestSuite) TestDeclineBet() {
 			httpResp: s.makeResponse(http.StatusNoContent, ""),
 		},
 		{
-			name:        "api error",
+			name:        "bad request error",
+			input:       []byte(`{"bet_id": "bet1", "reason": "test"}`),
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-bad-request-response.json"),
+			expectedErr: mts.ErrBadRequest,
+		},
+		{
+			name:        "certificate error",
+			input:       []byte(`{"bet_id": "bet1", "reason": "test"}`),
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-certificate-response.json"),
+			expectedErr: mts.ErrInvalidCertificate,
+		},
+		{
+			name:        "unknown api error",
 			input:       []byte(`{"bet_id": "bet1", "reason": "test"}`),
 			httpResp:    s.makeResponse(http.StatusBadRequest, "error-response.json"),
-			expectedErr: apierror.NewUser("test.error", nil),
+			expectedErr: mts.ErrUnknown,
 		},
 		{
 			name:        "ip forbidden",
 			input:       []byte(`{"bet_id": "bet1", "reason": "test"}`),
 			httpResp:    s.makeResponse(http.StatusForbidden, ""),
-			expectedErr: apierror.NewUser(mts.ErrCodeAccessForIPDenied, nil),
+			expectedErr: mts.ErrAccessForIPDenied,
 		},
 	}
 
@@ -255,16 +278,28 @@ func (s *ClientHTTPTestSuite) TestCalculateCashOut() {
 			},
 		},
 		{
-			name:        "api error",
+			name:        "bad request error",
+			input:       defaultReq,
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-bad-request-response.json"),
+			expectedErr: mts.ErrBadRequest,
+		},
+		{
+			name:        "certificate error",
+			input:       defaultReq,
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-certificate-response.json"),
+			expectedErr: mts.ErrInvalidCertificate,
+		},
+		{
+			name:        "unknown api error",
 			input:       defaultReq,
 			httpResp:    s.makeResponse(http.StatusBadRequest, "error-response.json"),
-			expectedErr: apierror.NewUser("test.error", nil),
+			expectedErr: mts.ErrUnknown,
 		},
 		{
 			name:        "ip forbidden",
 			input:       defaultReq,
 			httpResp:    s.makeResponse(http.StatusForbidden, ""),
-			expectedErr: apierror.NewUser(mts.ErrCodeAccessForIPDenied, nil),
+			expectedErr: mts.ErrAccessForIPDenied,
 		},
 	}
 
@@ -363,16 +398,40 @@ func (s *ClientHTTPTestSuite) TestPlaceCashOutOrder() {
 			},
 		},
 		{
-			name:        "api error",
+			name:        "bad request error",
+			input:       defaultReq,
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-bad-request-response.json"),
+			expectedErr: mts.ErrBadRequest,
+		},
+		{
+			name:        "certificate error",
+			input:       defaultReq,
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-certificate-response.json"),
+			expectedErr: mts.ErrInvalidCertificate,
+		},
+		{
+			name:        "bad request error",
+			input:       defaultReq,
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-bad-request-response.json"),
+			expectedErr: mts.ErrBadRequest,
+		},
+		{
+			name:        "certificate error",
+			input:       defaultReq,
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-certificate-response.json"),
+			expectedErr: mts.ErrInvalidCertificate,
+		},
+		{
+			name:        "unknown api error",
 			input:       defaultReq,
 			httpResp:    s.makeResponse(http.StatusBadRequest, "error-response.json"),
-			expectedErr: apierror.NewUser("test.error", nil),
+			expectedErr: mts.ErrUnknown,
 		},
 		{
 			name:        "ip forbidden",
 			input:       defaultReq,
 			httpResp:    s.makeResponse(http.StatusForbidden, ""),
-			expectedErr: apierror.NewUser(mts.ErrCodeAccessForIPDenied, nil),
+			expectedErr: mts.ErrAccessForIPDenied,
 		},
 	}
 
@@ -425,16 +484,28 @@ func (s *ClientHTTPTestSuite) TestCancelCashOutOrder() {
 			httpResp: s.makeResponse(http.StatusOK, "place-cash-out-order/response-success.json"),
 		},
 		{
-			name:        "api error",
+			name:        "bad request error",
+			input:       defaultReq,
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-bad-request-response.json"),
+			expectedErr: mts.ErrBadRequest,
+		},
+		{
+			name:        "certificate error",
+			input:       defaultReq,
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-certificate-response.json"),
+			expectedErr: mts.ErrInvalidCertificate,
+		},
+		{
+			name:        "unknown api error",
 			input:       defaultReq,
 			httpResp:    s.makeResponse(http.StatusBadRequest, "error-response.json"),
-			expectedErr: apierror.NewUser("test.error", nil),
+			expectedErr: mts.ErrUnknown,
 		},
 		{
 			name:        "ip forbidden",
 			input:       defaultReq,
 			httpResp:    s.makeResponse(http.StatusForbidden, ""),
-			expectedErr: apierror.NewUser(mts.ErrCodeAccessForIPDenied, nil),
+			expectedErr: mts.ErrAccessForIPDenied,
 		},
 	}
 
@@ -549,18 +620,33 @@ func (s *ClientHTTPTestSuite) TestGetRestrictions() {
 			},
 		},
 		{
-			name:        "api error",
+			name:        "bad request error",
+			input:       defaultReq,
+			queryParams: defaultQueryParams,
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-bad-request-response.json"),
+			expectedErr: mts.ErrBadRequest,
+		},
+		{
+			name:        "certificate error",
+			input:       defaultReq,
+			queryParams: defaultQueryParams,
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-certificate-response.json"),
+			expectedErr: mts.ErrInvalidCertificate,
+		},
+
+		{
+			name:        "unknown api error",
 			input:       defaultReq,
 			queryParams: defaultQueryParams,
 			httpResp:    s.makeResponse(http.StatusBadRequest, "error-response.json"),
-			expectedErr: apierror.NewUser("test.error", nil),
+			expectedErr: mts.ErrUnknown,
 		},
 		{
 			name:        "ip forbidden",
 			input:       defaultReq,
 			queryParams: defaultQueryParams,
 			httpResp:    s.makeResponse(http.StatusForbidden, ""),
-			expectedErr: apierror.NewUser(mts.ErrCodeAccessForIPDenied, nil),
+			expectedErr: mts.ErrAccessForIPDenied,
 		},
 	}
 
@@ -631,18 +717,32 @@ func (s *ClientHTTPTestSuite) TestGetMaxBet() {
 			expected:    "240.96",
 		},
 		{
-			name:        "api error",
+			name:        "bad request error",
+			input:       defaultReq,
+			queryParams: defaultQueryParams,
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-bad-request-response.json"),
+			expectedErr: mts.ErrBadRequest,
+		},
+		{
+			name:        "certificate error",
+			input:       defaultReq,
+			queryParams: defaultQueryParams,
+			httpResp:    s.makeResponse(http.StatusBadRequest, "error-certificate-response.json"),
+			expectedErr: mts.ErrInvalidCertificate,
+		},
+		{
+			name:        "unknown api error",
 			input:       defaultReq,
 			queryParams: defaultQueryParams,
 			httpResp:    s.makeResponse(http.StatusBadRequest, "error-response.json"),
-			expectedErr: apierror.NewUser("test.error", nil),
+			expectedErr: mts.ErrUnknown,
 		},
 		{
 			name:        "ip forbidden",
 			input:       defaultReq,
 			queryParams: defaultQueryParams,
 			httpResp:    s.makeResponse(http.StatusForbidden, ""),
-			expectedErr: apierror.NewUser(mts.ErrCodeAccessForIPDenied, nil),
+			expectedErr: mts.ErrAccessForIPDenied,
 		},
 	}
 

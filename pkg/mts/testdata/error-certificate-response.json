@@ -1,0 +1,6 @@
+{
+  "error": {
+    "level": "system",
+    "code": "AUTH_INVALID_CERTIFICATE"
+  }
+}
