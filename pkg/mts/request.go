@@ -38,7 +38,7 @@ type DeclineBetRequest struct {
 
 type CalculateCashOutRequest struct {
 	BetID      string             `json:"-"`
-	Amount     CashOutMoney       `json:"amount"`
+	Amount     Money              `json:"amount"`
 	Selections []CashOutSelection `json:"selections"`
 }
 
@@ -59,8 +59,8 @@ type DeclineCashOutOrderRequest struct {
 type PlaceCashOutOrderRequest struct {
 	ID           string             `json:"id"`
 	BetID        string             `json:"-"`
-	Amount       CashOutMoney       `json:"amount"`
-	RefundAmount CashOutMoney       `json:"refund_amount"`
+	Amount       Money              `json:"amount"`
+	RefundAmount Money              `json:"refund_amount"`
 	CreatedAt    string             `json:"created_at"`
 	Selections   []CashOutSelection `json:"selections"`
 }

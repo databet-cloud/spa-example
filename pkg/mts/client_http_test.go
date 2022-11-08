@@ -210,7 +210,7 @@ func (s *ClientHTTPTestSuite) TestDeclineBet() {
 func (s *ClientHTTPTestSuite) TestCalculateCashOut() {
 	defaultReq := &mts.CalculateCashOutRequest{
 		BetID:  "bet1",
-		Amount: mts.CashOutMoney{Value: "100", CurrencyCode: "USD"},
+		Amount: mts.Money{Value: "100", CurrencyCode: "USD"},
 		Selections: []mts.CashOutSelection{
 			{
 				SportEventID: "sportEvent1",
@@ -298,8 +298,8 @@ func (s *ClientHTTPTestSuite) TestPlaceCashOutOrder() {
 	defaultReq := &mts.PlaceCashOutOrderRequest{
 		ID:           "order1",
 		BetID:        "bet1",
-		Amount:       mts.CashOutMoney{Value: "100", CurrencyCode: "EUR"},
-		RefundAmount: mts.CashOutMoney{Value: "20", CurrencyCode: "EUR"},
+		Amount:       mts.Money{Value: "100", CurrencyCode: "EUR"},
+		RefundAmount: mts.Money{Value: "20", CurrencyCode: "EUR"},
 		CreatedAt:    time.Unix(1, 0).UTC().String(),
 		Selections: []mts.CashOutSelection{
 			{
