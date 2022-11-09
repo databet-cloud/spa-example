@@ -249,17 +249,13 @@ func (c *ClientHTTP) FindSportByID(ctx context.Context, sportID string) (*Sport,
 	return resp.Sport, nil
 }
 
-// GetAllSports finds all sports, tags is an optional argument.
-func (c *ClientHTTP) GetAllSports(ctx context.Context, tags ...string) ([]Sport, error) {
+func (c *ClientHTTP) FindSportsByFilters(ctx context.Context, filters *SportFilters) ([]Sport, error) {
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, c.sharedResourceURL+"/sports", http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("create http request: %w", err)
 	}
 
-	if len(tags) > 0 {
-		queryParams := url.Values{"tags[]": tags}
-		httpReq.URL.RawQuery = queryParams.Encode()
-	}
+	httpReq.URL.RawQuery = filters.ToQueryParams().Encode()
 
 	httpResp, err := c.httpClient.Do(httpReq)
 	if err != nil {

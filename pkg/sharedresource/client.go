@@ -10,6 +10,6 @@ type Client interface {
 	FindLocalizedMarketsByFilters(ctx context.Context, locale Locale, filters *MarketFilters) ([]MarketLocalized, error)
 
 	FindSportByID(ctx context.Context, sportID string) (*Sport, error)
-	GetAllSports(ctx context.Context, tags ...string) ([]Sport, error)
+	FindSportsByFilters(ctx context.Context, filters *SportFilters) ([]Sport, error)
 	GetAllLocalizedSports(ctx context.Context, locale Locale, ids ...string) ([]SportLocalized, error)
 }
