@@ -6,13 +6,6 @@ import (
 	"github.com/databet-cloud/databet-go-sdk/pkg/restriction"
 )
 
-type CashOutSelection struct {
-	SportEventID string  `json:"sport_event_id"`
-	MarketID     string  `json:"market_id"`
-	OddID        string  `json:"odd_id"`
-	Value        float64 `json:"value,string"`
-}
-
 type CashOutOrderSelection struct {
 	OddID        string  `json:"odd_id"`
 	MarketID     string  `json:"market_id"`

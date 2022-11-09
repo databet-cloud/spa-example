@@ -44,6 +44,13 @@ type CalculateCashOutRequest struct {
 	Selections []CashOutSelection `json:"selections"`
 }
 
+type CashOutSelection struct {
+	SportEventID string  `json:"sport_event_id"`
+	MarketID     string  `json:"market_id"`
+	OddID        string  `json:"odd_id"`
+	Value        float64 `json:"value,string"`
+}
+
 type CancelCashOutOrderRequest struct {
 	BetID          string          `json:"foreign_id"`
 	CashOutOrderID string          `json:"cash_out_order_id"`
