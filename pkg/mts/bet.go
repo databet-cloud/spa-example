@@ -54,7 +54,9 @@ const (
 	BetStatusCodeSettled
 	BetStatusCodeUnsettled
 	BetStatusCodeRefunded
-	BetStatusCodeRefundedManually
+	// deprecated const
+	_
+	BetStatusCodeRefundedManually = 7
 )
 
 type BetStatus struct {
