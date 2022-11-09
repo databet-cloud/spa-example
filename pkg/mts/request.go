@@ -10,8 +10,9 @@ type PlaceBetRequest struct {
 	OddAcceptStrategy AcceptStrategyID           `json:"odd_accept_strategy"`
 	PlayerID          string                     `json:"player_id"`
 	ClientIP          string                     `json:"client_ip"`
-	CountryCode       string                     `json:"country_code"`
-	CreatedAt         time.Time                  `json:"created_at"`
+	// CountryCode ISO 3166-1 alpha-2
+	CountryCode string    `json:"country_code"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 type PlaceBetRequestBetType struct {
@@ -20,8 +21,9 @@ type PlaceBetRequestBetType struct {
 }
 
 type PlaceBetRequestStake struct {
-	Value        float64 `json:"value"`
-	CurrencyCode string  `json:"currency_code"`
+	Value float64 `json:"value"`
+	// CurrencyCode ISO 4217 (alfa-3)
+	CurrencyCode string `json:"currency_code"`
 }
 
 type PlaceBetRequestSelection struct {
@@ -66,10 +68,13 @@ type PlaceCashOutOrderRequest struct {
 }
 
 type GetRestrictionsRequest struct {
-	PlayerID          string
-	BetType           int
-	Selections        []RestrictionsSelection
-	SystemSizes       []int
+	PlayerID   string
+	BetType    int
+	Selections []RestrictionsSelection
+	// SystemSizes: every element in array defines odds grouping. For Singles it's always [1],
+	// for express - [len(BetPlaceRequest.Selections)], for system - user defined size.
+	SystemSizes []int
+	// CurrencyCode ISO 4217 (alfa-3)
 	CurrencyCode      string
 	OddAcceptStrategy AcceptStrategyID
 }

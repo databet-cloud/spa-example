@@ -542,12 +542,12 @@ func (s *ClientHTTPTestSuite) TestGetRestrictions() {
 			SportEventID: "sportEvent1",
 			MarketID:     "market1",
 			OddID:        "odd1",
-			Value:        "value1",
+			Value:        1.42,
 		}, {
 			SportEventID: "sportEvent2",
 			MarketID:     "market2",
 			OddID:        "odd2",
-			Value:        "value2",
+			Value:        2.42,
 		}},
 		SystemSizes:       []int{1},
 		CurrencyCode:      "USD",
@@ -563,11 +563,11 @@ func (s *ClientHTTPTestSuite) TestGetRestrictions() {
 		"selections[0][sport_event_id]": []string{"sportEvent1"},
 		"selections[0][market_id]":      []string{"market1"},
 		"selections[0][odd_id]":         []string{"odd1"},
-		"selections[0][value]":          []string{"value1"},
+		"selections[0][value]":          []string{"1.42"},
 		"selections[1][sport_event_id]": []string{"sportEvent2"},
 		"selections[1][market_id]":      []string{"market2"},
 		"selections[1][odd_id]":         []string{"odd2"},
-		"selections[1][value]":          []string{"value2"},
+		"selections[1][value]":          []string{"2.42"},
 	}
 
 	testCases := []struct {
@@ -680,12 +680,12 @@ func (s *ClientHTTPTestSuite) TestGetMaxBet() {
 			SportEventID: "sportEvent1",
 			MarketID:     "market1",
 			OddID:        "odd1",
-			Value:        "value1",
+			Value:        1.42,
 		}, {
 			SportEventID: "sportEvent2",
 			MarketID:     "market2",
 			OddID:        "odd2",
-			Value:        "value2",
+			Value:        2.42,
 		}},
 	}
 
@@ -694,11 +694,11 @@ func (s *ClientHTTPTestSuite) TestGetMaxBet() {
 		"selections[0][sport_event_id]": []string{"sportEvent1"},
 		"selections[0][market_id]":      []string{"market1"},
 		"selections[0][odd_id]":         []string{"odd1"},
-		"selections[0][value]":          []string{"value1"},
+		"selections[0][value]":          []string{"1.42"},
 		"selections[1][sport_event_id]": []string{"sportEvent2"},
 		"selections[1][market_id]":      []string{"market2"},
 		"selections[1][odd_id]":         []string{"odd2"},
-		"selections[1][value]":          []string{"value2"},
+		"selections[1][value]":          []string{"2.42"},
 	}
 
 	testCases := []struct {

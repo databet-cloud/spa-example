@@ -36,7 +36,9 @@ const (
 
 type BetType struct {
 	Code BetTypeCode `json:"code"`
-	Size []int       `json:"size"`
+	// Size: every element in array defines odds grouping. For Singles it's always [1],
+	// for express - [len(BetPlaceRequest.Selections)], for system - user defined size.
+	Size []int `json:"size"`
 }
 
 func NewBetType(code BetTypeCode, size []int) BetType {
@@ -61,7 +63,8 @@ type BetStatus struct {
 }
 
 type Money struct {
-	Value        string `json:"value"`
+	Value string `json:"value"`
+	// CurrencyCode ISO 4217 (alfa-3)
 	CurrencyCode string `json:"currency_code"`
 }
 
@@ -79,16 +82,17 @@ func NewMultiMoney(base Money, origin Money) MultiMoney {
 }
 
 type Selection struct {
-	SportEventIsLive bool            `json:"sport_event_is_live"`
-	SportEventID     string          `json:"sport_event_id"`
-	MarketID         string          `json:"market_id"`
-	OddID            string          `json:"odd_id"`
-	Value            float64         `json:"value,string"`
-	Marge            float64         `json:"marge,string"`
-	Status           SelectionStatus `json:"status"`
-	MarketType       int             `json:"market_type"`
-	SportID          string          `json:"sport_id"`
-	TournamentID     string          `json:"tournament_id"`
+	SportEventIsLive bool   `json:"sport_event_is_live"`
+	SportEventID     string `json:"sport_event_id"`
+	MarketID         string `json:"market_id"`
+	OddID            string `json:"odd_id"`
+	// Value must be greater than 1
+	Value        float64         `json:"value,string"`
+	Marge        float64         `json:"marge,string"`
+	Status       SelectionStatus `json:"status"`
+	MarketType   int             `json:"market_type"`
+	SportID      string          `json:"sport_id"`
+	TournamentID string          `json:"tournament_id"`
 }
 
 type SelectionStatus int
@@ -107,6 +111,7 @@ type PlayerInfo struct {
 	PlayerID    string `json:"id"`
 	RiskGroupID string `json:"risk_group_id"`
 	ClientIP    net.IP `json:"client_ip"`
+	// CountryCode ISO 3166-1 alpha-2
 	CountryCode string `json:"country_code"`
 }
 
@@ -362,15 +367,15 @@ const (
 )
 
 type BetStopSettingsManual struct {
-	Status     BetStopStatus `json:"status" bson:"status"`
-	AutoCancel bool          `json:"auto_cancel" bson:"auto_cancel"`
+	Status     BetStopStatus `json:"status"`
+	AutoCancel bool          `json:"auto_cancel"`
 }
 
 type BetStopSettings struct {
-	SportEventID string                `json:"sport_event_id" bson:"sport_event_id"`
-	BetStop      bool                  `json:"bet_stop" bson:"bet_stop"`
-	System       BetStopStatus         `json:"system" bson:"system"`
-	Manual       BetStopSettingsManual `json:"manual" bson:"manual"`
+	SportEventID string                `json:"sport_event_id"`
+	BetStop      bool                  `json:"bet_stop"`
+	System       BetStopStatus         `json:"system"`
+	Manual       BetStopSettingsManual `json:"manual"`
 }
 
 func NewBetStopSettings(
