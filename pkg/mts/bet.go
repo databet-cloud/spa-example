@@ -86,7 +86,6 @@ type Selection struct {
 	Value            string          `json:"value"`
 	Marge            string          `json:"marge"`
 	Status           SelectionStatus `json:"status"`
-	TraderID         string          `json:"trader_id"`
 	MarketType       int             `json:"market_type"`
 	SportID          string          `json:"sport_id"`
 	TournamentID     string          `json:"tournament_id"`
@@ -157,17 +156,16 @@ type Marker struct {
 }
 
 type PlaceContext struct {
-	Restrictions      []restriction.Restriction `json:"restrictions"`
-	PlayerLimit       *PlayerLimit              `json:"player_limit,omitempty"`
-	Fixtures          []Fixture                 `json:"fixtures"`
-	SportEventRisks   []SportEventRisk          `json:"sport_event_risk"`
-	SportEventLimits  []SportEventLimit         `json:"sport_event_limits"`
-	MarketLimits      []MarketLimit             `json:"market_limits"`
-	MaxBet            string                    `json:"max_bet"`
-	DelayMs           uint64                    `json:"delay_ms"`
-	Forks             []Fork                    `json:"forks"`
-	DataProviderTypes []SportEventDataProvider  `json:"sport_event_data_providers"`
-	BetStopSettings   []BetStopSettings         `json:"bet_stop_settings"`
+	Restrictions     []restriction.Restriction `json:"restrictions"`
+	PlayerLimit      *PlayerLimit              `json:"player_limit,omitempty"`
+	Fixtures         []Fixture                 `json:"fixtures"`
+	SportEventRisks  []SportEventRisk          `json:"sport_event_risk"`
+	SportEventLimits []SportEventLimit         `json:"sport_event_limits"`
+	MarketLimits     []MarketLimit             `json:"market_limits"`
+	MaxBet           string                    `json:"max_bet"`
+	DelayMs          uint64                    `json:"delay_ms"`
+	Forks            []Fork                    `json:"forks"`
+	BetStopSettings  []BetStopSettings         `json:"bet_stop_settings"`
 }
 
 func NewPlaceContext(
@@ -180,21 +178,19 @@ func NewPlaceContext(
 	maxBet string,
 	delayMs uint64,
 	forks []Fork,
-	dataProviderTypes []SportEventDataProvider,
 	betStopSettings []BetStopSettings,
 ) *PlaceContext {
 	return &PlaceContext{
-		Restrictions:      restrictions,
-		PlayerLimit:       playerLimit,
-		Fixtures:          fixtures,
-		SportEventRisks:   sportEventRisks,
-		SportEventLimits:  sportEventLimits,
-		MarketLimits:      marketLimits,
-		MaxBet:            maxBet,
-		DelayMs:           delayMs,
-		Forks:             forks,
-		DataProviderTypes: dataProviderTypes,
-		BetStopSettings:   betStopSettings,
+		Restrictions:     restrictions,
+		PlayerLimit:      playerLimit,
+		Fixtures:         fixtures,
+		SportEventRisks:  sportEventRisks,
+		SportEventLimits: sportEventLimits,
+		MarketLimits:     marketLimits,
+		MaxBet:           maxBet,
+		DelayMs:          delayMs,
+		Forks:            forks,
+		BetStopSettings:  betStopSettings,
 	}
 }
 
@@ -356,23 +352,6 @@ func NewMarketLimit(
 		UpdatedAt:            updatedAt,
 	}
 }
-
-type SportEventDataProvider struct {
-	SportEventID     string           `json:"sport_event_id"`
-	DataProviderType DataProviderType `json:"data_provider_type"`
-}
-
-func NewSportEventDataProvider(sportEventID string, dataProviderType DataProviderType) SportEventDataProvider {
-	return SportEventDataProvider{SportEventID: sportEventID, DataProviderType: dataProviderType}
-}
-
-type DataProviderType string
-
-const (
-	DataProviderTypeUnknown      DataProviderType = "unknown"
-	DataProviderTypeBetRadar     DataProviderType = "betradar"
-	DataProviderTypeMultiTrading DataProviderType = "multitrading"
-)
 
 type BetStopStatus string
 
