@@ -276,7 +276,7 @@ func (c *ClientHTTP) GetRestrictions(ctx context.Context, req *GetRestrictionsRe
 		query.Set(fmt.Sprintf("selections[%d][sport_event_id]", i), sel.SportEventID)
 		query.Set(fmt.Sprintf("selections[%d][market_id]", i), sel.MarketID)
 		query.Set(fmt.Sprintf("selections[%d][odd_id]", i), sel.OddID)
-		query.Set(fmt.Sprintf("selections[%d][value]", i), strconv.FormatFloat(sel.Value, 'f', 2, 64))
+		query.Set(fmt.Sprintf("selections[%d][value]", i), sel.Value.String())
 	}
 
 	for i, systemSize := range req.SystemSizes {

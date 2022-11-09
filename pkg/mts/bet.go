@@ -89,8 +89,8 @@ type Selection struct {
 	MarketID         string `json:"market_id"`
 	OddID            string `json:"odd_id"`
 	// Value must be greater than 1
-	Value        float64         `json:"value,string"`
-	Marge        float64         `json:"marge,string"`
+	Value        Decimal         `json:"value"`
+	Marge        Decimal         `json:"marge"`
 	Status       SelectionStatus `json:"status"`
 	MarketType   int             `json:"market_type"`
 	SportID      string          `json:"sport_id"`
@@ -169,7 +169,7 @@ type PlaceContext struct {
 	SportEventRisks  []SportEventRisk          `json:"sport_event_risk"`
 	SportEventLimits []SportEventLimit         `json:"sport_event_limits"`
 	MarketLimits     []MarketLimit             `json:"market_limits"`
-	MaxBet           float64                   `json:"max_bet,string"`
+	MaxBet           Decimal                   `json:"max_bet"`
 	DelayMs          DurationMS                `json:"delay_ms"`
 	Forks            []Fork                    `json:"forks"`
 	BetStopSettings  []BetStopSettings         `json:"bet_stop_settings"`
@@ -182,7 +182,7 @@ func NewPlaceContext(
 	sportEventRisks []SportEventRisk,
 	sportEventLimits []SportEventLimit,
 	marketLimits []MarketLimit,
-	maxBet float64,
+	maxBet Decimal,
 	delayMs DurationMS,
 	forks []Fork,
 	betStopSettings []BetStopSettings,
@@ -279,11 +279,11 @@ func NewFixture(id string, isLive bool) Fixture {
 
 type SportEventRisk struct {
 	SportEventID string  `json:"sport_event_id"`
-	Total        float64 `json:"total,string"`
-	Ordinar      float64 `json:"ordinar,string"`
+	Total        Decimal `json:"total"`
+	Ordinar      Decimal `json:"ordinar"`
 }
 
-func NewSportEventRisk(sportEventID string, total float64, ordinar float64) SportEventRisk {
+func NewSportEventRisk(sportEventID string, total Decimal, ordinar Decimal) SportEventRisk {
 	return SportEventRisk{SportEventID: sportEventID, Total: total, Ordinar: ordinar}
 }
 

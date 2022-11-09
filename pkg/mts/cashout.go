@@ -10,7 +10,7 @@ type CashOutOrderSelection struct {
 	OddID        string  `json:"odd_id"`
 	MarketID     string  `json:"market_id"`
 	SportEventID string  `json:"sport_event_id"`
-	Value        float64 `json:"value,string"`
+	Value        Decimal `json:"value"`
 }
 
 type CashOutOrderID string
@@ -54,16 +54,16 @@ type CalculatedCashOut struct {
 }
 
 type CashOutAmount struct {
-	RefundAmount    float64        `json:"refund_amount,string"`
-	MinAmount       float64        `json:"min_amount,string"`
-	MinRefundAmount float64        `json:"min_refund_amount,string"`
-	MaxAmount       float64        `json:"max_amount,string"`
-	MaxRefundAmount float64        `json:"max_refund_amount,string"`
+	RefundAmount    Decimal        `json:"refund_amount"`
+	MinAmount       Decimal        `json:"min_amount"`
+	MinRefundAmount Decimal        `json:"min_refund_amount"`
+	MaxAmount       Decimal        `json:"max_amount"`
+	MaxRefundAmount Decimal        `json:"max_refund_amount"`
 	Ranges          []CashOutRange `json:"ranges"`
 }
 
 type CashOutRange struct {
-	FromAmount  float64 `json:"from_amount,string"`
-	ToAmount    float64 `json:"to_amount,string"`
-	RefundRatio float64 `json:"refund_ratio,string"`
+	FromAmount  Decimal `json:"from_amount"`
+	ToAmount    Decimal `json:"to_amount"`
+	RefundRatio Decimal `json:"refund_ratio"`
 }
