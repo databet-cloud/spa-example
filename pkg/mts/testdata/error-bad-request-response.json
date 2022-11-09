@@ -1,0 +1,9 @@
+{
+  "error": {
+    "level": "user",
+    "code": "INVALID_REQUEST",
+    "data": {
+      "field1": "required"
+    }
+  }
+}

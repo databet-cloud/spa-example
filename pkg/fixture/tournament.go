@@ -9,9 +9,10 @@ import (
 )
 
 type Tournament struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	MasterID    string `json:"master_id"`
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	MasterID string `json:"master_id"`
+	// CountryCode ISO 3166-1 alpha-2
 	CountryCode string `json:"country_code"`
 }
 

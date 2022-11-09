@@ -1,0 +1,16 @@
+{
+  "amount": {
+    "refund_amount":  "10.01",
+    "min_amount": "10",
+    "min_refund_amount":  "10",
+    "max_amount": "20.01",
+    "max_refund_amount":  "20.01",
+    "ranges": [
+      {
+        "from_amount": "10.1",
+        "to_amount": "20.1",
+        "refund_ratio":  "1.5"
+      }
+    ]
+  }
+}

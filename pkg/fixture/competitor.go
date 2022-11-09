@@ -19,8 +19,9 @@ type Competitor struct {
 	TemplatePosition int    `json:"template_position"`
 	Scores           Scores `json:"scores"`
 	//
-	Name        string `json:"name"`
-	MasterID    string `json:"master_id"`
+	Name     string `json:"name"`
+	MasterID string `json:"master_id"`
+	// CountryCode ISO 3166-1 alpha-2
 	CountryCode string `json:"country_code"`
 }
 
