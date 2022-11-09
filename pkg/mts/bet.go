@@ -83,8 +83,8 @@ type Selection struct {
 	SportEventID     string          `json:"sport_event_id"`
 	MarketID         string          `json:"market_id"`
 	OddID            string          `json:"odd_id"`
-	Value            string          `json:"value"`
-	Marge            string          `json:"marge"`
+	Value            float64         `json:"value,string"`
+	Marge            float64         `json:"marge,string"`
 	Status           SelectionStatus `json:"status"`
 	MarketType       int             `json:"market_type"`
 	SportID          string          `json:"sport_id"`
@@ -162,7 +162,7 @@ type PlaceContext struct {
 	SportEventRisks  []SportEventRisk          `json:"sport_event_risk"`
 	SportEventLimits []SportEventLimit         `json:"sport_event_limits"`
 	MarketLimits     []MarketLimit             `json:"market_limits"`
-	MaxBet           string                    `json:"max_bet"`
+	MaxBet           float64                   `json:"max_bet,string"`
 	DelayMs          uint64                    `json:"delay_ms"`
 	Forks            []Fork                    `json:"forks"`
 	BetStopSettings  []BetStopSettings         `json:"bet_stop_settings"`
@@ -175,7 +175,7 @@ func NewPlaceContext(
 	sportEventRisks []SportEventRisk,
 	sportEventLimits []SportEventLimit,
 	marketLimits []MarketLimit,
-	maxBet string,
+	maxBet float64,
 	delayMs uint64,
 	forks []Fork,
 	betStopSettings []BetStopSettings,
@@ -271,12 +271,12 @@ func NewFixture(id string, isLive bool) Fixture {
 }
 
 type SportEventRisk struct {
-	SportEventID string `json:"sport_event_id"`
-	Total        string `json:"total"`
-	Ordinar      string `json:"ordinar"`
+	SportEventID string  `json:"sport_event_id"`
+	Total        float64 `json:"total,string"`
+	Ordinar      float64 `json:"ordinar,string"`
 }
 
-func NewSportEventRisk(sportEventID string, total string, ordinar string) SportEventRisk {
+func NewSportEventRisk(sportEventID string, total float64, ordinar float64) SportEventRisk {
 	return SportEventRisk{SportEventID: sportEventID, Total: total, Ordinar: ordinar}
 }
 

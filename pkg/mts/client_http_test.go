@@ -108,7 +108,7 @@ func (s *ClientHTTPTestSuite) TestPlaceBet() {
 					PlayerInfo:  mts.PlayerInfo{PlayerID: "", RiskGroupID: "", ClientIP: net.IP(nil), CountryCode: ""},
 					CreatedAt:   time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
 					Selections: []*mts.Selection{
-						{SportEventID: "1", MarketID: "1", OddID: "1", Value: "1.5", Marge: "0.06"},
+						{SportEventID: "1", MarketID: "1", OddID: "1", Value: 1.5, Marge: 0.06},
 					},
 				},
 			},
@@ -239,7 +239,7 @@ func (s *ClientHTTPTestSuite) TestCalculateCashOut() {
 				SportEventID: "sportEvent1",
 				MarketID:     "market1",
 				OddID:        "odd1",
-				Value:        "value1",
+				Value:        1.42,
 			},
 		},
 	}
@@ -257,13 +257,13 @@ func (s *ClientHTTPTestSuite) TestCalculateCashOut() {
 			httpResp: s.makeResponse(http.StatusOK, "calculate-cash-out/response-success.json"),
 			expected: &mts.CalculateCashOutResponse{
 				Amount: &mts.CashOutAmount{
-					RefundAmount:    "10.01",
-					MinAmount:       "10",
-					MinRefundAmount: "10",
-					MaxAmount:       "20.01",
-					MaxRefundAmount: "20.01",
+					RefundAmount:    10.01,
+					MinAmount:       10,
+					MinRefundAmount: 10,
+					MaxAmount:       20.01,
+					MaxRefundAmount: 20.01,
 					Ranges: []mts.CashOutRange{
-						{FromAmount: "10.1", ToAmount: "20.1", RefundRatio: "1.5"},
+						{FromAmount: 10.1, ToAmount: 20.1, RefundRatio: 1.5},
 					},
 				},
 				Restrictions: nil,
@@ -341,7 +341,7 @@ func (s *ClientHTTPTestSuite) TestPlaceCashOutOrder() {
 				SportEventID: "sportEvent1",
 				MarketID:     "market1",
 				OddID:        "odd1",
-				Value:        "value1",
+				Value:        1.42,
 			},
 		},
 	}
@@ -369,7 +369,7 @@ func (s *ClientHTTPTestSuite) TestPlaceCashOutOrder() {
 					PlayerInfo:  mts.PlayerInfo{PlayerID: "", RiskGroupID: "", ClientIP: net.IP(nil), CountryCode: ""},
 					CreatedAt:   time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
 					Selections: []*mts.Selection{
-						{SportEventID: "1", MarketID: "1", OddID: "1", Value: "1.5", Marge: "0.06"},
+						{SportEventID: "1", MarketID: "1", OddID: "1", Value: 1.5, Marge: 0.06},
 					},
 				},
 				CashOutOrder: &mts.CashOutOrder{
@@ -384,7 +384,7 @@ func (s *ClientHTTPTestSuite) TestPlaceCashOutOrder() {
 					},
 					CreatedAt: mustParseTime(s.T(), "2006-01-02T15:04:05+07:00"),
 					Selections: []mts.CashOutOrderSelection{
-						{OddID: "1", MarketID: "1", SportEventID: "1", Value: "8"},
+						{OddID: "1", MarketID: "1", SportEventID: "1", Value: 8},
 					},
 				},
 			},
@@ -706,7 +706,7 @@ func (s *ClientHTTPTestSuite) TestGetMaxBet() {
 		input       *mts.GetMaxBetRequest
 		queryParams url.Values
 		httpResp    *http.Response
-		expected    string
+		expected    float64
 		expectedErr error
 	}{
 		{
@@ -714,7 +714,7 @@ func (s *ClientHTTPTestSuite) TestGetMaxBet() {
 			input:       defaultReq,
 			queryParams: defaultQueryParams,
 			httpResp:    s.makeResponse(http.StatusOK, "max-bet/response-success.json"),
-			expected:    "240.96",
+			expected:    240.96,
 		},
 		{
 			name:        "bad request error",

@@ -15,5 +15,5 @@ type Client interface {
 	CancelCashOutOrder(ctx context.Context, req *CancelCashOutOrderRequest) error
 
 	GetRestrictions(ctx context.Context, req *GetRestrictionsRequest) ([]restriction.Restriction, error)
-	GetMaxBet(ctx context.Context, req *GetMaxBetRequest) (string, error)
+	GetMaxBet(ctx context.Context, req *GetMaxBetRequest) (float64, error)
 }

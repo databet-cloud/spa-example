@@ -315,10 +315,10 @@ func (c *ClientHTTP) GetRestrictions(ctx context.Context, req *GetRestrictionsRe
 	return resp.Restrictions, nil
 }
 
-func (c *ClientHTTP) GetMaxBet(ctx context.Context, req *GetMaxBetRequest) (string, error) {
+func (c *ClientHTTP) GetMaxBet(ctx context.Context, req *GetMaxBetRequest) (float64, error) {
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("%s/max-bet", c.mtsURL), http.NoBody)
 	if err != nil {
-		return "", fmt.Errorf("create http request: %w", err)
+		return 0, fmt.Errorf("create http request: %w", err)
 	}
 
 	query := httpReq.URL.Query()
@@ -336,24 +336,24 @@ func (c *ClientHTTP) GetMaxBet(ctx context.Context, req *GetMaxBetRequest) (stri
 
 	httpResp, err := c.httpClient.Do(httpReq)
 	if err != nil {
-		return "", fmt.Errorf("do http request: %w", err)
+		return 0, fmt.Errorf("do http request: %w", err)
 	}
 
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode == http.StatusForbidden {
-		return "", ErrAccessForIPDenied
+		return 0, ErrAccessForIPDenied
 	}
 
 	var resp getMaxBetResponse
 
 	err = json.NewDecoder(httpResp.Body).Decode(&resp)
 	if err != nil {
-		return "", fmt.Errorf("unmarshal response: %w, status code: %s", err, httpResp.Status)
+		return 0, fmt.Errorf("unmarshal response: %w, status code: %s", err, httpResp.Status)
 	}
 
 	if resp.Error != nil {
-		return "", c.convertApiErr(resp.Error)
+		return 0, c.convertApiErr(resp.Error)
 	}
 
 	return resp.MaxBet, nil

@@ -49,6 +49,6 @@ type getRestrictionsResponse struct {
 }
 
 type getMaxBetResponse struct {
-	MaxBet string    `json:"max_bet"`
+	MaxBet float64   `json:"max_bet,string"`
 	Error  *apiError `json:"error,omitempty"`
 }
