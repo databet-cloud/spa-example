@@ -19,7 +19,7 @@ var (
 	ErrInvalidCertificate = fmt.Errorf("invalid certificate")
 	ErrUnknownSportEvent  = fmt.Errorf("unknown sport event")
 	ErrUnknownMarket      = fmt.Errorf("unknown market")
-	ErrUnknown            = fmt.Errorf("unknown  error")
+	ErrUnknown            = fmt.Errorf("unknown error")
 )
 
 type apiError struct {
