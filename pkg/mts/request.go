@@ -78,8 +78,3 @@ type GetRestrictionsRequest struct {
 	CurrencyCode      string
 	OddAcceptStrategy AcceptStrategyID
 }
-
-type GetMaxBetRequest struct {
-	PlayerID   string
-	Selections []MaxBetSelection
-}

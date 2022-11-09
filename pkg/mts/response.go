@@ -47,8 +47,3 @@ type getRestrictionsResponse struct {
 	Restrictions []restriction.Restriction `json:"restrictions,omitempty"`
 	Error        *apiError                 `json:"error,omitempty"`
 }
-
-type getMaxBetResponse struct {
-	MaxBet float64   `json:"max_bet,string"`
-	Error  *apiError `json:"error,omitempty"`
-}

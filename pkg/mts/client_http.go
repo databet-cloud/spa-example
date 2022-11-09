@@ -315,50 +315,6 @@ func (c *ClientHTTP) GetRestrictions(ctx context.Context, req *GetRestrictionsRe
 	return resp.Restrictions, nil
 }
 
-func (c *ClientHTTP) GetMaxBet(ctx context.Context, req *GetMaxBetRequest) (float64, error) {
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("%s/max-bet", c.mtsURL), http.NoBody)
-	if err != nil {
-		return 0, fmt.Errorf("create http request: %w", err)
-	}
-
-	query := httpReq.URL.Query()
-
-	query.Set("player_id", req.PlayerID)
-
-	for i, sel := range req.Selections {
-		query.Set(fmt.Sprintf("selections[%d][sport_event_id]", i), sel.SportEventID)
-		query.Set(fmt.Sprintf("selections[%d][market_id]", i), sel.MarketID)
-		query.Set(fmt.Sprintf("selections[%d][odd_id]", i), sel.OddID)
-		query.Set(fmt.Sprintf("selections[%d][value]", i), strconv.FormatFloat(sel.Value, 'f', 2, 32))
-	}
-
-	httpReq.URL.RawQuery = query.Encode()
-
-	httpResp, err := c.httpClient.Do(httpReq)
-	if err != nil {
-		return 0, fmt.Errorf("do http request: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	if httpResp.StatusCode == http.StatusForbidden {
-		return 0, ErrAccessForIPDenied
-	}
-
-	var resp getMaxBetResponse
-
-	err = json.NewDecoder(httpResp.Body).Decode(&resp)
-	if err != nil {
-		return 0, fmt.Errorf("unmarshal response: %w, status code: %s", err, httpResp.Status)
-	}
-
-	if resp.Error != nil {
-		return 0, c.convertApiErr(resp.Error)
-	}
-
-	return resp.MaxBet, nil
-}
-
 func (c *ClientHTTP) convertApiErr(err *apiError) error {
 	switch err.Code {
 	case errCodeAuthInvalidCertificate:
