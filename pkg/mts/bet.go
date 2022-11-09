@@ -168,7 +168,7 @@ type PlaceContext struct {
 	SportEventLimits []SportEventLimit         `json:"sport_event_limits"`
 	MarketLimits     []MarketLimit             `json:"market_limits"`
 	MaxBet           float64                   `json:"max_bet,string"`
-	DelayMs          uint64                    `json:"delay_ms"`
+	DelayMs          DurationMS                `json:"delay_ms"`
 	Forks            []Fork                    `json:"forks"`
 	BetStopSettings  []BetStopSettings         `json:"bet_stop_settings"`
 }
@@ -181,7 +181,7 @@ func NewPlaceContext(
 	sportEventLimits []SportEventLimit,
 	marketLimits []MarketLimit,
 	maxBet float64,
-	delayMs uint64,
+	delayMs DurationMS,
 	forks []Fork,
 	betStopSettings []BetStopSettings,
 ) *PlaceContext {
@@ -237,7 +237,7 @@ type RiskGroup struct {
 	ID                    string          `json:"id"`
 	Title                 string          `json:"title"`
 	StakeMultiplier       StakeMultiplier `json:"stake_multiplier"`
-	BetProcessingDelayMs  int             `json:"bet_processing_delay_ms"`
+	BetProcessingDelayMs  DurationMS      `json:"bet_processing_delay_ms"`
 	BetIntervalMultiplier string          `json:"bet_interval_multiplier"`
 }
 
@@ -245,7 +245,7 @@ func NewRiskGroup(
 	id string,
 	title string,
 	stakeMultiplier StakeMultiplier,
-	betProcessingDelayMs int,
+	betProcessingDelayMs DurationMS,
 	betIntervalMultiplier string,
 ) RiskGroup {
 	return RiskGroup{
@@ -310,12 +310,12 @@ func NewSportEventLimit(
 }
 
 type BetLimits struct {
-	BetIntervalMs         int `json:"interval_ms"`
-	BetIntervalMultiplier int `json:"interval_multiplier"`
-	BetDelayMs            int `json:"delay_ms"`
+	BetIntervalMs         DurationMS `json:"interval_ms"`
+	BetIntervalMultiplier int        `json:"interval_multiplier"`
+	BetDelayMs            DurationMS `json:"delay_ms"`
 }
 
-func NewBetLimits(betIntervalMs int, betIntervalMultiplier int, betDelayMs int) BetLimits {
+func NewBetLimits(betIntervalMs DurationMS, betIntervalMultiplier int, betDelayMs DurationMS) BetLimits {
 	return BetLimits{BetIntervalMs: betIntervalMs, BetIntervalMultiplier: betIntervalMultiplier, BetDelayMs: betDelayMs}
 }
 
