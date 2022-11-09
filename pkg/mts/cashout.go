@@ -20,8 +20,14 @@ type CashOutOrderSelection struct {
 	Value        string `json:"value"`
 }
 
+type CashOutOrderID string
+
+func (o CashOutOrderID) String() string {
+	return string(o)
+}
+
 type CashOutOrder struct {
-	ID           string                  `json:"id"`
+	ID           CashOutOrderID          `json:"id"`
 	BetID        string                  `json:"bet_id"`
 	Amount       MultiMoney              `json:"amount"`
 	RefundAmount MultiMoney              `json:"refund_amount"`

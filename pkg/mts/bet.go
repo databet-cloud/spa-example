@@ -8,22 +8,22 @@ import (
 )
 
 type Bet struct {
-	Version       string                  `json:"version"`
-	ID            string                  `json:"id"`
-	ForeignID     string                  `json:"foreign_id"`
-	BookmakerID   string                  `json:"bookmaker_id"`
-	Status        BetStatus               `json:"status"`
-	Type          BetType                 `json:"type"`
-	Stake         MultiMoney              `json:"stake"`
-	Refund        MultiMoney              `json:"refund"`
-	RefundBase    MultiMoney              `json:"refund_base"`
-	Selections    []*Selection            `json:"selections"`
-	PlayerInfo    PlayerInfo              `json:"player_info"`
-	CreatedAt     time.Time               `json:"created_at"`
-	Events        []Event                 `json:"events"`
-	Markers       []Marker                `json:"markers"`
-	PlaceContext  *PlaceContext           `json:"place_context,omitempty"`
-	CashOutOrders map[string]CashOutOrder `json:"cash_out_orders"`
+	Version       string                          `json:"version"`
+	ID            string                          `json:"id"`
+	ForeignID     string                          `json:"foreign_id"`
+	BookmakerID   string                          `json:"bookmaker_id"`
+	Status        BetStatus                       `json:"status"`
+	Type          BetType                         `json:"type"`
+	Stake         MultiMoney                      `json:"stake"`
+	Refund        MultiMoney                      `json:"refund"`
+	RefundBase    MultiMoney                      `json:"refund_base"`
+	Selections    []*Selection                    `json:"selections"`
+	PlayerInfo    PlayerInfo                      `json:"player_info"`
+	CreatedAt     time.Time                       `json:"created_at"`
+	Events        []Event                         `json:"events"`
+	Markers       []Marker                        `json:"markers"`
+	PlaceContext  *PlaceContext                   `json:"place_context,omitempty"`
+	CashOutOrders map[CashOutOrderID]CashOutOrder `json:"cash_out_orders"`
 }
 
 type BetTypeCode int
