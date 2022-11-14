@@ -186,6 +186,13 @@ func TestSportEventPatcher_ApplyPatches(t *testing.T) {
 		assert.NoError(t, err)
 	}
 
+	// Convert ints to floats, because various libs unmarshal num to any different
+	for k, v := range sportEvent.Meta {
+		if num, ok := v.(int64); ok {
+			sportEvent.Meta[k] = float64(num)
+		}
+	}
+
 	assert.Equal(t, expectedSportEvent, sportEvent)
 }
 

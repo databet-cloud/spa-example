@@ -7,7 +7,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/minio/simdjson-go v0.4.2
 	github.com/stretchr/testify v1.8.0
-	golang.org/x/exp v0.0.0-20221012211006-4de253d81b95
+	golang.org/x/exp v0.0.0-20221109205753-fc8884afc316
 )
 
 require (

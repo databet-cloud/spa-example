@@ -4,11 +4,12 @@
     "bo": 1,
     "game_state": "map",
     "match_format": "default",
-    "round": 5,
-    "side_away": "t",
-    "side_home": "ct",
+    "round": 21,
+    "side_away": "ct",
+    "side_home": "t",
     "state_number": 1,
-    "timer_running": false
+    "time": "0",
+    "timer_running": true
   },
   "fixture": {
     "id": "c8c0795a-0ee7-476f-95a8-d06defe97bc5",

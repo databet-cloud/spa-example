@@ -152,6 +152,20 @@ func (p *PatcherSimdJSON) ApplyPatches(sportEvent *SportEvent, rawPatches json.R
 			if err != nil {
 				return fmt.Errorf("sonic unmarshal markets: %w", err)
 			}
+		case "meta":
+			if partialPatch {
+				sportEvent.Meta[rest], err = p.rootIter.Interface()
+				if err != nil {
+					return err
+				}
+
+				continue
+			}
+
+			sportEvent.Meta, err = simdutil.MapStrAnyFromIter(p.rootIter)
+			if err != nil {
+				return fmt.Errorf("unmarshal meta: %w", err)
+			}
 		}
 	}
 
