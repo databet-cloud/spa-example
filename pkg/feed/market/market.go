@@ -38,6 +38,7 @@ func (s Status) IsValid() bool {
 	}
 }
 
+// Markets is a map with market id in its key and market as a value
 type Markets map[string]Market
 
 func (c Markets) Clone() Markets {
@@ -70,15 +71,21 @@ func (c Markets) Has(id string) bool {
 }
 
 type Market struct {
-	ID          string            `json:"id"`
-	Template    string            `json:"template"`
-	Status      Status            `json:"status"`
-	Odds        Odds              `json:"odds"`
-	TypeID      int               `json:"type_id"`
+	// ID of the market
+	ID string `json:"id"`
+	// Template is a name with specifiers, that could be replaced to format market's name
+	Template string `json:"template"`
+	Status   Status `json:"status"`
+	// Odds is the collection of all available odds for the current market
+	Odds Odds `json:"odds"`
+	// TypeID is an original id for the market, without odds in it
+	TypeID int `json:"type_id"`
+	// Specifiers is the collection of all specifiers, such as
 	Specifiers  map[string]string `json:"specifiers"`
 	IsDefective bool              `json:"is_defective"`
 	Meta        map[string]any    `json:"meta"`
-	Flags       int               `json:"flags"`
+	// Flags could be checked, using & operator, e.g.: flags & IsDefective
+	Flags int `json:"flags"`
 }
 
 func (m Market) Clone() Market {

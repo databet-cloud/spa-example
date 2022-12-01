@@ -9,10 +9,17 @@ import (
 	"github.com/databet-cloud/databet-go-sdk/internal/simdutil"
 )
 
+type PlatformType string
+
+const (
+	PlatformTypeDesktop = "desktop"
+	PlatformTypeMobile  = "mobile"
+)
+
 type Platform struct {
-	Type             string   `json:"type"`
-	AllowedCountries []string `json:"allowed_countries"`
-	Enabled          bool     `json:"enabled"`
+	Type             PlatformType `json:"type"`
+	AllowedCountries []string     `json:"allowed_countries"`
+	Enabled          bool         `json:"enabled"`
 }
 
 func (p Platform) Clone() Platform {
@@ -37,7 +44,10 @@ func (p *Platform) UnmarshalSimdJSON(obj *simdjson.Object, reuseIter *simdjson.I
 
 		switch string(name) {
 		case "type":
-			p.Type, err = simdutil.UnsafeStrFromIter(reuseIter)
+			var v string
+			v, err = simdutil.UnsafeStrFromIter(reuseIter)
+
+			p.Type = PlatformType(v)
 		case "allowed_countries":
 			array, err := reuseIter.Array(nil)
 			if err != nil {

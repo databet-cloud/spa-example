@@ -61,14 +61,18 @@ func (f *Fixture) UnmarshalSimdJSON(
 			f.ID, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "version":
 			f.Version, err = simdutil.IntFromIter(reuseIter)
-		case "owner_id":
-			f.OwnerID, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "template":
 			f.Template, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "status":
-			f.Status, err = simdutil.IntFromIter(reuseIter)
+			var v int
+			v, err = simdutil.IntFromIter(reuseIter)
+
+			f.Status = Status(v)
 		case "type":
-			f.Type, err = simdutil.IntFromIter(reuseIter)
+			var v int
+			v, err = simdutil.IntFromIter(reuseIter)
+
+			f.Type = Type(v)
 		case "sport_id":
 			f.SportID, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "tournament":
