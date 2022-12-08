@@ -71,6 +71,10 @@ func (c *ClientHTTP) GetFeedVersion(ctx context.Context, bookmakerID string) (st
 
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("status code %q isn't ok", resp.Status)
+	}
+
 	return resp.Header.Get(HeaderLastVersion), nil
 }
 
