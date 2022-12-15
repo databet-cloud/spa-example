@@ -1,4 +1,4 @@
-package sharedresource
+package api
 
 import (
 	"context"

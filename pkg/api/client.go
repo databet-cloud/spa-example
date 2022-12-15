@@ -1,6 +1,8 @@
-package sharedresource
+package api
 
-import "context"
+import (
+	"context"
+)
 
 type Client interface {
 	FindMarketByID(ctx context.Context, marketID int) (*Market, error)
