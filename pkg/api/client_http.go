@@ -48,7 +48,7 @@ func (c *ClientHTTP) FindMarketByID(ctx context.Context, marketID int) (*Market,
 
 	if httpResp.StatusCode != http.StatusOK {
 		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %s", httpResp.Status, string(rawBody))
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
 	}
 
 	var resp struct {
@@ -91,7 +91,7 @@ func (c *ClientHTTP) FindMarketsByIDs(ctx context.Context, marketIDs []int) ([]M
 
 	if httpResp.StatusCode != http.StatusOK {
 		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %s", httpResp.Status, string(rawBody))
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
 	}
 
 	var resp struct {
@@ -134,7 +134,7 @@ func (c *ClientHTTP) FindLocalizedMarketsByIDs(ctx context.Context, locale Local
 
 	if httpResp.StatusCode != http.StatusOK {
 		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %s", httpResp.Status, string(rawBody))
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
 	}
 
 	var resp struct {
@@ -171,7 +171,7 @@ func (c *ClientHTTP) FindMarketsByFilters(ctx context.Context, filters *MarketFi
 
 	if httpResp.StatusCode != http.StatusOK {
 		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %s", httpResp.Status, string(rawBody))
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
 	}
 
 	var resp struct {
@@ -208,7 +208,7 @@ func (c *ClientHTTP) FindLocalizedMarketsByFilters(ctx context.Context, locale L
 
 	if httpResp.StatusCode != http.StatusOK {
 		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %s", httpResp.Status, string(rawBody))
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
 	}
 
 	var resp struct {
@@ -238,7 +238,7 @@ func (c *ClientHTTP) FindSportByID(ctx context.Context, sportID string) (*Sport,
 
 	if httpResp.StatusCode != http.StatusOK {
 		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %s", httpResp.Status, string(rawBody))
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
 	}
 
 	var resp struct {
@@ -270,7 +270,7 @@ func (c *ClientHTTP) FindSportsByFilters(ctx context.Context, filters *SportFilt
 
 	if httpResp.StatusCode != http.StatusOK {
 		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %s", httpResp.Status, string(rawBody))
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
 	}
 
 	var resp struct {
@@ -312,7 +312,7 @@ func (c *ClientHTTP) GetAllLocalizedSports(ctx context.Context, locale Locale, i
 
 	if httpResp.StatusCode != http.StatusOK {
 		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %s", httpResp.Status, string(rawBody))
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
 	}
 
 	var resp struct {
@@ -355,7 +355,7 @@ func (c *ClientHTTP) FindTournamentByID(ctx context.Context, tournamentID string
 	}
 
 	if httpResp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("status code: %s, response body: %s", httpResp.Status, string(rawBody))
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
 	}
 
 	var resp struct {
@@ -403,7 +403,7 @@ func (c *ClientHTTP) FindLocalizedTournamentByID(ctx context.Context, locale Loc
 	}
 
 	if httpResp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("status code: %s, response body: %s", httpResp.Status, string(rawBody))
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
 	}
 
 	var resp struct {
