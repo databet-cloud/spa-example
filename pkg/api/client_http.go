@@ -375,6 +375,56 @@ func (c *ClientHTTP) FindTournamentByID(ctx context.Context, tournamentID string
 	return resp.Tournament, nil
 }
 
+func (c *ClientHTTP) FindTournamentsByIDs(ctx context.Context, tournamentIDs []string) ([]Tournament, error) {
+	httpReq, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		c.apiURL+"/tournaments/by-ids",
+		http.NoBody,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("create http request: %w", err)
+	}
+
+	httpReq.URL.RawQuery = url.Values{"ids[]": tournamentIDs}.Encode()
+
+	httpResp, err := c.httpClient.Do(httpReq)
+	if err != nil {
+		return nil, fmt.Errorf("do http request: %w", err)
+	}
+
+	defer httpResp.Body.Close()
+
+	rawBody, err := io.ReadAll(httpResp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read response body: %w", err)
+	}
+
+	if httpResp.StatusCode == http.StatusUnauthorized {
+		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
+	}
+
+	if httpResp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+	}
+
+	var resp struct {
+		Tournament []Tournament `json:"tournaments"`
+		Error      *apiError    `json:"error"`
+	}
+
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshal response: %w", err)
+	}
+
+	if resp.Error != nil {
+		return nil, c.convertApiError(resp.Error)
+	}
+
+	return resp.Tournament, nil
+}
+
 func (c *ClientHTTP) SearchTournaments(ctx context.Context, req *SearchTournamentsRequest) (*SearchTournamentsResponse, error) {
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
@@ -461,6 +511,60 @@ func (c *ClientHTTP) FindLocalizedTournamentByID(ctx context.Context, locale Loc
 	var resp struct {
 		Tournament *TournamentLocalized `json:"tournament"`
 		Error      *apiError            `json:"error"`
+	}
+
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshal response: %w", err)
+	}
+
+	if resp.Error != nil {
+		return nil, c.convertApiError(resp.Error)
+	}
+
+	return resp.Tournament, nil
+}
+
+func (c *ClientHTTP) FindLocalizedTournamentsByIDs(
+	ctx context.Context,
+	locale Locale,
+	tournamentIDs []string,
+) ([]TournamentLocalized, error) {
+	httpReq, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		c.apiURL+"/tournaments/localized/"+locale.String(),
+		http.NoBody,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("create http request: %w", err)
+	}
+
+	httpReq.URL.RawQuery = url.Values{"ids[]": tournamentIDs}.Encode()
+
+	httpResp, err := c.httpClient.Do(httpReq)
+	if err != nil {
+		return nil, fmt.Errorf("do http request: %w", err)
+	}
+
+	defer httpResp.Body.Close()
+
+	rawBody, err := io.ReadAll(httpResp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read response body: %w", err)
+	}
+
+	if httpResp.StatusCode == http.StatusUnauthorized {
+		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
+	}
+
+	if httpResp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+	}
+
+	var resp struct {
+		Tournament []TournamentLocalized `json:"tournaments"`
+		Error      *apiError             `json:"error"`
 	}
 
 	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
