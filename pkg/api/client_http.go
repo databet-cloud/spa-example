@@ -8,19 +8,23 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+
+	"github.com/bytedance/sonic"
+
+	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
 
 type ClientHTTP struct {
-	httpClient        *http.Client
-	sharedResourceURL string
+	httpClient *http.Client
+	apiURL     string
 }
 
 var _ Client = (*ClientHTTP)(nil)
 
-func NewClientHTTP(httpClient *http.Client, sharedResourceURL string) *ClientHTTP {
+func NewClientHTTP(httpClient *http.Client, apiURL string) *ClientHTTP {
 	return &ClientHTTP{
-		httpClient:        httpClient,
-		sharedResourceURL: sharedResourceURL,
+		httpClient: httpClient,
+		apiURL:     apiURL,
 	}
 }
 
@@ -28,7 +32,7 @@ func (c *ClientHTTP) FindMarketByID(ctx context.Context, marketID int) (*Market,
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.sharedResourceURL+"/markets/"+strconv.Itoa(marketID),
+		c.apiURL+"/markets/"+strconv.Itoa(marketID),
 		http.NoBody,
 	)
 	if err != nil {
@@ -63,7 +67,7 @@ func (c *ClientHTTP) FindMarketsByIDs(ctx context.Context, marketIDs []int) ([]M
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.sharedResourceURL+"/markets",
+		c.apiURL+"/markets",
 		http.NoBody,
 	)
 	if err != nil {
@@ -106,7 +110,7 @@ func (c *ClientHTTP) FindLocalizedMarketsByIDs(ctx context.Context, locale Local
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.sharedResourceURL+"/localized/markets/"+locale.String(),
+		c.apiURL+"/localized/markets/"+locale.String(),
 		http.NoBody,
 	)
 	if err != nil {
@@ -149,7 +153,7 @@ func (c *ClientHTTP) FindMarketsByFilters(ctx context.Context, filters *MarketFi
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.sharedResourceURL+"/markets",
+		c.apiURL+"/markets",
 		http.NoBody,
 	)
 	if err != nil {
@@ -186,7 +190,7 @@ func (c *ClientHTTP) FindLocalizedMarketsByFilters(ctx context.Context, locale L
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.sharedResourceURL+"/localized/markets/"+locale.String(),
+		c.apiURL+"/localized/markets/"+locale.String(),
 		http.NoBody,
 	)
 	if err != nil {
@@ -220,7 +224,7 @@ func (c *ClientHTTP) FindLocalizedMarketsByFilters(ctx context.Context, locale L
 }
 
 func (c *ClientHTTP) FindSportByID(ctx context.Context, sportID string) (*Sport, error) {
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, c.sharedResourceURL+"/sports/"+sportID, http.NoBody)
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, c.apiURL+"/sports/"+sportID, http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("create http request: %w", err)
 	}
@@ -250,7 +254,7 @@ func (c *ClientHTTP) FindSportByID(ctx context.Context, sportID string) (*Sport,
 }
 
 func (c *ClientHTTP) FindSportsByFilters(ctx context.Context, filters *SportFilters) ([]Sport, error) {
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, c.sharedResourceURL+"/sports", http.NoBody)
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, c.apiURL+"/sports", http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("create http request: %w", err)
 	}
@@ -287,7 +291,7 @@ func (c *ClientHTTP) GetAllLocalizedSports(ctx context.Context, locale Locale, i
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.sharedResourceURL+"/localized/sports/"+locale.String(),
+		c.apiURL+"/localized/sports/"+locale.String(),
 		http.NoBody,
 	)
 	if err != nil {
@@ -321,4 +325,109 @@ func (c *ClientHTTP) GetAllLocalizedSports(ctx context.Context, locale Locale, i
 	}
 
 	return resp.Sports, nil
+}
+
+func (c *ClientHTTP) FindTournamentByID(ctx context.Context, tournamentID string) (*Tournament, error) {
+	httpReq, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		c.apiURL+"/tournaments/"+tournamentID,
+		http.NoBody,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("create http request: %w", err)
+	}
+
+	httpResp, err := c.httpClient.Do(httpReq)
+	if err != nil {
+		return nil, fmt.Errorf("do http request: %w", err)
+	}
+
+	defer httpResp.Body.Close()
+
+	rawBody, err := io.ReadAll(httpResp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read response body: %w", err)
+	}
+
+	if httpResp.StatusCode == http.StatusUnauthorized {
+		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
+	}
+
+	if httpResp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status code: %s, response body: %s", httpResp.Status, string(rawBody))
+	}
+
+	var resp struct {
+		Tournament *Tournament `json:"tournament"`
+		Error      *apiError   `json:"error"`
+	}
+
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshal response: %w", err)
+	}
+
+	if resp.Error != nil {
+		return nil, c.convertApiError(resp.Error)
+	}
+
+	return resp.Tournament, nil
+}
+
+func (c *ClientHTTP) FindLocalizedTournamentByID(ctx context.Context, locale Locale, tournamentID string) (*TournamentLocalized, error) {
+	httpReq, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		c.apiURL+"/tournaments/localized/"+tournamentID+"/"+locale.String(),
+		http.NoBody,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("create http request: %w", err)
+	}
+
+	httpResp, err := c.httpClient.Do(httpReq)
+	if err != nil {
+		return nil, fmt.Errorf("do http request: %w", err)
+	}
+
+	defer httpResp.Body.Close()
+
+	rawBody, err := io.ReadAll(httpResp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read response body: %w", err)
+	}
+
+	if httpResp.StatusCode == http.StatusUnauthorized {
+		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
+	}
+
+	if httpResp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status code: %s, response body: %s", httpResp.Status, string(rawBody))
+	}
+
+	var resp struct {
+		Tournament *TournamentLocalized `json:"tournament"`
+		Error      *apiError            `json:"error"`
+	}
+
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshal response: %w", err)
+	}
+
+	if resp.Error != nil {
+		return nil, c.convertApiError(resp.Error)
+	}
+
+	return resp.Tournament, nil
+}
+
+func (c *ClientHTTP) convertApiError(err *apiError) error {
+	switch err.Code {
+	case errCodeTournamentNotFound:
+		return fmt.Errorf("tournament: %w", ErrNotFound)
+	default:
+		return fmt.Errorf("%w, extra data: %v", ErrUnknown, err.Data)
+	}
 }
