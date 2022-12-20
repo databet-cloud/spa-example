@@ -16,5 +16,7 @@ type Client interface {
 	GetAllLocalizedSports(ctx context.Context, locale Locale, ids ...string) ([]SportLocalized, error)
 
 	FindTournamentByID(ctx context.Context, tournamentID string) (*Tournament, error)
+	SearchTournaments(ctx context.Context, req *SearchTournamentsRequest) (*SearchTournamentsResponse, error)
 	FindLocalizedTournamentByID(ctx context.Context, locale Locale, tournamentID string) (*TournamentLocalized, error)
+	SearchLocalizedTournaments(ctx context.Context, locale Locale, req *SearchTournamentsRequest) (*SearchLocalizedTournamentsResponse, error)
 }

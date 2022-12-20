@@ -1,0 +1,48 @@
+{
+  "tournaments": [
+    {
+      "id": "betting:0:csaaa-esports_counter_strike-esports_counter_strike",
+      "original_id": "csaaa-esports_counter_strike",
+      "type": 1,
+      "source_id": "sourceID",
+      "duplicated": false,
+      "deactivated": false,
+      "version": "0ee56e0b-661a-4f9b-9cb7-8abf8b7fc3e7",
+      "provider_id": "betting:0",
+      "provider_version": "",
+      "sport_id": "esports_counter_strike",
+      "sport_default_params": {},
+      "country_code": "WW-AFR",
+      "organization": "",
+      "organization_id": "organizationID",
+      "logo": {
+        "file": "",
+        "url": "binary-storage-stage-betting.ginsp.net/tournaments/564px-ESL_Pro_League5a8d7358ad21b9668747145ae1bd8fd847d441215577.png"
+      },
+      "limit_groups": {
+        "prematch_id": "prematchID",
+        "live_id": "liveID"
+      },
+      "date_start": "1977-01-01T00:00:00+00:00",
+      "date_end": "1977-01-23T01:00:00+00:00",
+      "localizations": [
+        {
+          "locale": "en",
+          "name": "CSAAA",
+          "description": "123",
+          "keywords": [
+            "csaaa"
+          ]
+        }
+      ],
+      "priorities": [],
+      "updated_at": "2022-12-16T16:38:01+00:00",
+      "meta": {
+        "show_tournament_info": true,
+        "prize_pool": "100 000$",
+        "live_coverage": true
+      }
+    }
+  ],
+  "count": 5
+}
