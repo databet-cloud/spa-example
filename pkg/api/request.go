@@ -162,3 +162,102 @@ func (r *SearchTournamentsRequest) ToQueryParams() url.Values {
 
 	return values
 }
+
+type SearchPlayersRequest struct {
+	IDs                []string
+	SearchNames        []string
+	SportIDs           []string
+	Keywords           []string
+	SearchNameStrategy *SearchStrategy
+	CountryCode        *string
+	Duplicated         *bool
+	Limit              *int
+	Offset             *int
+}
+
+func (r *SearchPlayersRequest) SetIDs(ids ...string) *SearchPlayersRequest {
+	r.IDs = ids
+	return r
+}
+
+func (r *SearchPlayersRequest) SetSearchNames(searchNames ...string) *SearchPlayersRequest {
+	r.SearchNames = searchNames
+	return r
+}
+
+func (r *SearchPlayersRequest) SetSportIDs(sportIDs ...string) *SearchPlayersRequest {
+	r.SportIDs = sportIDs
+	return r
+}
+
+func (r *SearchPlayersRequest) SetKeywords(keywords ...string) *SearchPlayersRequest {
+	r.Keywords = keywords
+	return r
+}
+
+func (r *SearchPlayersRequest) SetSearchNameStrategy(searchNameStrategy SearchStrategy) *SearchPlayersRequest {
+	r.SearchNameStrategy = &searchNameStrategy
+	return r
+}
+
+func (r *SearchPlayersRequest) SetCountryCode(countryCode string) *SearchPlayersRequest {
+	r.CountryCode = &countryCode
+	return r
+}
+
+func (r *SearchPlayersRequest) SetDuplicated(duplicated bool) *SearchPlayersRequest {
+	r.Duplicated = &duplicated
+	return r
+}
+
+func (r *SearchPlayersRequest) SetLimit(limit int) *SearchPlayersRequest {
+	r.Limit = &limit
+	return r
+}
+
+func (r *SearchPlayersRequest) SetOffset(offset int) *SearchPlayersRequest {
+	r.Offset = &offset
+	return r
+}
+
+func (r *SearchPlayersRequest) ToQueryParams() url.Values {
+	values := url.Values{}
+
+	if len(r.IDs) > 0 {
+		values["ids[]"] = r.IDs
+	}
+
+	if r.SearchNames != nil {
+		values["search_strings[]"] = r.SearchNames
+	}
+
+	if r.SearchNameStrategy != nil {
+		values.Set("search_string_strategy", r.SearchNameStrategy.String())
+	}
+
+	if r.SportIDs != nil {
+		values["sport_ids[]"] = r.SportIDs
+	}
+
+	if r.CountryCode != nil {
+		values.Set("country_code", *r.CountryCode)
+	}
+
+	if r.Keywords != nil {
+		values["keywords[]"] = r.Keywords
+	}
+
+	if r.Duplicated != nil {
+		values.Set("duplicated", strconv.FormatBool(*r.Duplicated))
+	}
+
+	if r.Limit != nil {
+		values.Set("limit", strconv.Itoa(*r.Limit))
+	}
+
+	if r.Offset != nil {
+		values.Set("offset", strconv.Itoa(*r.Offset))
+	}
+
+	return values
+}

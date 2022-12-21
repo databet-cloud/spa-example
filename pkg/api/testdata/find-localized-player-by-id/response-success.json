@@ -1,0 +1,30 @@
+{
+  "player": {
+    "id": "betting:1:sr:competitor:100221",
+    "original_id": "sr:competitor:100221",
+    "type": 1,
+    "source_id": "",
+    "duplicated": false,
+    "version": "7db572ae-d443-43cf-8d59-0eedcb74bcfb",
+    "provider_id": "betting:1",
+    "provider_version": "",
+    "sport_id": "tennis",
+    "country_code": "",
+    "logo": {
+      "file": "",
+      "url": ""
+    },
+    "logo_auto_update": true,
+    "date_of_birth": "1970-01-01T00:00:00+00:00",
+    "statistics": [],
+    "locale": "en",
+    "name": "",
+    "nickname": "Romero De Avila Senise, Alberto",
+    "description": "",
+    "keywords": [
+      "romero-de-avila-senise-alberto"
+    ],
+    "updated_at": "2021-12-23T17:07:19+00:00",
+    "meta": {}
+  }
+}

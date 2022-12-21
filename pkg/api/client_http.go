@@ -635,10 +635,258 @@ func (c *ClientHTTP) SearchLocalizedTournaments(
 	return &resp.SearchLocalizedTournamentsResponse, nil
 }
 
+func (c *ClientHTTP) FindPlayerByID(ctx context.Context, playerID string) (*Player, error) {
+	httpReq, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		c.apiURL+"/players/"+playerID,
+		http.NoBody,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("create http request: %w", err)
+	}
+
+	httpResp, err := c.httpClient.Do(httpReq)
+	if err != nil {
+		return nil, fmt.Errorf("do http request: %w", err)
+	}
+
+	defer httpResp.Body.Close()
+
+	rawBody, err := io.ReadAll(httpResp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read response body: %w", err)
+	}
+
+	if httpResp.StatusCode == http.StatusUnauthorized {
+		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
+	}
+
+	if httpResp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+	}
+
+	var resp struct {
+		Player Player    `json:"player"`
+		Error  *apiError `json:"error"`
+	}
+
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshal response: %w", err)
+	}
+
+	if resp.Error != nil {
+		return nil, c.convertApiError(resp.Error)
+	}
+
+	return &resp.Player, nil
+}
+
+func (c *ClientHTTP) FindPlayersByIDs(ctx context.Context, playerIDs []string) ([]Player, error) {
+	httpReq, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		c.apiURL+"/players/by-ids",
+		http.NoBody,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("create http request: %w", err)
+	}
+
+	httpReq.URL.RawQuery = url.Values{"ids[]": playerIDs}.Encode()
+
+	httpResp, err := c.httpClient.Do(httpReq)
+	if err != nil {
+		return nil, fmt.Errorf("do http request: %w", err)
+	}
+
+	defer httpResp.Body.Close()
+
+	rawBody, err := io.ReadAll(httpResp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read response body: %w", err)
+	}
+
+	if httpResp.StatusCode == http.StatusUnauthorized {
+		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
+	}
+
+	if httpResp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+	}
+
+	var resp struct {
+		Players []Player  `json:"players"`
+		Error   *apiError `json:"error"`
+	}
+
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshal response: %w", err)
+	}
+
+	if resp.Error != nil {
+		return nil, c.convertApiError(resp.Error)
+	}
+
+	return resp.Players, nil
+}
+
+func (c *ClientHTTP) SearchPlayers(ctx context.Context, req *SearchPlayersRequest) (*SearchPlayersResponse, error) {
+	httpReq, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		c.apiURL+"/search/players",
+		http.NoBody,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("create http request: %w", err)
+	}
+
+	httpReq.URL.RawQuery = req.ToQueryParams().Encode()
+
+	httpResp, err := c.httpClient.Do(httpReq)
+	if err != nil {
+		return nil, fmt.Errorf("do http request: %w", err)
+	}
+
+	defer httpResp.Body.Close()
+
+	rawBody, err := io.ReadAll(httpResp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read response body: %w", err)
+	}
+
+	if httpResp.StatusCode == http.StatusUnauthorized {
+		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
+	}
+
+	if httpResp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+	}
+
+	var resp struct {
+		SearchPlayersResponse
+		Error *apiError `json:"error"`
+	}
+
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshal response: %w", err)
+	}
+
+	if resp.Error != nil {
+		return nil, c.convertApiError(resp.Error)
+	}
+
+	return &resp.SearchPlayersResponse, nil
+}
+
+func (c *ClientHTTP) FindLocalizedPlayerByID(ctx context.Context, locale Locale, playerID string) (*PlayerLocalized, error) {
+	httpReq, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		c.apiURL+"/players/localized/"+playerID+"/"+locale.String(),
+		http.NoBody,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("create http request: %w", err)
+	}
+
+	httpResp, err := c.httpClient.Do(httpReq)
+	if err != nil {
+		return nil, fmt.Errorf("do http request: %w", err)
+	}
+
+	defer httpResp.Body.Close()
+
+	rawBody, err := io.ReadAll(httpResp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read response body: %w", err)
+	}
+
+	if httpResp.StatusCode == http.StatusUnauthorized {
+		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
+	}
+
+	if httpResp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+	}
+
+	var resp struct {
+		Player PlayerLocalized `json:"player"`
+		Error  *apiError       `json:"error"`
+	}
+
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshal response: %w", err)
+	}
+
+	if resp.Error != nil {
+		return nil, c.convertApiError(resp.Error)
+	}
+
+	return &resp.Player, nil
+}
+
+func (c *ClientHTTP) FindLocalizedPlayersByIDs(ctx context.Context, locale Locale, playerIDs []string) ([]PlayerLocalized, error) {
+	httpReq, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		c.apiURL+"/players/localized/"+locale.String(),
+		http.NoBody,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("create http request: %w", err)
+	}
+
+	httpReq.URL.RawQuery = url.Values{"ids[]": playerIDs}.Encode()
+
+	httpResp, err := c.httpClient.Do(httpReq)
+	if err != nil {
+		return nil, fmt.Errorf("do http request: %w", err)
+	}
+
+	defer httpResp.Body.Close()
+
+	rawBody, err := io.ReadAll(httpResp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read response body: %w", err)
+	}
+
+	if httpResp.StatusCode == http.StatusUnauthorized {
+		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
+	}
+
+	if httpResp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+	}
+
+	var resp struct {
+		Players []PlayerLocalized `json:"players"`
+		Error   *apiError         `json:"error"`
+	}
+
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshal response: %w", err)
+	}
+
+	if resp.Error != nil {
+		return nil, c.convertApiError(resp.Error)
+	}
+
+	return resp.Players, nil
+}
+
 func (c *ClientHTTP) convertApiError(err *apiError) error {
 	switch err.Code {
 	case errCodeTournamentNotFound:
 		return fmt.Errorf("tournament: %w", ErrNotFound)
+	case errCodePlayerNotFound:
+		return fmt.Errorf("player: %w", ErrNotFound)
 	default:
 		return fmt.Errorf("%w, extra data: %v", ErrUnknown, err.Data)
 	}

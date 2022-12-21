@@ -1,6 +1,8 @@
 package api_test
 
-import "github.com/databet-cloud/databet-go-sdk/pkg/api"
+import (
+	"github.com/databet-cloud/databet-go-sdk/pkg/api"
+)
 
 var DefaultTournament = api.Tournament{
 	ID:             "betting:0:csaaa-esports_counter_strike-esports_counter_strike",
@@ -84,4 +86,54 @@ var DefaultLocalizedTournament = api.TournamentLocalized{
 	Name:                   "CSAAA",
 	Description:            "123",
 	Keywords:               []string{"csaaa"},
+}
+
+var DefaultPlayer = api.Player{
+	ID:              "betting:1:sr:competitor:100221",
+	OriginalID:      "sr:competitor:100221",
+	Type:            1,
+	SourceID:        "",
+	Version:         "7db572ae-d443-43cf-8d59-0eedcb74bcfb",
+	ProviderID:      "betting:1",
+	ProviderVersion: "",
+	SportID:         "tennis",
+	LogoAutoUpdate:  true,
+	CountryCode:     "",
+	DateOfBirth:     mustParseTime("1970-01-01T00:00:00+00:00"),
+	Statistics:      []interface{}{},
+	Duplicated:      false,
+	Localizations: []api.PlayerLocalization{
+		{
+			Locale:      "en",
+			Name:        "",
+			Nickname:    "Romero De Avila Senise, Alberto",
+			Description: "",
+			Keywords:    []string{"romero-de-avila-senise-alberto"},
+		},
+	},
+	UpdatedAt: mustParseTime("2021-12-23T17:07:19+00:00"),
+	Meta:      map[string]interface{}{},
+}
+
+var DefaultLocalizedPlayer = api.PlayerLocalized{
+	ID:              "betting:1:sr:competitor:100221",
+	OriginalID:      "sr:competitor:100221",
+	Type:            1,
+	SourceID:        "",
+	Version:         "7db572ae-d443-43cf-8d59-0eedcb74bcfb",
+	ProviderID:      "betting:1",
+	ProviderVersion: "",
+	SportID:         "tennis",
+	LogoAutoUpdate:  true,
+	CountryCode:     "",
+	DateOfBirth:     mustParseTime("1970-01-01T00:00:00+00:00"),
+	Statistics:      []interface{}{},
+	Duplicated:      false,
+	Locale:          "en",
+	Name:            "",
+	Nickname:        "Romero De Avila Senise, Alberto",
+	Description:     "",
+	Keywords:        []string{"romero-de-avila-senise-alberto"},
+	UpdatedAt:       mustParseTime("2021-12-23T17:07:19+00:00"),
+	Meta:            map[string]interface{}{},
 }
