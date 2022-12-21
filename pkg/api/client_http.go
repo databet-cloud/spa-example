@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -39,23 +38,16 @@ func (c *ClientHTTP) FindMarketByID(ctx context.Context, marketID int) (*Market,
 		return nil, fmt.Errorf("create http request: %w", err)
 	}
 
-	httpResp, err := c.httpClient.Do(httpReq)
+	rawBody, err := c.doAPIRequest(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("do http request: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	if httpResp.StatusCode != http.StatusOK {
-		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+		return nil, err
 	}
 
 	var resp struct {
 		Market *Market `json:"market"`
 	}
 
-	err = json.NewDecoder(httpResp.Body).Decode(&resp)
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
 	if err != nil {
 		return nil, fmt.Errorf("unmarshal response: %w", err)
 	}
@@ -82,23 +74,16 @@ func (c *ClientHTTP) FindMarketsByIDs(ctx context.Context, marketIDs []int) ([]M
 
 	httpReq.URL.RawQuery = queryParams.Encode()
 
-	httpResp, err := c.httpClient.Do(httpReq)
+	rawBody, err := c.doAPIRequest(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("do http request: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	if httpResp.StatusCode != http.StatusOK {
-		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+		return nil, err
 	}
 
 	var resp struct {
 		Markets []Market `json:"markets"`
 	}
 
-	err = json.NewDecoder(httpResp.Body).Decode(&resp)
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
 	if err != nil {
 		return nil, fmt.Errorf("unmarshal response: %w", err)
 	}
@@ -125,23 +110,16 @@ func (c *ClientHTTP) FindLocalizedMarketsByIDs(ctx context.Context, locale Local
 
 	httpReq.URL.RawQuery = queryParams.Encode()
 
-	httpResp, err := c.httpClient.Do(httpReq)
+	rawBody, err := c.doAPIRequest(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("do http request: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	if httpResp.StatusCode != http.StatusOK {
-		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+		return nil, err
 	}
 
 	var resp struct {
 		Markets []MarketLocalized `json:"markets"`
 	}
 
-	err = json.NewDecoder(httpResp.Body).Decode(&resp)
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
 	if err != nil {
 		return nil, fmt.Errorf("unmarshal response: %w", err)
 	}
@@ -162,23 +140,16 @@ func (c *ClientHTTP) FindMarketsByFilters(ctx context.Context, filters *MarketFi
 
 	httpReq.URL.RawQuery = filters.ToQueryParams().Encode()
 
-	httpResp, err := c.httpClient.Do(httpReq)
+	rawBody, err := c.doAPIRequest(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("do http request: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	if httpResp.StatusCode != http.StatusOK {
-		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+		return nil, err
 	}
 
 	var resp struct {
 		Markets []Market `json:"markets"`
 	}
 
-	err = json.NewDecoder(httpResp.Body).Decode(&resp)
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
 	if err != nil {
 		return nil, fmt.Errorf("unmarshal response: %w", err)
 	}
@@ -199,23 +170,16 @@ func (c *ClientHTTP) FindLocalizedMarketsByFilters(ctx context.Context, locale L
 
 	httpReq.URL.RawQuery = filters.ToQueryParams().Encode()
 
-	httpResp, err := c.httpClient.Do(httpReq)
+	rawBody, err := c.doAPIRequest(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("do http request: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	if httpResp.StatusCode != http.StatusOK {
-		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+		return nil, err
 	}
 
 	var resp struct {
 		Markets []MarketLocalized `json:"markets"`
 	}
 
-	err = json.NewDecoder(httpResp.Body).Decode(&resp)
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
 	if err != nil {
 		return nil, fmt.Errorf("unmarshal response: %w", err)
 	}
@@ -229,23 +193,16 @@ func (c *ClientHTTP) FindSportByID(ctx context.Context, sportID string) (*Sport,
 		return nil, fmt.Errorf("create http request: %w", err)
 	}
 
-	httpResp, err := c.httpClient.Do(httpReq)
+	rawBody, err := c.doAPIRequest(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("do http request: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	if httpResp.StatusCode != http.StatusOK {
-		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+		return nil, err
 	}
 
 	var resp struct {
 		Sport *Sport `json:"sport"`
 	}
 
-	err = json.NewDecoder(httpResp.Body).Decode(&resp)
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
 	if err != nil {
 		return nil, fmt.Errorf("unmarshal response: %w", err)
 	}
@@ -261,23 +218,16 @@ func (c *ClientHTTP) FindSportsByFilters(ctx context.Context, filters *SportFilt
 
 	httpReq.URL.RawQuery = filters.ToQueryParams().Encode()
 
-	httpResp, err := c.httpClient.Do(httpReq)
+	rawBody, err := c.doAPIRequest(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("do http request: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	if httpResp.StatusCode != http.StatusOK {
-		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+		return nil, err
 	}
 
 	var resp struct {
 		Sports []Sport `json:"sports"`
 	}
 
-	err = json.NewDecoder(httpResp.Body).Decode(&resp)
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
 	if err != nil {
 		return nil, fmt.Errorf("unmarshal response: %w", err)
 	}
@@ -303,23 +253,16 @@ func (c *ClientHTTP) GetAllLocalizedSports(ctx context.Context, locale Locale, i
 		httpReq.URL.RawQuery = queryParams.Encode()
 	}
 
-	httpResp, err := c.httpClient.Do(httpReq)
+	rawBody, err := c.doAPIRequest(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("do http request: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	if httpResp.StatusCode != http.StatusOK {
-		rawBody, _ := io.ReadAll(httpResp.Body)
-		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+		return nil, err
 	}
 
 	var resp struct {
 		Sports []SportLocalized `json:"sports"`
 	}
 
-	err = json.NewDecoder(httpResp.Body).Decode(&resp)
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
 	if err != nil {
 		return nil, fmt.Errorf("unmarshal response: %w", err)
 	}
@@ -338,24 +281,9 @@ func (c *ClientHTTP) FindLocalizedTournamentByID(ctx context.Context, locale Loc
 		return nil, fmt.Errorf("create http request: %w", err)
 	}
 
-	httpResp, err := c.httpClient.Do(httpReq)
+	rawBody, err := c.doAPIRequest(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("do http request: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	rawBody, err := io.ReadAll(httpResp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("read response body: %w", err)
-	}
-
-	if httpResp.StatusCode == http.StatusUnauthorized {
-		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
-	}
-
-	if httpResp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+		return nil, err
 	}
 
 	var resp struct {
@@ -392,24 +320,9 @@ func (c *ClientHTTP) FindLocalizedTournamentsByIDs(
 
 	httpReq.URL.RawQuery = url.Values{"ids[]": tournamentIDs}.Encode()
 
-	httpResp, err := c.httpClient.Do(httpReq)
+	rawBody, err := c.doAPIRequest(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("do http request: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	rawBody, err := io.ReadAll(httpResp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("read response body: %w", err)
-	}
-
-	if httpResp.StatusCode == http.StatusUnauthorized {
-		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
-	}
-
-	if httpResp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+		return nil, err
 	}
 
 	var resp struct {
@@ -440,24 +353,9 @@ func (c *ClientHTTP) FindLocalizedPlayerByID(ctx context.Context, locale Locale,
 		return nil, fmt.Errorf("create http request: %w", err)
 	}
 
-	httpResp, err := c.httpClient.Do(httpReq)
+	rawBody, err := c.doAPIRequest(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("do http request: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	rawBody, err := io.ReadAll(httpResp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("read response body: %w", err)
-	}
-
-	if httpResp.StatusCode == http.StatusUnauthorized {
-		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
-	}
-
-	if httpResp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+		return nil, err
 	}
 
 	var resp struct {
@@ -490,24 +388,9 @@ func (c *ClientHTTP) FindLocalizedPlayersByIDs(ctx context.Context, locale Local
 
 	httpReq.URL.RawQuery = url.Values{"ids[]": playerIDs}.Encode()
 
-	httpResp, err := c.httpClient.Do(httpReq)
+	rawBody, err := c.doAPIRequest(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("do http request: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	rawBody, err := io.ReadAll(httpResp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("read response body: %w", err)
-	}
-
-	if httpResp.StatusCode == http.StatusUnauthorized {
-		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
-	}
-
-	if httpResp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+		return nil, err
 	}
 
 	var resp struct {
@@ -538,24 +421,9 @@ func (c *ClientHTTP) FindLocalizedTeamByID(ctx context.Context, locale Locale, t
 		return nil, fmt.Errorf("create http request: %w", err)
 	}
 
-	httpResp, err := c.httpClient.Do(httpReq)
+	rawBody, err := c.doAPIRequest(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("do http request: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	rawBody, err := io.ReadAll(httpResp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("read response body: %w", err)
-	}
-
-	if httpResp.StatusCode == http.StatusUnauthorized {
-		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
-	}
-
-	if httpResp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+		return nil, err
 	}
 
 	var resp struct {
@@ -588,24 +456,9 @@ func (c *ClientHTTP) FindLocalizedTeamsByIDs(ctx context.Context, locale Locale,
 
 	httpReq.URL.RawQuery = url.Values{"ids[]": teamIDs}.Encode()
 
-	httpResp, err := c.httpClient.Do(httpReq)
+	rawBody, err := c.doAPIRequest(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("do http request: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	rawBody, err := io.ReadAll(httpResp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("read response body: %w", err)
-	}
-
-	if httpResp.StatusCode == http.StatusUnauthorized {
-		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
-	}
-
-	if httpResp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
+		return nil, err
 	}
 
 	var resp struct {
@@ -638,6 +491,29 @@ func (c *ClientHTTP) FindLocalizedOrganizationsByIDs(ctx context.Context, locale
 
 	httpReq.URL.RawQuery = url.Values{"ids[]": organizationIDs}.Encode()
 
+	rawBody, err := c.doAPIRequest(httpReq)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp struct {
+		Organizations []OrganizationLocalized `json:"organizations"`
+		Error         *apiError               `json:"error"`
+	}
+
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshal response: %w", err)
+	}
+
+	if resp.Error != nil {
+		return nil, c.convertApiError(resp.Error)
+	}
+
+	return resp.Organizations, nil
+}
+
+func (c *ClientHTTP) doAPIRequest(httpReq *http.Request) ([]byte, error) {
 	httpResp, err := c.httpClient.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("do http request: %w", err)
@@ -658,21 +534,7 @@ func (c *ClientHTTP) FindLocalizedOrganizationsByIDs(ctx context.Context, locale
 		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
 	}
 
-	var resp struct {
-		Organizations []OrganizationLocalized `json:"organizations"`
-		Error         *apiError               `json:"error"`
-	}
-
-	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
-	if err != nil {
-		return nil, fmt.Errorf("unmarshal response: %w", err)
-	}
-
-	if resp.Error != nil {
-		return nil, c.convertApiError(resp.Error)
-	}
-
-	return resp.Organizations, nil
+	return rawBody, nil
 }
 
 func (c *ClientHTTP) convertApiError(err *apiError) error {

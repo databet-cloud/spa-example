@@ -39,7 +39,7 @@ type PlayerClient interface {
 
 type TeamClient interface {
 	FindLocalizedTeamByID(ctx context.Context, locale Locale, teamID string) (*TeamLocalized, error)
-	FindLocalizedTeamByIDs(ctx context.Context, locale Locale, teamIDs []string) ([]TeamLocalized, error)
+	FindLocalizedTeamsByIDs(ctx context.Context, locale Locale, teamIDs []string) ([]TeamLocalized, error)
 }
 
 type OrganizationClient interface {
