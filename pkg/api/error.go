@@ -5,6 +5,7 @@ import "fmt"
 const (
 	errCodeTournamentNotFound = "tournament_not_found"
 	errCodePlayerNotFound     = "player_not_found"
+	errCodeTeamNotFound       = "team_not_found"
 )
 
 var (

@@ -1,0 +1,30 @@
+{
+  "teams": [
+    {
+      "id": "betting:0:1-esports_dota_2",
+      "original_id": "betting:0:1-esports_dota_2",
+      "type": 1,
+      "source_id": "",
+      "version": "7d825371-034e-47b0-97d3-c5b7c4082cb1",
+      "provider_id": "betting:0",
+      "sport_id": "esports_dota_2",
+      "country_code": "AX",
+      "duplicated": false,
+      "logo": {
+        "file": "",
+        "url": "test-storage/team/surprised-cat5aa905ff3a61a819205529.webp"
+      },
+      "logo_auto_update": true,
+      "player_ids": [],
+      "statistics": [],
+      "updated_at": "2022-05-12T18:07:26+00:00",
+      "locale": "en",
+      "name": "3NaVi123123",
+      "description": "1",
+      "keywords": [
+        "3navi123123"
+      ],
+      "meta": {}
+    }
+  ]
+}

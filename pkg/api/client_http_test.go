@@ -553,6 +553,99 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedPlayersByIDs() {
 	}
 }
 
+func (s *ClientHTTPTestSuite) TestFindLocalizedTeamByID() {
+	testCases := []struct {
+		name        string
+		httpResp    *http.Response
+		expected    *api.TeamLocalized
+		expectedErr error
+	}{
+		{
+			name:     "succeed",
+			httpResp: s.makeResponse(http.StatusOK, "find-localized-team-by-id/response-success.json"),
+			expected: &DefaultLocalizedTeam,
+		},
+		{
+			name:        "not found",
+			httpResp:    s.makeResponse(http.StatusOK, "find-localized-team-by-id/response-not-found.json"),
+			expectedErr: api.ErrNotFound,
+		},
+		{
+			name:        "unauthorized",
+			httpResp:    s.makeResponse(http.StatusUnauthorized, ""),
+			expectedErr: api.ErrInvalidCertificate,
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			ctrl := gomock.NewController(s.T())
+			defer ctrl.Finish()
+
+			roundTripper := mocks.NewRoundTripper(ctrl)
+			s.client.Transport = roundTripper
+
+			req := s.makeRequest(
+				http.MethodGet,
+				fmt.Sprintf("%s/teams/localized/teamID/en", testURL),
+				http.NoBody,
+			)
+			roundTripper.EXPECT().RoundTrip(s.newReqMatcher(req)).Return(tc.httpResp, nil)
+
+			actual, actualErr := s.apiClient.FindLocalizedTeamByID(context.Background(), api.LocaleEnglish, "teamID")
+
+			s.Equal(tc.expected, actual)
+			s.ErrorIs(actualErr, tc.expectedErr)
+		})
+	}
+}
+
+func (s *ClientHTTPTestSuite) TestFindLocalizedTeamsByIDs() {
+	testCases := []struct {
+		name        string
+		httpResp    *http.Response
+		expected    []api.TeamLocalized
+		expectedErr error
+	}{
+		{
+			name:     "succeed",
+			httpResp: s.makeResponse(http.StatusOK, "find-localized-teams-by-ids/response-success.json"),
+			expected: []api.TeamLocalized{DefaultLocalizedTeam},
+		},
+		{
+			name:        "unauthorized",
+			httpResp:    s.makeResponse(http.StatusUnauthorized, ""),
+			expectedErr: api.ErrInvalidCertificate,
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			ctrl := gomock.NewController(s.T())
+			defer ctrl.Finish()
+
+			roundTripper := mocks.NewRoundTripper(ctrl)
+			s.client.Transport = roundTripper
+
+			req := s.makeRequest(
+				http.MethodGet,
+				fmt.Sprintf("%s/teams/localized/en?ids[]=id1&ids[]=id2", testURL),
+				http.NoBody,
+			)
+			roundTripper.EXPECT().RoundTrip(s.newReqMatcher(req)).Return(tc.httpResp, nil)
+
+			actual, actualErr := s.apiClient.FindLocalizedTeamsByIDs(
+				context.Background(),
+				api.LocaleEnglish,
+				[]string{"id1", "id2"},
+			)
+
+			s.Equal(tc.expected, actual)
+			s.ErrorIs(actualErr, tc.expectedErr)
+		})
+	}
+}
+
 func (s *ClientHTTPTestSuite) newReqMatcher(req *http.Request) reqMatcher {
 	return reqMatcher{
 		s:           &s.Suite,

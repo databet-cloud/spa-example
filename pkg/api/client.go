@@ -41,3 +41,8 @@ type PlayerClient interface {
 	FindLocalizedPlayerByID(ctx context.Context, locale Locale, playerID string) (*PlayerLocalized, error)
 	FindLocalizedPlayersByIDs(ctx context.Context, locale Locale, playerIDs []string) ([]PlayerLocalized, error)
 }
+
+type TeamClient interface {
+	FindLocalizedTeamByID(ctx context.Context, locale Locale, teamID string) (*TeamLocalized, error)
+	FindLocalizedTeamByIDs(ctx context.Context, locale Locale, teamIDs []string) ([]TeamLocalized, error)
+}

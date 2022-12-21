@@ -137,3 +137,14 @@ var DefaultLocalizedPlayer = api.PlayerLocalized{
 	UpdatedAt:       mustParseTime("2021-12-23T17:07:19+00:00"),
 	Meta:            map[string]interface{}{},
 }
+
+var DefaultLocalizedTeam = api.TeamLocalized{
+	ID:             "betting:0:1-esports_dota_2",
+	CountryCode:    "AX",
+	Name:           "3NaVi123123",
+	SportID:        "esports_dota_2",
+	OrganizationID: "",
+	Logo:           api.Logo{URL: "test-storage/team/surprised-cat5aa905ff3a61a819205529.webp"},
+	Description:    "1",
+	Keywords:       []string{"3navi123123"},
+}
