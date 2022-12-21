@@ -9,6 +9,8 @@ type Client interface {
 	SportClient
 	TournamentClient
 	PlayerClient
+	TeamClient
+	OrganizationClient
 }
 
 type MarketClient interface {
@@ -38,4 +40,8 @@ type PlayerClient interface {
 type TeamClient interface {
 	FindLocalizedTeamByID(ctx context.Context, locale Locale, teamID string) (*TeamLocalized, error)
 	FindLocalizedTeamByIDs(ctx context.Context, locale Locale, teamIDs []string) ([]TeamLocalized, error)
+}
+
+type OrganizationClient interface {
+	FindLocalizedOrganizationsByIDs(ctx context.Context, locale Locale, organizationIDs []string) ([]OrganizationLocalized, error)
 }

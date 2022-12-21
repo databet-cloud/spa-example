@@ -40,3 +40,10 @@ var DefaultLocalizedTeam = api.TeamLocalized{
 	Description: "1",
 	Keywords:    []string{"3navi123123"},
 }
+
+var DefaultLocalizedOrganization = api.OrganizationLocalized{
+	ID:       "0754ec51-964b-4d00-9a5b-dbeab376eac3",
+	Name:     "ITF. Men",
+	SportIDs: []string{"tennis"},
+	Locale:   "en",
+}

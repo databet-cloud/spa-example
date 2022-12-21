@@ -315,6 +315,52 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedTeamsByIDs() {
 	}
 }
 
+func (s *ClientHTTPTestSuite) TestFindLocalizedOrganizationsByIDs() {
+	testCases := []struct {
+		name        string
+		httpResp    *http.Response
+		expected    []api.OrganizationLocalized
+		expectedErr error
+	}{
+		{
+			name:     "succeed",
+			httpResp: s.makeResponse(http.StatusOK, "find-localized-organizations-by-ids/response-success.json"),
+			expected: []api.OrganizationLocalized{DefaultLocalizedOrganization},
+		},
+		{
+			name:        "unauthorized",
+			httpResp:    s.makeResponse(http.StatusUnauthorized, ""),
+			expectedErr: api.ErrInvalidCertificate,
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			ctrl := gomock.NewController(s.T())
+			defer ctrl.Finish()
+
+			roundTripper := mocks.NewRoundTripper(ctrl)
+			s.client.Transport = roundTripper
+
+			req := s.makeRequest(
+				http.MethodGet,
+				fmt.Sprintf("%s/organizations/localized/en/by-ids?ids[]=id1&ids[]=id2", testURL),
+				http.NoBody,
+			)
+			roundTripper.EXPECT().RoundTrip(s.newReqMatcher(req)).Return(tc.httpResp, nil)
+
+			actual, actualErr := s.apiClient.FindLocalizedOrganizationsByIDs(
+				context.Background(),
+				api.LocaleEnglish,
+				[]string{"id1", "id2"},
+			)
+
+			s.Equal(tc.expected, actual)
+			s.ErrorIs(actualErr, tc.expectedErr)
+		})
+	}
+}
+
 func (s *ClientHTTPTestSuite) newReqMatcher(req *http.Request) reqMatcher {
 	return reqMatcher{
 		s:           &s.Suite,
