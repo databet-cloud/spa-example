@@ -5,7 +5,7 @@ import (
 )
 
 type Client interface {
-	GetAll(ctx context.Context, bookmakerID string) (cur *RawMessageCursor, version string, err error)
-	GetFeedVersion(ctx context.Context, bookmakerID string) (string, error)
-	GetLogsFromVersion(ctx context.Context, bookmakerID string, version string) (*RawMessageCursor, error)
+	GetAll(ctx context.Context) (cur *RawMessageCursor, version string, err error)
+	GetFeedVersion(ctx context.Context) (string, error)
+	GetLogsFromVersion(ctx context.Context, version string) (*RawMessageCursor, error)
 }

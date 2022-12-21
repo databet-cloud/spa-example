@@ -24,13 +24,8 @@ func NewClientHTTP(httpClient *http.Client, feedURL string) *ClientHTTP {
 	}
 }
 
-func (c *ClientHTTP) GetAll(ctx context.Context, bookmakerID string) (cursor *RawMessageCursor, lastVersion string, err error) {
-	req, err := http.NewRequestWithContext(
-		ctx,
-		http.MethodGet,
-		fmt.Sprintf("%s/v2/bookmaker/%s/all", c.feedURL, bookmakerID),
-		http.NoBody,
-	)
+func (c *ClientHTTP) GetAll(ctx context.Context) (cursor *RawMessageCursor, lastVersion string, err error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.feedURL+"/all", http.NoBody)
 	if err != nil {
 		return nil, "", fmt.Errorf("create http request: %w", err)
 	}
@@ -53,13 +48,8 @@ func (c *ClientHTTP) GetAll(ctx context.Context, bookmakerID string) (cursor *Ra
 	return NewRawMessageCursor(resp.Body), lastVersion, nil
 }
 
-func (c *ClientHTTP) GetFeedVersion(ctx context.Context, bookmakerID string) (string, error) {
-	req, err := http.NewRequestWithContext(
-		ctx,
-		http.MethodGet,
-		fmt.Sprintf("%s/v2/bookmaker/%s/logVersion", c.feedURL, bookmakerID),
-		http.NoBody,
-	)
+func (c *ClientHTTP) GetFeedVersion(ctx context.Context) (string, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.feedURL+"/logVersion", http.NoBody)
 	if err != nil {
 		return "", fmt.Errorf("create http request: %w", err)
 	}
@@ -78,13 +68,8 @@ func (c *ClientHTTP) GetFeedVersion(ctx context.Context, bookmakerID string) (st
 	return resp.Header.Get(HeaderLastVersion), nil
 }
 
-func (c *ClientHTTP) GetLogsFromVersion(ctx context.Context, bookmakerID string, version string) (*RawMessageCursor, error) {
-	req, err := http.NewRequestWithContext(
-		ctx,
-		http.MethodGet,
-		fmt.Sprintf("%s/v2/bookmaker/%s/log", c.feedURL, bookmakerID),
-		http.NoBody,
-	)
+func (c *ClientHTTP) GetLogsFromVersion(ctx context.Context, version string) (*RawMessageCursor, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.feedURL+"/log", http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("create http request: %w", err)
 	}
