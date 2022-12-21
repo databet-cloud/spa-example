@@ -26,18 +26,11 @@ type SportClient interface {
 }
 
 type TournamentClient interface {
-	FindTournamentByID(ctx context.Context, tournamentID string) (*Tournament, error)
-	FindTournamentsByIDs(ctx context.Context, tournamentIDs []string) ([]Tournament, error)
-	SearchTournaments(ctx context.Context, req *SearchTournamentsRequest) (*SearchTournamentsResponse, error)
 	FindLocalizedTournamentByID(ctx context.Context, locale Locale, tournamentID string) (*TournamentLocalized, error)
 	FindLocalizedTournamentsByIDs(ctx context.Context, locale Locale, tournamentIDs []string) ([]TournamentLocalized, error)
-	SearchLocalizedTournaments(ctx context.Context, locale Locale, req *SearchTournamentsRequest) (*SearchLocalizedTournamentsResponse, error)
 }
 
 type PlayerClient interface {
-	FindPlayerByID(ctx context.Context, playerID string) (*Player, error)
-	FindPlayersByIDs(ctx context.Context, playerIDs []string) ([]Player, error)
-	SearchPlayers(ctx context.Context, req *SearchPlayersRequest) (*SearchPlayersResponse, error)
 	FindLocalizedPlayerByID(ctx context.Context, locale Locale, playerID string) (*PlayerLocalized, error)
 	FindLocalizedPlayersByIDs(ctx context.Context, locale Locale, playerIDs []string) ([]PlayerLocalized, error)
 }
