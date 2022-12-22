@@ -1,0 +1,20 @@
+{
+  "tournament": {
+    "id": "betting:0:csaaa-esports_counter_strike-esports_counter_strike",
+    "sport_id": "esports_counter_strike",
+    "country_code": "WW-AFR",
+    "organization_id": "organizationID",
+    "logo": {
+      "url": "binary-storage-stage-betting.ginsp.net/tournaments/564px-ESL_Pro_League5a8d7358ad21b9668747145ae1bd8fd847d441215577.png"
+    },
+    "locale": "en",
+    "name": "CSAAA",
+    "description": "123",
+    "keywords": [
+      "csaaa"
+    ],
+    "meta": {
+      "prize_pool": "100 000$"
+    }
+  }
+}

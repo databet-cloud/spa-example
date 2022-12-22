@@ -1,0 +1,15 @@
+{
+  "organizations": [
+    {
+      "id": "0754ec51-964b-4d00-9a5b-dbeab376eac3",
+      "sport_ids": [
+        "tennis"
+      ],
+      "logo": {
+        "url": ""
+      },
+      "locale": "en",
+      "name": "ITF. Men"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "team": {
+    "id": "betting:0:1-esports_dota_2",
+    "sport_id": "esports_dota_2",
+    "country_code": "AX",
+    "logo": {
+      "url": "test-storage/team/surprised-cat5aa905ff3a61a819205529.webp"
+    },
+    "locale": "en",
+    "name": "3NaVi123123",
+    "description": "1",
+    "keywords": [
+      "3navi123123"
+    ],
+    "meta": {}
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "players": [
+    {
+      "id": "betting:1:sr:competitor:100221",
+      "sport_id": "tennis",
+      "country_code": "",
+      "logo": {
+        "url": ""
+      },
+      "locale": "en",
+      "nickname": "Romero De Avila Senise, Alberto",
+      "keywords": [
+        "romero-de-avila-senise-alberto"
+      ]
+    }
+  ]
+}

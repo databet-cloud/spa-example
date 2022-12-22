@@ -32,11 +32,15 @@ func (c *RawMessageCursor) Next(ctx context.Context) (json.RawMessage, error) {
 		return nil, nil
 	}
 
+	doneCh := make(chan struct{})
+	defer close(doneCh)
+
 	go func() {
 		select {
 		case <-ctx.Done():
 			// close reader to terminate json decoder
 			_ = c.close()
+		case <-doneCh:
 		}
 	}()
 
@@ -44,7 +48,7 @@ func (c *RawMessageCursor) Next(ctx context.Context) (json.RawMessage, error) {
 
 	if err := c.decoder.Decode(&msg); err != nil {
 		if closeErr := c.close(); closeErr != nil {
-			return nil, fmt.Errorf("%w after error: %v", closeErr, err)
+			return nil, fmt.Errorf("%v after error: %w", closeErr, err)
 		}
 
 		return nil, fmt.Errorf("decode msg: %w", err)
