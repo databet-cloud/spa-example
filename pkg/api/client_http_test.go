@@ -63,7 +63,6 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedTournamentByID() {
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
 			ctrl := gomock.NewController(s.T())
-			defer ctrl.Finish()
 
 			roundTripper := mocks.NewRoundTripper(ctrl)
 			s.client.Transport = roundTripper
@@ -105,7 +104,6 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedTournamentsByIDs() {
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
 			ctrl := gomock.NewController(s.T())
-			defer ctrl.Finish()
 
 			roundTripper := mocks.NewRoundTripper(ctrl)
 			s.client.Transport = roundTripper
@@ -156,7 +154,6 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedPlayerByID() {
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
 			ctrl := gomock.NewController(s.T())
-			defer ctrl.Finish()
 
 			roundTripper := mocks.NewRoundTripper(ctrl)
 			s.client.Transport = roundTripper
@@ -198,7 +195,6 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedPlayersByIDs() {
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
 			ctrl := gomock.NewController(s.T())
-			defer ctrl.Finish()
 
 			roundTripper := mocks.NewRoundTripper(ctrl)
 			s.client.Transport = roundTripper
@@ -249,7 +245,6 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedTeamByID() {
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
 			ctrl := gomock.NewController(s.T())
-			defer ctrl.Finish()
 
 			roundTripper := mocks.NewRoundTripper(ctrl)
 			s.client.Transport = roundTripper
@@ -291,7 +286,6 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedTeamsByIDs() {
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
 			ctrl := gomock.NewController(s.T())
-			defer ctrl.Finish()
 
 			roundTripper := mocks.NewRoundTripper(ctrl)
 			s.client.Transport = roundTripper
@@ -337,7 +331,6 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedOrganizationsByIDs() {
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
 			ctrl := gomock.NewController(s.T())
-			defer ctrl.Finish()
 
 			roundTripper := mocks.NewRoundTripper(ctrl)
 			s.client.Transport = roundTripper
