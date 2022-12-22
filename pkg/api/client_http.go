@@ -31,7 +31,7 @@ func (c *ClientHTTP) FindMarketByID(ctx context.Context, marketID int) (*Market,
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.apiURL+"/markets/"+strconv.Itoa(marketID),
+		fmt.Sprintf("%s/markets/%d", c.apiURL, marketID),
 		http.NoBody,
 	)
 	if err != nil {
@@ -59,7 +59,7 @@ func (c *ClientHTTP) FindMarketsByIDs(ctx context.Context, marketIDs []int) ([]M
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.apiURL+"/markets",
+		fmt.Sprintf("%s/markets", c.apiURL),
 		http.NoBody,
 	)
 	if err != nil {
@@ -95,7 +95,7 @@ func (c *ClientHTTP) FindLocalizedMarketsByIDs(ctx context.Context, locale Local
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.apiURL+"/localized/markets/"+locale.String(),
+		fmt.Sprintf("%s/localized/markets/%s", c.apiURL, locale),
 		http.NoBody,
 	)
 	if err != nil {
@@ -131,7 +131,7 @@ func (c *ClientHTTP) FindMarketsByFilters(ctx context.Context, filters *MarketFi
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.apiURL+"/markets",
+		fmt.Sprintf("%s/markets", c.apiURL),
 		http.NoBody,
 	)
 	if err != nil {
@@ -161,7 +161,7 @@ func (c *ClientHTTP) FindLocalizedMarketsByFilters(ctx context.Context, locale L
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.apiURL+"/localized/markets/"+locale.String(),
+		fmt.Sprintf("%s/localized/markets/%s", c.apiURL, locale),
 		http.NoBody,
 	)
 	if err != nil {
@@ -188,7 +188,12 @@ func (c *ClientHTTP) FindLocalizedMarketsByFilters(ctx context.Context, locale L
 }
 
 func (c *ClientHTTP) FindSportByID(ctx context.Context, sportID string) (*Sport, error) {
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, c.apiURL+"/sports/"+sportID, http.NoBody)
+	httpReq, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		fmt.Sprintf("%s/sports/%s", c.apiURL, sportID),
+		http.NoBody,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("create http request: %w", err)
 	}
@@ -241,7 +246,7 @@ func (c *ClientHTTP) GetAllLocalizedSports(ctx context.Context, locale Locale, i
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.apiURL+"/localized/sports/"+locale.String(),
+		fmt.Sprintf("%s/localized/sports/%s", c.apiURL, locale),
 		http.NoBody,
 	)
 	if err != nil {
@@ -274,7 +279,7 @@ func (c *ClientHTTP) FindLocalizedTournamentByID(ctx context.Context, locale Loc
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.apiURL+"/tournaments/localized/"+tournamentID+"/"+locale.String(),
+		fmt.Sprintf("%s/tournaments/localized/%s/%s", c.apiURL, tournamentID, locale),
 		http.NoBody,
 	)
 	if err != nil {
@@ -311,7 +316,7 @@ func (c *ClientHTTP) FindLocalizedTournamentsByIDs(
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.apiURL+"/tournaments/localized/"+locale.String(),
+		fmt.Sprintf("%s/tournaments/localized/%s", c.apiURL, locale),
 		http.NoBody,
 	)
 	if err != nil {
@@ -346,7 +351,7 @@ func (c *ClientHTTP) FindLocalizedPlayerByID(ctx context.Context, locale Locale,
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.apiURL+"/players/localized/"+playerID+"/"+locale.String(),
+		fmt.Sprintf("%s/players/localized/%s/%s", c.apiURL, playerID, locale),
 		http.NoBody,
 	)
 	if err != nil {
@@ -379,7 +384,7 @@ func (c *ClientHTTP) FindLocalizedPlayersByIDs(ctx context.Context, locale Local
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.apiURL+"/players/localized/"+locale.String(),
+		fmt.Sprintf("%s/players/localized/%s", c.apiURL, locale),
 		http.NoBody,
 	)
 	if err != nil {
@@ -414,7 +419,7 @@ func (c *ClientHTTP) FindLocalizedTeamByID(ctx context.Context, locale Locale, t
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.apiURL+"/teams/localized/"+teamID+"/"+locale.String(),
+		fmt.Sprintf("%s/teams/localized/%s/%s", c.apiURL, teamID, locale),
 		http.NoBody,
 	)
 	if err != nil {
@@ -447,7 +452,7 @@ func (c *ClientHTTP) FindLocalizedTeamsByIDs(ctx context.Context, locale Locale,
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.apiURL+"/teams/localized/"+locale.String(),
+		fmt.Sprintf("%s/teams/localized/%s", c.apiURL, locale),
 		http.NoBody,
 	)
 	if err != nil {
@@ -482,7 +487,7 @@ func (c *ClientHTTP) FindLocalizedOrganizationsByIDs(ctx context.Context, locale
 	httpReq, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		c.apiURL+"/organizations/localized/"+locale.String()+"/by-ids",
+		fmt.Sprintf("%s/organizations/localized/%s/by-ids", c.apiURL, locale),
 		http.NoBody,
 	)
 	if err != nil {
