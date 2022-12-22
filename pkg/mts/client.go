@@ -2,8 +2,6 @@ package mts
 
 import (
 	"context"
-
-	"github.com/databet-cloud/databet-go-sdk/pkg/restriction"
 )
 
 type Client interface {
@@ -14,5 +12,5 @@ type Client interface {
 	PlaceCashOutOrder(ctx context.Context, req *PlaceCashOutOrderRequest) (*PlaceCashOutOrderResponse, error)
 	CancelCashOutOrder(ctx context.Context, req *CancelCashOutOrderRequest) error
 
-	GetRestrictions(ctx context.Context, req *GetRestrictionsRequest) ([]restriction.Restriction, error)
+	GetRestrictions(ctx context.Context, req *GetRestrictionsRequest) ([]Restriction, error)
 }

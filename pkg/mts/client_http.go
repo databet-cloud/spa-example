@@ -10,8 +10,6 @@ import (
 	"strconv"
 
 	"github.com/bytedance/sonic"
-
-	"github.com/databet-cloud/databet-go-sdk/pkg/restriction"
 )
 
 type ClientHTTP struct {
@@ -259,7 +257,7 @@ func (c *ClientHTTP) CancelCashOutOrder(ctx context.Context, req *CancelCashOutO
 	return nil
 }
 
-func (c *ClientHTTP) GetRestrictions(ctx context.Context, req *GetRestrictionsRequest) ([]restriction.Restriction, error) {
+func (c *ClientHTTP) GetRestrictions(ctx context.Context, req *GetRestrictionsRequest) ([]Restriction, error) {
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("%s/restrictions", c.mtsURL), http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("create http request: %w", err)

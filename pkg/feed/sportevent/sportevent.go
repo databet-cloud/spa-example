@@ -5,8 +5,8 @@ import (
 
 	"golang.org/x/exp/maps"
 
-	"github.com/databet-cloud/databet-go-sdk/pkg/fixture"
-	"github.com/databet-cloud/databet-go-sdk/pkg/market"
+	"github.com/databet-cloud/databet-go-sdk/pkg/feed/fixture"
+	"github.com/databet-cloud/databet-go-sdk/pkg/feed/market"
 )
 
 type SportEvent struct {

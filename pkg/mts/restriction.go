@@ -1,4 +1,4 @@
-package restriction
+package mts
 
 type Type string
 
@@ -7,30 +7,30 @@ func (t Type) String() string {
 }
 
 const (
-	MaxBet                Type = "max_bet"
-	MaxOddBet             Type = "max_odd_bet"
-	BetType               Type = "bet_type"
-	BetStatus             Type = "bet_status"
-	BetInterval           Type = "bet_interval"
-	BetDelay              Type = "bet_delay"
-	BetSelectionExistence Type = "bet_selection_existence"
-	SelectionValue        Type = "selection_value"
-	SelectionValueChange  Type = "selection_value_change"
-	SportEventType        Type = "sport_event_type"
-	SportEventStatus      Type = "sport_event_status"
-	SportEventExistence   Type = "sport_event_existence"
-	SportEventBetStop     Type = "sport_event_bet_stop"
-	MarketStatus          Type = "market_status"
-	MarketExistence       Type = "market_existence"
-	MarketDefective       Type = "market_defective"
-	OddStatus             Type = "odd_status"
-	OddExistence          Type = "odd_existence"
-	CashOutBetType        Type = "cash_out_bet_type"
-	BetCashOutSelection   Type = "bet_cash_out_selections_mismatch"
-	CashOutUnavailable    Type = "cash_out_unavailable"
-	CashOutAmountLimit    Type = "cash_out_amount_limit"
-	CashOutRefundAmount   Type = "cash_out_refund_amount"
-	CashOutOrderStatus    Type = "cash_out_order_status"
+	RestrictionMaxBet                          Type = "max_bet"
+	RestrictionMaxOddBet                       Type = "max_odd_bet"
+	RestrictionBetType                         Type = "bet_type"
+	RestrictionBetStatus                       Type = "bet_status"
+	RestrictionBetInterval                     Type = "bet_interval"
+	RestrictionBetDelay                        Type = "bet_delay"
+	RestrictionBetSelectionExistence           Type = "bet_selection_existence"
+	RestrictionSelectionValue                  Type = "selection_value"
+	RestrictionRestrictionSelectionValueChange Type = "selection_value_change"
+	RestrictionRestrictionSportEventType       Type = "sport_event_type"
+	RestrictionRestrictionSportEventStatus     Type = "sport_event_status"
+	RestrictionRestrictionSportEventExistence  Type = "sport_event_existence"
+	RestrictionRestrictionSportEventBetStop    Type = "sport_event_bet_stop"
+	RestrictionMarketStatus                    Type = "market_status"
+	RestrictionMarketExistence                 Type = "market_existence"
+	RestrictionMarketDefective                 Type = "market_defective"
+	RestrictionOddStatus                       Type = "odd_status"
+	RestrictionOddExistence                    Type = "odd_existence"
+	RestrictionCashOutBetType                  Type = "cash_out_bet_type"
+	RestrictionBetCashOutSelection             Type = "bet_cash_out_selections_mismatch"
+	RestrictionCashOutUnavailable              Type = "cash_out_unavailable"
+	RestrictionCashOutAmountLimit              Type = "cash_out_amount_limit"
+	RestrictionCashOutRefundAmount             Type = "cash_out_refund_amount"
+	RestrictionCashOutOrderStatus              Type = "cash_out_order_status"
 )
 
 const (

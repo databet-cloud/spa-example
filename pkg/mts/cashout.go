@@ -2,8 +2,6 @@ package mts
 
 import (
 	"time"
-
-	"github.com/databet-cloud/databet-go-sdk/pkg/restriction"
 )
 
 type CashOutOrderSelection struct {
@@ -45,12 +43,12 @@ const (
 )
 
 type CashOutContext struct {
-	Restrictions []restriction.Restriction `json:"restrictions"`
+	Restrictions []Restriction `json:"restrictions"`
 }
 
 type CalculatedCashOut struct {
-	Amount       CashOutAmount             `json:"amount"`
-	Restrictions []restriction.Restriction `json:"restrictions"`
+	Amount       CashOutAmount `json:"amount"`
+	Restrictions []Restriction `json:"restrictions"`
 }
 
 type CashOutAmount struct {

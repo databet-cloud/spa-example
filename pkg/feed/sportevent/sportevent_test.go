@@ -12,10 +12,10 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/databet-cloud/databet-go-sdk/pkg/feed"
-	"github.com/databet-cloud/databet-go-sdk/pkg/fixture"
-	"github.com/databet-cloud/databet-go-sdk/pkg/market"
+	"github.com/databet-cloud/databet-go-sdk/pkg/feed/fixture"
+	"github.com/databet-cloud/databet-go-sdk/pkg/feed/market"
+	"github.com/databet-cloud/databet-go-sdk/pkg/feed/sportevent"
 	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
-	"github.com/databet-cloud/databet-go-sdk/pkg/sportevent"
 )
 
 //go:embed testdata/benchmark/sport_event.json

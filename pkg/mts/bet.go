@@ -3,8 +3,6 @@ package mts
 import (
 	"net"
 	"time"
-
-	"github.com/databet-cloud/databet-go-sdk/pkg/restriction"
 )
 
 type Bet struct {
@@ -163,20 +161,20 @@ type Marker struct {
 }
 
 type PlaceContext struct {
-	Restrictions     []restriction.Restriction `json:"restrictions"`
-	PlayerLimit      *PlayerLimit              `json:"player_limit,omitempty"`
-	Fixtures         []Fixture                 `json:"fixtures"`
-	SportEventRisks  []SportEventRisk          `json:"sport_event_risk"`
-	SportEventLimits []SportEventLimit         `json:"sport_event_limits"`
-	MarketLimits     []MarketLimit             `json:"market_limits"`
-	MaxBet           Decimal                   `json:"max_bet"`
-	DelayMs          DurationMS                `json:"delay_ms"`
-	Forks            []Fork                    `json:"forks"`
-	BetStopSettings  []BetStopSettings         `json:"bet_stop_settings"`
+	Restrictions     []Restriction     `json:"restrictions"`
+	PlayerLimit      *PlayerLimit      `json:"player_limit,omitempty"`
+	Fixtures         []Fixture         `json:"fixtures"`
+	SportEventRisks  []SportEventRisk  `json:"sport_event_risk"`
+	SportEventLimits []SportEventLimit `json:"sport_event_limits"`
+	MarketLimits     []MarketLimit     `json:"market_limits"`
+	MaxBet           Decimal           `json:"max_bet"`
+	DelayMs          DurationMS        `json:"delay_ms"`
+	Forks            []Fork            `json:"forks"`
+	BetStopSettings  []BetStopSettings `json:"bet_stop_settings"`
 }
 
 func NewPlaceContext(
-	restrictions []restriction.Restriction,
+	restrictions []Restriction,
 	playerLimit *PlayerLimit,
 	fixtures []Fixture,
 	sportEventRisks []SportEventRisk,

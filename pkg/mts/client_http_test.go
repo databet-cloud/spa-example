@@ -20,7 +20,6 @@ import (
 
 	"github.com/databet-cloud/databet-go-sdk/pkg/mts"
 	"github.com/databet-cloud/databet-go-sdk/pkg/mts/mocks"
-	"github.com/databet-cloud/databet-go-sdk/pkg/restriction"
 )
 
 const testURL = "http://mts-test"
@@ -118,7 +117,7 @@ func (s *ClientHTTPTestSuite) TestPlaceBet() {
 			input:    rawPlaceBetReq,
 			httpResp: s.makeResponse(http.StatusBadRequest, "response-restrictions.json"),
 			expected: &mts.PlaceBetResponse{
-				Restrictions: []restriction.Restriction{
+				Restrictions: []mts.Restriction{
 					{Type: "test_restriction"},
 				},
 			},
@@ -274,7 +273,7 @@ func (s *ClientHTTPTestSuite) TestCalculateCashOut() {
 			input:    defaultReq,
 			httpResp: s.makeResponse(http.StatusBadRequest, "response-restrictions.json"),
 			expected: &mts.CalculateCashOutResponse{
-				Restrictions: []restriction.Restriction{{Type: "test_restriction"}},
+				Restrictions: []mts.Restriction{{Type: "test_restriction"}},
 			},
 		},
 		{
@@ -394,7 +393,7 @@ func (s *ClientHTTPTestSuite) TestPlaceCashOutOrder() {
 			input:    defaultReq,
 			httpResp: s.makeResponse(http.StatusBadRequest, "response-restrictions.json"),
 			expected: &mts.PlaceCashOutOrderResponse{
-				Restrictions: []restriction.Restriction{{Type: "test_restriction"}},
+				Restrictions: []mts.Restriction{{Type: "test_restriction"}},
 			},
 		},
 		{
@@ -466,7 +465,7 @@ func (s *ClientHTTPTestSuite) TestCancelCashOutOrder() {
 		BetID:          "bet1",
 		CashOutOrderID: "order1",
 		Context: &mts.CashOutContext{
-			Restrictions: []restriction.Restriction{
+			Restrictions: []mts.Restriction{
 				{Type: "test_restriction"},
 			},
 		},
@@ -575,7 +574,7 @@ func (s *ClientHTTPTestSuite) TestGetRestrictions() {
 		input       *mts.GetRestrictionsRequest
 		queryParams url.Values
 		httpResp    *http.Response
-		expected    []restriction.Restriction
+		expected    []mts.Restriction
 		expectedErr error
 	}{
 		{
@@ -583,38 +582,38 @@ func (s *ClientHTTPTestSuite) TestGetRestrictions() {
 			input:       defaultReq,
 			queryParams: defaultQueryParams,
 			httpResp:    s.makeResponse(http.StatusOK, "restrictions/response-success.json"),
-			expected: []restriction.Restriction{
+			expected: []mts.Restriction{
 				{
-					Type: restriction.MaxBet,
+					Type: mts.RestrictionMaxBet,
 					Context: map[string]any{
-						restriction.CtxKeyMaxBet: "240.96",
+						mts.CtxKeyMaxBet: "240.96",
 					},
 				},
 				{
-					Type: restriction.MarketStatus,
+					Type: mts.RestrictionMarketStatus,
 					Context: map[string]any{
-						restriction.CtxKeyMarketID:     "20",
-						restriction.CtxKeySportEventID: "85d130b1-6c8f-4170-bb4f-f80343b55c01",
-						restriction.CtxKeyStatus:       float64(3),
+						mts.CtxKeyMarketID:     "20",
+						mts.CtxKeySportEventID: "85d130b1-6c8f-4170-bb4f-f80343b55c01",
+						mts.CtxKeyStatus:       float64(3),
 					},
 				},
 				{
-					Type: restriction.OddStatus,
+					Type: mts.RestrictionOddStatus,
 					Context: map[string]any{
-						restriction.CtxKeyIsActive:     true,
-						restriction.CtxKeyMarketID:     "20",
-						restriction.CtxKeyOddID:        "1",
-						restriction.CtxKeySportEventID: "85d130b1-6c8f-4170-bb4f-f80343b55c01",
-						restriction.CtxKeyStatus:       float64(1),
+						mts.CtxKeyIsActive:     true,
+						mts.CtxKeyMarketID:     "20",
+						mts.CtxKeyOddID:        "1",
+						mts.CtxKeySportEventID: "85d130b1-6c8f-4170-bb4f-f80343b55c01",
+						mts.CtxKeyStatus:       float64(1),
 					},
 				},
 				{
-					Type: restriction.SelectionValue,
+					Type: mts.RestrictionSelectionValue,
 					Context: map[string]any{
-						restriction.CtxKeyMarketID:     "20",
-						restriction.CtxKeyOddID:        "1",
-						restriction.CtxKeySportEventID: "85d130b1-6c8f-4170-bb4f-f80343b55c01",
-						restriction.CtxKeyValue:        "1.00",
+						mts.CtxKeyMarketID:     "20",
+						mts.CtxKeyOddID:        "1",
+						mts.CtxKeySportEventID: "85d130b1-6c8f-4170-bb4f-f80343b55c01",
+						mts.CtxKeyValue:        "1.00",
 					},
 				},
 			},
