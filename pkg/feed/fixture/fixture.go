@@ -8,7 +8,6 @@ func NewFixture() *Fixture {
 	return &Fixture{
 		Competitors: Competitors{},
 		Streams:     Streams{},
-		Venue:       Venue{},
 		Tournament:  Tournament{},
 	}
 }
@@ -32,7 +31,6 @@ type Fixture struct {
 	SportID string `json:"sport_id"`
 	// Tournament of the current sport event
 	Tournament  Tournament  `json:"tournament"`
-	Venue       Venue       `json:"venue"`
 	Competitors Competitors `json:"competitors"`
 	// Streams is the collection of available streams, binded to the current sport event
 	Streams Streams `json:"streams"`

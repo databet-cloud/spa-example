@@ -242,18 +242,6 @@ func (p *PatcherSimdJSON) applyFixturePatch(f *fixture.Fixture, path string, ite
 
 		f.Streams = make(fixture.Streams)
 		return f.Streams.FromIter(iter, p.tmpObj)
-
-	case "venue":
-		if partialPatch {
-			if rest != "id" {
-				return fmt.Errorf("invalid venue patch: %s", rest)
-			}
-
-			f.Venue.ID, err = simdutil.UnsafeStrFromIter(iter)
-			return err
-		}
-
-		return f.Venue.FromIter(iter, p.tmpObj)
 	}
 
 	if err != nil {

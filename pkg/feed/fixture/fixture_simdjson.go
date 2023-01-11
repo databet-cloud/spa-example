@@ -82,8 +82,6 @@ func (f *Fixture) UnmarshalSimdJSON(
 			}
 
 			err = f.Tournament.UnmarshalSimdJSON(tournamentObj, reuseIter)
-		case "venue":
-			err = f.Venue.FromIter(reuseIter, reuseObj)
 		case "competitors":
 			f.Competitors = make(Competitors, 4)
 
