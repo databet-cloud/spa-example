@@ -13,6 +13,7 @@ type placeBetResponse struct {
 type PlaceBetResponse struct {
 	// Bet that was placed in case of successful response
 	Bet *Bet `json:"bet,omitempty"`
+
 	// Restrictions is the list of restrictions that aren't met and the bet is declined
 	Restrictions []Restriction `json:"restrictions,omitempty"`
 }

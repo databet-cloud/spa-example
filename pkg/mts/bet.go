@@ -7,6 +7,7 @@ import (
 
 type Bet struct {
 	Version string `json:"version"`
+
 	// ID of the bet sent with the PlaceBet request
 	// example: m7k6BN4yRaibEtlPYxmvSGOiUXEEF9IAAAxiqwAQ
 	ID          string     `json:"id"`
@@ -15,18 +16,21 @@ type Bet struct {
 	Status      BetStatus  `json:"status"`
 	Type        BetType    `json:"type"`
 	Stake       MultiMoney `json:"stake"`
+
 	// Refund is an amount of money that should be creadited to the player`s balance,
 	// if the bet won - the value is greater than 0, if lost - equal to 0
 	Refund     MultiMoney   `json:"refund"`
 	RefundBase MultiMoney   `json:"refund_base"`
 	Selections []*Selection `json:"selections"`
 	PlayerInfo PlayerInfo   `json:"player_info"`
+
 	// CreatedAt is a timestamp when the bet was placed by user.
 	// ISO 8601 (RFC 3339) format, example: 2019-07-24T15:55:20+00:00
 	CreatedAt    time.Time     `json:"created_at"`
 	Events       []Event       `json:"events"`
 	Markers      []Marker      `json:"markers"`
 	PlaceContext *PlaceContext `json:"place_context,omitempty"`
+
 	// CashOutOrders is the collection of cash-out orders, indexed by cash-out ids
 	CashOutOrders map[CashOutOrderID]CashOutOrder `json:"cash_out_orders"`
 }

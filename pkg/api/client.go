@@ -24,6 +24,7 @@ type MarketClient interface {
 type SportClient interface {
 	FindSportByID(ctx context.Context, sportID string) (*Sport, error)
 	FindSportsByFilters(ctx context.Context, filters *SportFilters) ([]Sport, error)
+
 	// GetAllLocalizedSports finds sports by ids (optional argument, by default all sports are returned)
 	// and translates them to a given locale.
 	GetAllLocalizedSports(ctx context.Context, locale Locale, ids ...string) ([]SportLocalized, error)

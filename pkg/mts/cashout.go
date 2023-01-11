@@ -20,15 +20,19 @@ func (o CashOutOrderID) String() string {
 type CashOutOrder struct {
 	// ID of the cash-out sent by the PlaceCashOutOrder request
 	ID CashOutOrderID `json:"id"`
+
 	// BetID sent by the PlaceBet request
 	BetID string `json:"bet_id"`
+
 	// Amount is the part of the bet stake that was cashed out
 	Amount MultiMoney `json:"amount"`
+
 	// RefundAmount of money that should be credited to the player`s balance
 	RefundAmount MultiMoney         `json:"refund_amount"`
 	Status       CashOutOrderStatus `json:"status"`
 	CreatedAt    time.Time          `json:"created_at"`
 	UpdatedAt    time.Time          `json:"updated_at"`
+
 	// Selections state at the moment of cash-out - must contain all selections in the bet,
 	// but have an actual value(coefficients)
 	Selections []CashOutOrderSelection `json:"selections"`

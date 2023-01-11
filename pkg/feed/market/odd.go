@@ -72,14 +72,19 @@ func (c Odds) Clone() Odds {
 type Odd struct {
 	// ID of the current odd
 	ID string `json:"id"`
+
 	// Template is a name with specifiers, that could be replaced to format market's name
 	Template string `json:"template"`
+
 	// IsActive indicates whether this odd is active and you could accept bets on it or not
 	IsActive bool `json:"is_active"`
+
 	// Status indicates odd status
 	Status OddStatus `json:"status"`
+
 	// Value is a float coefficient in string representation
 	Value string `json:"value"`
+
 	// Reason indicates why the current status is set to the current odd
 	StatusReason string `json:"status_reason"`
 }

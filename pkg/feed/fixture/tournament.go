@@ -11,8 +11,10 @@ import (
 type Tournament struct {
 	// ID of the tournament
 	ID string `json:"id"`
+
 	// Name of the tournament
 	Name string `json:"name"`
+
 	// CountryCode ISO 3166-1 alpha-2
 	CountryCode string `json:"country_code"`
 }
