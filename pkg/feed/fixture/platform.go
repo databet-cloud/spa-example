@@ -12,8 +12,8 @@ import (
 type PlatformType string
 
 const (
-	PlatformTypeDesktop = "desktop"
-	PlatformTypeMobile  = "mobile"
+	PlatformTypeDesktop PlatformType = "desktop"
+	PlatformTypeMobile  PlatformType = "mobile"
 )
 
 type Platform struct {
