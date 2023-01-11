@@ -6,7 +6,7 @@ import (
 	"github.com/minio/simdjson-go"
 	"golang.org/x/exp/slices"
 
-	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
+	"github.com/databet-cloud/databet-go-sdk/internal/simdutil"
 )
 
 type Platform struct {

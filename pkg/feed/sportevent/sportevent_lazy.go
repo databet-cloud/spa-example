@@ -6,9 +6,9 @@ import (
 
 	"github.com/minio/simdjson-go"
 
+	"github.com/databet-cloud/databet-go-sdk/internal/simdutil"
 	"github.com/databet-cloud/databet-go-sdk/pkg/feed/fixture"
 	"github.com/databet-cloud/databet-go-sdk/pkg/feed/market"
-	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
 
 // SportEventLazy could be used to lazy unmarshal and handle markets

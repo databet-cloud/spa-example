@@ -10,7 +10,7 @@ import (
 
 	"github.com/bytedance/sonic"
 
-	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
+	"github.com/databet-cloud/databet-go-sdk/internal/simdutil"
 )
 
 type ClientHTTP struct {

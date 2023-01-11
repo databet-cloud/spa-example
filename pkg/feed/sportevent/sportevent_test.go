@@ -11,11 +11,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/databet-cloud/databet-go-sdk/internal/simdutil"
 	"github.com/databet-cloud/databet-go-sdk/pkg/feed"
 	"github.com/databet-cloud/databet-go-sdk/pkg/feed/fixture"
 	"github.com/databet-cloud/databet-go-sdk/pkg/feed/market"
 	"github.com/databet-cloud/databet-go-sdk/pkg/feed/sportevent"
-	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
 )
 
 //go:embed testdata/benchmark/sport_event.json

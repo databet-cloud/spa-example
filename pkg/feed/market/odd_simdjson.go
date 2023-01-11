@@ -5,7 +5,7 @@ import (
 
 	"github.com/minio/simdjson-go"
 
-	"github.com/databet-cloud/databet-go-sdk/pkg/simdutil"
+	"github.com/databet-cloud/databet-go-sdk/internal/simdutil"
 )
 
 func (c Odds) UnmarshalSimdJSON(obj *simdjson.Object, reuseIter *simdjson.Iter, reuseOddObj *simdjson.Object, reuseOdd *Odd) error {
