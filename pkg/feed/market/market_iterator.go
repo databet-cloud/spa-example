@@ -8,6 +8,7 @@ import (
 	"github.com/databet-cloud/databet-go-sdk/internal/simdutil"
 )
 
+// Iterator allows you to lazily iterate through the simdjson.Iter and read markets from it
 type Iterator struct {
 	tmpIter simdjson.Iter
 	tmpObj  simdjson.Object

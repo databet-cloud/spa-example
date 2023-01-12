@@ -104,9 +104,15 @@ func (c *Competitor) UnmarshalSimdJSON(
 		case "id":
 			c.ID, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "type":
-			c.Type, err = simdutil.IntFromIter(reuseIter)
+			var v int
+
+			v, err = simdutil.IntFromIter(reuseIter)
+			c.Type = CompetitorType(v)
 		case "home_away":
-			c.HomeAway, err = simdutil.IntFromIter(reuseIter)
+			var v int
+
+			v, err = simdutil.IntFromIter(reuseIter)
+			c.HomeAway = CompetitorSide(v)
 		case "template_position":
 			c.TemplatePosition, err = simdutil.IntFromIter(reuseIter)
 		case "scores":
@@ -119,8 +125,6 @@ func (c *Competitor) UnmarshalSimdJSON(
 			err = c.Scores.UnmarshalSimdJSON(scoresObj, reuseIter, reuseScoreObj, reuseScore)
 		case "name":
 			c.Name, err = simdutil.UnsafeStrFromIter(reuseIter)
-		case "master_id":
-			c.MasterID, err = simdutil.UnsafeStrFromIter(reuseIter)
 		case "country_code":
 			c.CountryCode, err = simdutil.UnsafeStrFromIter(reuseIter)
 		}

@@ -180,9 +180,15 @@ func (p *PatcherSimdJSON) applyFixturePatch(f *fixture.Fixture, path string, ite
 
 	switch key {
 	case "status":
-		f.Status, err = simdutil.IntFromIter(iter)
+		var v int
+		v, err = simdutil.IntFromIter(iter)
+
+		f.Status = fixture.Status(v)
 	case "type":
-		f.Type, err = simdutil.IntFromIter(iter)
+		var v int
+		v, err = simdutil.IntFromIter(iter)
+
+		f.Type = fixture.Type(v)
 	case "start_time":
 		f.StartTime, err = simdutil.TimeFromIter(iter)
 	case "live_coverage":
@@ -236,18 +242,6 @@ func (p *PatcherSimdJSON) applyFixturePatch(f *fixture.Fixture, path string, ite
 
 		f.Streams = make(fixture.Streams)
 		return f.Streams.FromIter(iter, p.tmpObj)
-
-	case "venue":
-		if partialPatch {
-			if rest != "id" {
-				return fmt.Errorf("invalid venue patch: %s", rest)
-			}
-
-			f.Venue.ID, err = simdutil.UnsafeStrFromIter(iter)
-			return err
-		}
-
-		return f.Venue.FromIter(iter, p.tmpObj)
 	}
 
 	if err != nil {
@@ -299,15 +293,19 @@ func (p *PatcherSimdJSON) applyCompetitorPatch(c *fixture.Competitor, path strin
 	case "id":
 		c.ID, err = simdutil.UnsafeStrFromIter(iter)
 	case "type":
-		c.Type, err = simdutil.IntFromIter(iter)
+		var v int
+		v, err = simdutil.IntFromIter(iter)
+
+		c.Type = fixture.CompetitorType(v)
 	case "home_away":
-		c.HomeAway, err = simdutil.IntFromIter(iter)
+		var v int
+		v, err = simdutil.IntFromIter(iter)
+
+		c.HomeAway = fixture.CompetitorSide(v)
 	case "template_position":
 		c.TemplatePosition, err = simdutil.IntFromIter(iter)
 	case "name":
 		c.Name, err = simdutil.UnsafeStrFromIter(iter)
-	case "master_id":
-		c.MasterID, err = simdutil.UnsafeStrFromIter(iter)
 	case "country_code":
 		c.CountryCode, err = simdutil.UnsafeStrFromIter(iter)
 	case "scores":
@@ -403,8 +401,6 @@ func (p *PatcherSimdJSON) applyTournamentPatch(tournament *fixture.Tournament, p
 		tournament.ID, err = simdutil.UnsafeStrFromIter(iter)
 	case "name":
 		tournament.Name, err = simdutil.UnsafeStrFromIter(iter)
-	case "master_id":
-		tournament.MasterID, err = simdutil.UnsafeStrFromIter(iter)
 	case "country_code":
 		tournament.CountryCode, err = simdutil.UnsafeStrFromIter(iter)
 	}
@@ -525,7 +521,10 @@ func (p *PatcherSimdJSON) applyPlatformPatch(platform *fixture.Platform, path st
 
 	switch path {
 	case "type":
-		platform.Type, err = simdutil.UnsafeStrFromIter(iter)
+		var v string
+		v, err = simdutil.UnsafeStrFromIter(iter)
+
+		platform.Type = fixture.PlatformType(v)
 	case "allowed_countries":
 		array, err := iter.Array(nil)
 		if err != nil {

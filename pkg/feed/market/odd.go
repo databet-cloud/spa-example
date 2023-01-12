@@ -37,6 +37,7 @@ func (os OddStatus) IsResulted() bool {
 	return os != OddStatusNotResulted
 }
 
+// Odds is a map with odd id in its key and odd as a value
 type Odds map[string]Odd
 
 func (c Odds) Equals(other Odds) bool {
@@ -58,6 +59,7 @@ func (c Odds) Equals(other Odds) bool {
 	return true
 }
 
+// Clone odds and return it's deep copy
 func (c Odds) Clone() Odds {
 	newC := make(Odds, len(c))
 	for id, odd := range c {
@@ -68,12 +70,23 @@ func (c Odds) Clone() Odds {
 }
 
 type Odd struct {
-	ID           string    `json:"id"`
-	Template     string    `json:"template"`
-	IsActive     bool      `json:"is_active"`
-	Status       OddStatus `json:"status"`
-	Value        string    `json:"value"`
-	StatusReason string    `json:"status_reason"`
+	// ID of the current odd
+	ID string `json:"id"`
+
+	// Template is a name with specifiers, that could be replaced to format market's name
+	Template string `json:"template"`
+
+	// IsActive indicates whether this odd is active and you could accept bets on it or not
+	IsActive bool `json:"is_active"`
+
+	// Status indicates odd status
+	Status OddStatus `json:"status"`
+
+	// Value is a float coefficient in string representation
+	Value string `json:"value"`
+
+	// Reason indicates why the current status is set to the current odd
+	StatusReason string `json:"status_reason"`
 }
 
 func (o Odd) Equals(other Odd) bool {
@@ -85,6 +98,7 @@ func (o Odd) Equals(other Odd) bool {
 		o.StatusReason == other.StatusReason
 }
 
+// Clone odd and return it's deep copy
 func (o Odd) Clone() Odd {
 	return Odd{
 		ID:           o.ID,
