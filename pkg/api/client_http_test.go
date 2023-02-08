@@ -58,6 +58,11 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedTournamentByID() {
 			httpResp:    s.makeResponse(http.StatusUnauthorized, ""),
 			expectedErr: api.ErrInvalidCertificate,
 		},
+		{
+			name:        "ip forbidden",
+			httpResp:    s.makeResponse(http.StatusForbidden, ""),
+			expectedErr: api.ErrForbidden,
+		},
 	}
 
 	for _, tc := range testCases {
@@ -98,6 +103,11 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedTournamentsByIDs() {
 			name:        "unauthorized",
 			httpResp:    s.makeResponse(http.StatusUnauthorized, ""),
 			expectedErr: api.ErrInvalidCertificate,
+		},
+		{
+			name:        "ip forbidden",
+			httpResp:    s.makeResponse(http.StatusForbidden, ""),
+			expectedErr: api.ErrForbidden,
 		},
 	}
 
@@ -149,6 +159,11 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedPlayerByID() {
 			httpResp:    s.makeResponse(http.StatusUnauthorized, ""),
 			expectedErr: api.ErrInvalidCertificate,
 		},
+		{
+			name:        "ip forbidden",
+			httpResp:    s.makeResponse(http.StatusForbidden, ""),
+			expectedErr: api.ErrForbidden,
+		},
 	}
 
 	for _, tc := range testCases {
@@ -189,6 +204,11 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedPlayersByIDs() {
 			name:        "unauthorized",
 			httpResp:    s.makeResponse(http.StatusUnauthorized, ""),
 			expectedErr: api.ErrInvalidCertificate,
+		},
+		{
+			name:        "ip forbidden",
+			httpResp:    s.makeResponse(http.StatusForbidden, ""),
+			expectedErr: api.ErrForbidden,
 		},
 	}
 
@@ -240,6 +260,11 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedTeamByID() {
 			httpResp:    s.makeResponse(http.StatusUnauthorized, ""),
 			expectedErr: api.ErrInvalidCertificate,
 		},
+		{
+			name:        "ip forbidden",
+			httpResp:    s.makeResponse(http.StatusForbidden, ""),
+			expectedErr: api.ErrForbidden,
+		},
 	}
 
 	for _, tc := range testCases {
@@ -280,6 +305,11 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedTeamsByIDs() {
 			name:        "unauthorized",
 			httpResp:    s.makeResponse(http.StatusUnauthorized, ""),
 			expectedErr: api.ErrInvalidCertificate,
+		},
+		{
+			name:        "ip forbidden",
+			httpResp:    s.makeResponse(http.StatusForbidden, ""),
+			expectedErr: api.ErrForbidden,
 		},
 	}
 
@@ -325,6 +355,11 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedOrganizationsByIDs() {
 			name:        "unauthorized",
 			httpResp:    s.makeResponse(http.StatusUnauthorized, ""),
 			expectedErr: api.ErrInvalidCertificate,
+		},
+		{
+			name:        "ip forbidden",
+			httpResp:    s.makeResponse(http.StatusForbidden, ""),
+			expectedErr: api.ErrForbidden,
 		},
 	}
 
@@ -382,6 +417,11 @@ func (s *ClientHTTPTestSuite) TestFindSportEventLimits() {
 			name:        "unauthorized",
 			httpResp:    s.makeResponse(http.StatusUnauthorized, ""),
 			expectedErr: api.ErrInvalidCertificate,
+		},
+		{
+			name:        "ip forbidden",
+			httpResp:    s.makeResponse(http.StatusForbidden, ""),
+			expectedErr: api.ErrForbidden,
 		},
 	}
 

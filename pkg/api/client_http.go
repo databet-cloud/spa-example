@@ -577,6 +577,10 @@ func (c *ClientHTTP) doAPIRequest(httpReq *http.Request) ([]byte, error) {
 		return nil, fmt.Errorf("%w, response body: %q", ErrInvalidCertificate, string(rawBody))
 	}
 
+	if httpResp.StatusCode == http.StatusForbidden {
+		return nil, ErrForbidden
+	}
+
 	if httpResp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("status code: %s, response body: %q", httpResp.Status, string(rawBody))
 	}
