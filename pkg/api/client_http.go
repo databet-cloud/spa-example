@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/bytedance/sonic"
 
@@ -516,6 +517,47 @@ func (c *ClientHTTP) FindLocalizedOrganizationsByIDs(ctx context.Context, locale
 	}
 
 	return resp.Organizations, nil
+}
+
+func (c *ClientHTTP) FindSportEventLimits(
+	ctx context.Context,
+	req *FindSportEventLimitsRequest,
+) ([]SportEventLimit, error) {
+	rawReqBody, err := sonic.MarshalString(req)
+	if err != nil {
+		return nil, fmt.Errorf("marshal request body: %w", err)
+	}
+
+	httpReq, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodPost,
+		fmt.Sprintf("%s/sport_event_limit/find", c.apiURL),
+		strings.NewReader(rawReqBody),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("create http request: %w", err)
+	}
+
+	rawBody, err := c.doAPIRequest(httpReq)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp struct {
+		Limits []SportEventLimit `json:"limits"`
+		Error  *apiError         `json:"error"`
+	}
+
+	err = sonic.UnmarshalString(simdutil.UnsafeStrFromBytes(rawBody), &resp)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshal response: %w", err)
+	}
+
+	if resp.Error != nil {
+		return nil, c.convertApiError(resp.Error)
+	}
+
+	return resp.Limits, nil
 }
 
 func (c *ClientHTTP) doAPIRequest(httpReq *http.Request) ([]byte, error) {

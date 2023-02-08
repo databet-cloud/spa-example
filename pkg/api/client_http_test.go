@@ -354,6 +354,62 @@ func (s *ClientHTTPTestSuite) TestFindLocalizedOrganizationsByIDs() {
 	}
 }
 
+func (s *ClientHTTPTestSuite) TestFindSportEventLimits() {
+	testCases := []struct {
+		name        string
+		req         *api.FindSportEventLimitsRequest
+		httpResp    *http.Response
+		expected    []api.SportEventLimit
+		expectedErr error
+	}{
+		{
+			name: "succeed",
+			req: api.NewFindSportEventLimitRequest().
+				SetSportEventIDs("035896b9-cfcf-4447-a28d-bac27aa00471").
+				SetFixtureStates(api.LimitFixtureStateInProgress),
+			httpResp: s.makeResponse(http.StatusOK, "find-sport-event-limits/response-success.json"),
+			expected: []api.SportEventLimit{DefaultSportEventLimit},
+		},
+		{
+			name: "succeed",
+			req: api.NewFindSportEventLimitRequest().
+				SetSportEventIDs("035896b9-cfcf-4447-a28d-bac27aa00471").
+				SetFixtureStates(api.LimitFixtureStateInProgress),
+			httpResp:    s.makeResponse(http.StatusOK, "find-sport-event-limits/response-server-error.json"),
+			expectedErr: api.ErrUnknown,
+		},
+		{
+			name:        "unauthorized",
+			httpResp:    s.makeResponse(http.StatusUnauthorized, ""),
+			expectedErr: api.ErrInvalidCertificate,
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			ctrl := gomock.NewController(s.T())
+
+			roundTripper := mocks.NewRoundTripper(ctrl)
+			s.client.Transport = roundTripper
+
+			httpReq := s.makeRequest(
+				http.MethodPost,
+				fmt.Sprintf("%s/sport_event_limit/find", testURL),
+				http.NoBody,
+			)
+			roundTripper.EXPECT().RoundTrip(s.newReqMatcher(httpReq)).Return(tc.httpResp, nil)
+
+			actual, actualErr := s.apiClient.FindSportEventLimits(
+				context.Background(),
+				tc.req,
+			)
+
+			s.Equal(tc.expected, actual)
+			s.ErrorIs(actualErr, tc.expectedErr)
+		})
+	}
+}
+
 func (s *ClientHTTPTestSuite) newReqMatcher(req *http.Request) reqMatcher {
 	return reqMatcher{
 		s:           &s.Suite,

@@ -11,6 +11,7 @@ type Client interface {
 	PlayerClient
 	TeamClient
 	OrganizationClient
+	LimitClient
 }
 
 type MarketClient interface {
@@ -47,4 +48,8 @@ type TeamClient interface {
 
 type OrganizationClient interface {
 	FindLocalizedOrganizationsByIDs(ctx context.Context, locale Locale, organizationIDs []string) ([]OrganizationLocalized, error)
+}
+
+type LimitClient interface {
+	FindSportEventLimits(ctx context.Context, req *FindSportEventLimitsRequest) ([]SportEventLimit, error)
 }
