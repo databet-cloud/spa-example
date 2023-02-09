@@ -47,3 +47,21 @@ var DefaultLocalizedOrganization = api.OrganizationLocalized{
 	SportIDs: []string{"tennis"},
 	Locale:   "en",
 }
+
+var DefaultSportEventLimit = api.SportEventLimit{
+	BookmakerID:  "test",
+	SportEventID: "035896b9-cfcf-4447-a28d-bac27aa00471",
+	FixtureState: api.LimitFixtureStateInProgress,
+	BetLimit: api.BetLimit{
+		BetDelay: 10,
+	},
+	Risks: api.Risks{
+		MaxBetRisk: "100.00",
+	},
+	MarketsLimits: []api.MarketLimit{
+		{MarketID: "123", MaxBetRiskMultiplier: "1.42"},
+	},
+	LimitUpdatedAt: mustParseTime("2023-02-06T09:19:16.919Z"),
+	Version:        "cfgcc52mg7redge4kn6g",
+	UpdatedAt:      mustParseTime("2023-02-06T09:19:16.926Z"),
+}

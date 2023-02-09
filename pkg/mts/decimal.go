@@ -1,7 +1,5 @@
 package mts
 
-type Decimal string
+import "github.com/databet-cloud/databet-go-sdk/pkg/common"
 
-func (d Decimal) String() string {
-	return string(d)
-}
+type Decimal = common.Decimal
