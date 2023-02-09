@@ -1,6 +1,10 @@
 package api
 
-import "time"
+import (
+	"time"
+
+	"github.com/databet-cloud/databet-go-sdk/pkg/common"
+)
 
 type LimitFixtureState int
 
@@ -57,10 +61,10 @@ type BetLimit struct {
 }
 
 type Risks struct {
-	MaxBetRisk string `json:"max_bet_risk"`
+	MaxBetRisk common.Decimal `json:"max_bet_risk"`
 }
 
 type MarketLimit struct {
-	MarketID             string `json:"market_id"`
-	MaxBetRiskMultiplier string `json:"max_bet_risk_multiplier"`
+	MarketID             string         `json:"market_id"`
+	MaxBetRiskMultiplier common.Decimal `json:"max_bet_risk_multiplier"`
 }
