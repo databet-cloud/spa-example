@@ -1,11 +1,11 @@
 package statistics
 
-type PenaltyStatus = string
+type PenaltyStatus string
 
 const (
-	UNKNOWN  PenaltyStatus = "unknown"
-	AWARDED  PenaltyStatus = "awarded"
-	MISSED   PenaltyStatus = "missed"
-	ENDED    PenaltyStatus = "ended"
-	CANCELED PenaltyStatus = "canceled"
+	PenaltyStatusUnknown       PenaltyStatus = "unknown"
+	PenaltyStatusAwarded       PenaltyStatus = "awarded"
+	PenaltyStatusMissed        PenaltyStatus = "missed"
+	PenaltyStatusEnded         PenaltyStatus = "ended"
+	PenaltyStatusEndedCanceled PenaltyStatus = "canceled"
 )

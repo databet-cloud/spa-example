@@ -1,18 +1,28 @@
 package statistics
 
+type HockeyPeriodType string
+
 const (
 	HockeyPeriodRegular  HockeyPeriodType = "regular"
 	HockeyPeriodOvertime HockeyPeriodType = "overtime"
 	HockeyPeriodBullets  HockeyPeriodType = "bullets"
+)
 
-	HockeyPeriodOvertimeDurationUnknown        = "unknown"
-	HockeyPeriodOvertimeDurationNotAllowed     = "not_allowed"
-	HockeyPeriodOvertimeDurationUntilFirstGoal = "until_first_goal"
-	HockeyPeriodOvertimeDurationFiveMin        = "5_min"
-	HockeyPeriodOvertimeDurationSevenMin       = "7_min"
-	HockeyPeriodOvertimeDurationTenMin         = "10_min"
-	HockeyPeriodOvertimeDurationTwentyMin      = "20_min"
+type HockeyPeriodOvertimeDuration string
 
+const (
+	HockeyPeriodOvertimeDurationUnknown        HockeyPeriodOvertimeDuration = "unknown"
+	HockeyPeriodOvertimeDurationNotAllowed     HockeyPeriodOvertimeDuration = "not_allowed"
+	HockeyPeriodOvertimeDurationUntilFirstGoal HockeyPeriodOvertimeDuration = "until_first_goal"
+	HockeyPeriodOvertimeDurationFiveMin        HockeyPeriodOvertimeDuration = "5_min"
+	HockeyPeriodOvertimeDurationSevenMin       HockeyPeriodOvertimeDuration = "7_min"
+	HockeyPeriodOvertimeDurationTenMin         HockeyPeriodOvertimeDuration = "10_min"
+	HockeyPeriodOvertimeDurationTwentyMin      HockeyPeriodOvertimeDuration = "20_min"
+)
+
+type HockeyPeriodDuration string
+
+const (
 	HockeyPeriodDurationUnknown   = "unknown"
 	HockeyPeriodDurationThreeMin  = "3_min"
 	HockeyPeriodDurationFourMin   = "4_min"
@@ -21,18 +31,16 @@ const (
 	HockeyPeriodDurationTwentyMin = "20_min"
 )
 
-func (s HockeyStatistic) Typ() string {
+func (s HockeyStatistic) GetType() Type {
 	return s.Type
 }
 
 type HockeyStatistic struct {
-	Type                   string         `json:"type"`
-	OvertimePeriodDuration string         `json:"overtime_period_duration"`
-	PeriodDuration         string         `json:"period_duration"`
-	Periods                []HockeyPeriod `json:"periods"`
+	Type                   Type                         `json:"type"`
+	OvertimePeriodDuration HockeyPeriodOvertimeDuration `json:"overtime_period_duration"`
+	PeriodDuration         HockeyPeriodDuration         `json:"period_duration"`
+	Periods                []HockeyPeriod               `json:"periods"`
 }
-
-type HockeyPeriodType = string
 
 type HockeyPeriod struct {
 	Number       int                 `json:"number"`

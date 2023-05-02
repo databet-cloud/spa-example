@@ -1,31 +1,38 @@
 package statistics
 
+type IndoorSoccerPeriodType string
+
 const (
-	IndoorSoccerPeriodUnknown           = "unknown"
-	IndoorSoccerPeriodFirstHalf         = "1st_half"
-	IndoorSoccerPeriodSecondHalf        = "2nd_half"
-	IndoorSoccerTimeFormatUnknown       = "unknown"
-	IndoorSoccerTimeFormatTenMinutes    = "10_min"
-	IndoorSoccerTimeFormatTwelveMinutes = "12_min"
+	IndoorSoccerPeriodUnknown    IndoorSoccerPeriodType = "unknown"
+	IndoorSoccerPeriodFirstHalf  IndoorSoccerPeriodType = "1st_half"
+	IndoorSoccerPeriodSecondHalf IndoorSoccerPeriodType = "2nd_half"
 )
 
-func (s IndoorSoccerStatistic) Typ() string {
+type IndoorSoccerTimeFormat string
+
+const (
+	IndoorSoccerTimeFormatUnknown       IndoorSoccerTimeFormat = "unknown"
+	IndoorSoccerTimeFormatTenMinutes    IndoorSoccerTimeFormat = "10_min"
+	IndoorSoccerTimeFormatTwelveMinutes IndoorSoccerTimeFormat = "12_min"
+)
+
+func (s IndoorSoccerStatistic) GetType() Type {
 	return s.Type
 }
 
 type IndoorSoccerStatistic struct {
-	Type       string               `json:"type"`
-	TimeFormat string               `json:"time_format"`
-	Periods    []IndoorSoccerPeriod `json:"periods"`
+	Type       Type                   `json:"type"`
+	TimeFormat IndoorSoccerTimeFormat `json:"time_format"`
+	Periods    []IndoorSoccerPeriod   `json:"periods"`
 }
 
 type IndoorSoccerPeriod struct {
-	Number int                `json:"number"`
-	Type   string             `json:"type"`
-	Ended  bool               `json:"ended"`
-	Goals  []IndoorSoccerGoal `json:"goals"`
-	Cards  []IndoorSoccerCard `json:"cards"`
-	Timer  Timer              `json:"timer"`
+	Number int                    `json:"number"`
+	Type   IndoorSoccerPeriodType `json:"type"`
+	Ended  bool                   `json:"ended"`
+	Goals  []IndoorSoccerGoal     `json:"goals"`
+	Cards  []IndoorSoccerCard     `json:"cards"`
+	Timer  Timer                  `json:"timer"`
 }
 
 type IndoorSoccerGoal struct {
@@ -35,9 +42,9 @@ type IndoorSoccerGoal struct {
 }
 
 type IndoorSoccerCard struct {
-	Number    int    `json:"number"`
-	MatchTime int    `json:"match_time"`
-	Type      string `json:"type"`
-	Cancelled bool   `json:"cancelled"`
-	Team      string `json:"team"`
+	Number    int      `json:"number"`
+	MatchTime int      `json:"match_time"`
+	Type      CardType `json:"type"`
+	Cancelled bool     `json:"cancelled"`
+	Team      string   `json:"team"`
 }

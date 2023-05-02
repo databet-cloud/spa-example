@@ -1,28 +1,30 @@
 package statistics
 
+type EbasketballQuarterFormat string
+
 const (
-	EbasketballQuarterFormatUnknown       = "unknown"
-	EbasketballQuarterFormatFourMinutes   = "4_min"
-	EbasketballQuarterFormatFiveMinutes   = "5_min"
-	EbasketballQuarterFormatSixMinutes    = "6_min"
-	EbasketballQuarterFormatTenMinutes    = "10_min"
-	EbasketballQuarterFormatTwelveMinutes = "12_min"
+	EbasketballQuarterFormatUnknown       EbasketballQuarterFormat = "unknown"
+	EbasketballQuarterFormatFourMinutes   EbasketballQuarterFormat = "4_min"
+	EbasketballQuarterFormatFiveMinutes   EbasketballQuarterFormat = "5_min"
+	EbasketballQuarterFormatSixMinutes    EbasketballQuarterFormat = "6_min"
+	EbasketballQuarterFormatTenMinutes    EbasketballQuarterFormat = "10_min"
+	EbasketballQuarterFormatTwelveMinutes EbasketballQuarterFormat = "12_min"
 )
 
-func (s EBasketballStatistic) Typ() string {
+func (s EBasketballStatistic) GetType() Type {
 	return s.Type
 }
 
 type EBasketballStatistic struct {
-	Type       string               `json:"type"`
-	TimeFormat string               `json:"time_format"`
-	Quarters   []EBasketballQuarter `json:"quarters"`
+	Type       Type                     `json:"type"`
+	TimeFormat EbasketballQuarterFormat `json:"time_format"`
+	Quarters   []EBasketballQuarter     `json:"quarters"`
 }
 
 type EBasketballQuarter struct {
 	Number             int                    `json:"number"`
 	Ended              bool                   `json:"ended"`
-	BallPossessionTeam string                 `json:"ball_possession_team"`
+	BallPossessionTeam Team                   `json:"ball_possession_team"`
 	Timer              Timer                  `json:"timer"`
 	Score              EBasketballScore       `json:"score"`
 	FoulThrows         []EBasketballFoulThrow `json:"foul_throws"`

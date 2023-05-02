@@ -1,26 +1,22 @@
 package statistics
 
-const (
-	ESoccerCardTypeRed       = "red"
-	ESoccerCardTypeYellow    = "yellow"
-	ESoccerCardTypeYellowRed = "yellow_red"
-)
+type ESoccerPeriodType string
 
 const (
-	ESoccerPeriodUnknown     = "unknown"
-	ESoccerPeriodFirstHalf   = "1st_half"
-	ESoccerPeriodSecondHalf  = "2nd_half"
-	ESoccerPeriodFirstExtra  = "1st_extra"
-	ESoccerPeriodSecondExtra = "2nd_extra"
-	ESoccerPeriodPenalties   = "penalties"
+	ESoccerPeriodUnknown     ESoccerPeriodType = "unknown"
+	ESoccerPeriodFirstHalf   ESoccerPeriodType = "1st_half"
+	ESoccerPeriodSecondHalf  ESoccerPeriodType = "2nd_half"
+	ESoccerPeriodFirstExtra  ESoccerPeriodType = "1st_extra"
+	ESoccerPeriodSecondExtra ESoccerPeriodType = "2nd_extra"
+	ESoccerPeriodPenalties   ESoccerPeriodType = "penalties"
 )
 
-func (s ESoccerStatistic) Typ() string {
+func (s ESoccerStatistic) GetType() Type {
 	return s.Type
 }
 
 type ESoccerStatistic struct {
-	Type    string          `json:"type"`
+	Type    Type            `json:"type"`
 	Periods []ESoccerPeriod `json:"periods"`
 }
 
@@ -31,10 +27,10 @@ type ESoccerGoal struct {
 }
 
 type ESoccerCard struct {
-	Number   int    `json:"number"`
-	Type     string `json:"type"`
-	Canceled bool   `json:"canceled"`
-	Team     Team   `json:"team"`
+	Number   int      `json:"number"`
+	Type     CardType `json:"type"`
+	Canceled bool     `json:"canceled"`
+	Team     Team     `json:"team"`
 }
 
 type ESoccerPenalty struct {
@@ -45,10 +41,11 @@ type ESoccerPenalty struct {
 }
 
 type ESoccerPeriod struct {
-	Name      string           `json:"name"`
-	IsEnded   bool             `json:"is_ended"`
-	Timer     Timer            `json:"timer"`
-	Cards     []ESoccerCard    `json:"cards"`
-	Goals     []ESoccerGoal    `json:"goals"`
-	Penalties []ESoccerPenalty `json:"penalties"`
+	Name      string            `json:"name"`
+	Type      ESoccerPeriodType `json:"type"`
+	IsEnded   bool              `json:"is_ended"`
+	Timer     Timer             `json:"timer"`
+	Cards     []ESoccerCard     `json:"cards"`
+	Goals     []ESoccerGoal     `json:"goals"`
+	Penalties []ESoccerPenalty  `json:"penalties"`
 }

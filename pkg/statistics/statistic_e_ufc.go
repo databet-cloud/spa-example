@@ -12,12 +12,12 @@ const (
 	EUFCReasonOther EUFCReasonType = "o"
 )
 
-func (s EUFCStatistic) Typ() string {
+func (s EUFCStatistic) GetType() Type {
 	return s.Type
 }
 
 type EUFCStatistic struct {
-	Type   string      `json:"type"`
+	Type   Type        `json:"type"`
 	Rounds []EUFCRound `json:"rounds"`
 	Result EUFCResult  `json:"result"`
 }
@@ -28,8 +28,8 @@ type EUFCRound struct {
 }
 
 type EUFCResult struct {
-	RoundNumber *int            `json:"round_number"`
-	Winner      *Team           `json:"winner"`
-	Time        *int            `json:"time"`
-	Reason      *EUFCReasonType `json:"reason"`
+	RoundNumber int            `json:"round_number"`
+	Winner      Team           `json:"winner"`
+	Time        int            `json:"time"`
+	Reason      EUFCReasonType `json:"reason"`
 }

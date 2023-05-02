@@ -18,12 +18,12 @@ const (
 	PointAbove GamePoint = "A"
 )
 
-func (s TennisStatistic) Typ() string {
+func (s TennisStatistic) GetType() Type {
 	return s.Type
 }
 
 type TennisStatistic struct {
-	Type string      `json:"type"`
+	Type Type        `json:"type"`
 	Sets []TennisSet `json:"sets"`
 }
 

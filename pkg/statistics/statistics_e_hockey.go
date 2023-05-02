@@ -12,12 +12,12 @@ const (
 	EHockeyPeriodBulletsTwentyMin = 20
 )
 
-func (s EHockeyStatistic) Typ() string {
+func (s EHockeyStatistic) GetType() Type {
 	return s.Type
 }
 
 type EHockeyStatistic struct {
-	Type                   string          `json:"type"`
+	Type                   Type            `json:"type"`
 	OvertimePeriodDuration string          `json:"overtime_period_duration"`
 	PeriodDuration         string          `json:"period_duration"`
 	Periods                []EHockeyPeriod `json:"periods"`

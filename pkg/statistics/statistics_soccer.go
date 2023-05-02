@@ -1,21 +1,23 @@
 package statistics
 
+type SoccerPeriodType string
+
 const (
-	SoccerPeriodUnknown     = "unknown"
-	SoccerPeriodFirstHalf   = "1st_half"
-	SoccerPeriodSecondHalf  = "2nd_half"
-	SoccerPeriodFirstExtra  = "1st_extra"
-	SoccerPeriodSecondExtra = "2nd_extra"
-	SoccerPeriodPenalties   = "penalties"
-	SoccerPeriodLast        = "last"
+	SoccerPeriodUnknown     SoccerPeriodType = "unknown"
+	SoccerPeriodFirstHalf   SoccerPeriodType = "1st_half"
+	SoccerPeriodSecondHalf  SoccerPeriodType = "2nd_half"
+	SoccerPeriodFirstExtra  SoccerPeriodType = "1st_extra"
+	SoccerPeriodSecondExtra SoccerPeriodType = "2nd_extra"
+	SoccerPeriodPenalties   SoccerPeriodType = "penalties"
+	SoccerPeriodLast        SoccerPeriodType = "last"
 )
 
-func (s SoccerStatistic) Typ() string {
+func (s SoccerStatistic) GetType() Type {
 	return s.Type
 }
 
 type SoccerStatistic struct {
-	Type    string                  `json:"type"`
+	Type    Type                    `json:"type"`
 	Periods map[string]SoccerPeriod `json:"periods"`
 }
 
@@ -50,9 +52,10 @@ type SoccerTeam struct {
 }
 
 type SoccerPeriod struct {
-	Name      string      `json:"name"`
-	IsEnded   bool        `json:"is_ended"`
-	Teams     SoccerTeams `json:"teams"`
-	VARActive bool        `json:"video_assistant_referee_active"`
-	Timer     Timer       `json:"timer"`
+	Name      string           `json:"name"`
+	Type      SoccerPeriodType `json:"type"`
+	IsEnded   bool             `json:"is_ended"`
+	Teams     SoccerTeams      `json:"teams"`
+	VARActive bool             `json:"video_assistant_referee_active"`
+	Timer     Timer            `json:"timer"`
 }

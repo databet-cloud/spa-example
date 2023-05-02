@@ -11,12 +11,12 @@ import (
 type Statistics []Statistic
 
 type Statistic interface {
-	Typ() string
+	GetType() Type
 }
 
 // easyjson:json
 type typedStatistic struct {
-	Type string `json:"type"`
+	Type Type `json:"type"`
 }
 
 func (s *Statistics) UnmarshalJSON(data []byte) error {
@@ -38,41 +38,41 @@ func (s *Statistics) UnmarshalJSON(data []byte) error {
 		var statistic Statistic
 
 		switch typed.Type {
-		case SportCSGO:
+		case TypeCSGO:
 			statistic = new(CSGOStatistic)
-		case SportDota2:
+		case TypeDota2:
 			statistic = new(Dota2Statistic)
-		case SportLOL:
+		case TypeLOL:
 			statistic = new(LOLStatistic)
-		case SportSoccer:
+		case TypeSoccer:
 			statistic = new(SoccerStatistic)
-		case SportBasketball:
+		case TypeBasketball:
 			statistic = new(BasketballStatistic)
-		case SportHockey:
+		case TypeHockey:
 			statistic = new(HockeyStatistic)
-		case SportEHockey:
+		case TypeEHockey:
 			statistic = new(EHockeyStatistic)
-		case SportEBasketball:
+		case TypeEBasketball:
 			statistic = new(EBasketballStatistic)
-		case SportESoccer:
+		case TypeESoccer:
 			statistic = new(ESoccerStatistic)
-		case SportTennis:
+		case TypeTennis:
 			statistic = new(TennisStatistic)
-		case SportETennis:
+		case TypeETennis:
 			statistic = new(ETennisStatistic)
-		case SportTableTennis:
+		case TypeTableTennis:
 			statistic = new(TableTennisStatistic)
-		case SportVolleyball:
+		case TypeVolleyball:
 			statistic = new(VolleyballStatistic)
-		case SportBeachVolleyball:
+		case TypeBeachVolleyball:
 			statistic = new(BeachVolleyballStatistic)
-		case SportEVolleyball:
+		case TypeEVolleyball:
 			statistic = new(EVolleyballStatistic)
-		case SportAmericanFootball:
+		case TypeAmericanFootball:
 			statistic = new(AmericanFootballStatistic)
-		case SportIndoorSoccer:
+		case TypeIndoorSoccer:
 			statistic = new(IndoorSoccerStatistic)
-		case SportEUFC:
+		case TypeEUFC:
 			statistic = new(EUFCStatistic)
 		default:
 			// append raw json for unknown sport

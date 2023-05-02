@@ -1,11 +1,11 @@
 package statistics
 
-func (s ETennisStatistic) Typ() string {
+func (s ETennisStatistic) GetType() Type {
 	return s.Type
 }
 
 type ETennisStatistic struct {
-	Type string       `json:"type"`
+	Type Type         `json:"type"`
 	Sets []ETennisSet `json:"sets"`
 }
 

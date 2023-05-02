@@ -1,11 +1,11 @@
 package statistics
 
-func (s LOLStatistic) Typ() string {
+func (s LOLStatistic) GetType() Type {
 	return s.Type
 }
 
 type LOLStatistic struct {
-	Type string   `json:"type"`
+	Type Type     `json:"type"`
 	Maps []LOLMap `json:"maps"`
 }
 

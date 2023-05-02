@@ -1,19 +1,21 @@
 package statistics
 
+type AmericanFootballPeriodTimeFormat string
+
 const (
-	AmericanFootballPeriodTimeFormatUnknown        = "unknown"
-	AmericanFootballPeriodTimeFormatTwelveMinutes  = "12_min"
-	AmericanFootballPeriodTimeFormatFifteenMinutes = "15_min"
+	AmericanFootballPeriodTimeFormatUnknown        AmericanFootballPeriodTimeFormat = "unknown"
+	AmericanFootballPeriodTimeFormatTwelveMinutes  AmericanFootballPeriodTimeFormat = "12_min"
+	AmericanFootballPeriodTimeFormatFifteenMinutes AmericanFootballPeriodTimeFormat = "15_min"
 )
 
-func (s AmericanFootballStatistic) Typ() string {
+func (s AmericanFootballStatistic) GetType() Type {
 	return s.Type
 }
 
 type AmericanFootballStatistic struct {
-	Type       string                   `json:"type"`
-	TimeFormat string                   `json:"time_format"`
-	Periods    []AmericanFootballPeriod `json:"periods"`
+	Type       Type                             `json:"type"`
+	TimeFormat AmericanFootballPeriodTimeFormat `json:"time_format"`
+	Periods    []AmericanFootballPeriod         `json:"periods"`
 }
 
 type AmericanFootballPeriod struct {

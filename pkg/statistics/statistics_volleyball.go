@@ -1,22 +1,17 @@
 package statistics
 
-const (
-	VolleyballSetRegular = "regular"
-	VolleyballSetGolden  = "golden"
-)
-
-func (s VolleyballStatistic) Typ() string {
+func (s VolleyballStatistic) GetType() Type {
 	return s.Type
 }
 
 type VolleyballStatistic struct {
-	Type string          `json:"type"`
+	Type Type            `json:"type"`
 	Sets []VolleyballSet `json:"sets"`
 }
 
 type VolleyballSet struct {
 	Number        int               `json:"number"`
-	Type          string            `json:"type"`
+	Type          SetType           `json:"type"`
 	SetServer     Team              `json:"set_server"`
 	CurrentServer Team              `json:"current_server"`
 	Winner        Team              `json:"winner"`

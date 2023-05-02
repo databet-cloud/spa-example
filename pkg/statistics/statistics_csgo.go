@@ -1,41 +1,44 @@
 package statistics
 
+type CSGOSide string
+
 const (
-	CSGOSideT  = "t"
-	CSGOSideCT = "ct"
+	CSGOSideT  CSGOSide = "t"
+	CSGOSideCT CSGOSide = "ct"
+)
 
-	HomeWinner = "home"
-	AwayWinner = "away"
-
+const (
 	RoundTime = 60 + 55
 )
 
+type CSGOMapName string
+
 const (
-	CSGOMapNameDeInferno     = "de_inferno"
-	CSGOMapNameDeMirage      = "de_mirage"
-	CSGOMapNameDeVertigo     = "de_vertigo"
-	CSGOMapNameDeOverpass    = "de_overpass"
-	CSGOMapNameDeNuke        = "de_nuke"
-	CSGOMapNameDeDust2       = "de_dust2"
-	CSGOMapNameDeTrain       = "de_train"
-	CSGOMapNameDeCache       = "de_cache"
-	CSGOMapNameDeAncient     = "de_ancient"
-	CSGOMapNameDeCobblestone = "de_cobblestone"
-	CSGOMapNameDeAnubis      = "de_anubis"
+	CSGOMapNameDeInferno     CSGOMapName = "de_inferno"
+	CSGOMapNameDeMirage      CSGOMapName = "de_mirage"
+	CSGOMapNameDeVertigo     CSGOMapName = "de_vertigo"
+	CSGOMapNameDeOverpass    CSGOMapName = "de_overpass"
+	CSGOMapNameDeNuke        CSGOMapName = "de_nuke"
+	CSGOMapNameDeDust2       CSGOMapName = "de_dust2"
+	CSGOMapNameDeTrain       CSGOMapName = "de_train"
+	CSGOMapNameDeCache       CSGOMapName = "de_cache"
+	CSGOMapNameDeAncient     CSGOMapName = "de_ancient"
+	CSGOMapNameDeCobblestone CSGOMapName = "de_cobblestone"
+	CSGOMapNameDeAnubis      CSGOMapName = "de_anubis"
 )
 
-func (s CSGOStatistic) Typ() string {
+func (s CSGOStatistic) GetType() Type {
 	return s.Type
 }
 
 type CSGOStatistic struct {
-	Type string    `json:"type"`
+	Type Type      `json:"type"`
 	Maps []CSGOMap `json:"maps"`
 }
 
 type CSGOMap struct {
 	Number int          `json:"number"`
-	Name   string       `json:"name"`
+	Name   CSGOMapName  `json:"name"`
 	Rounds []CSGORound  `json:"rounds"`
 	Score  CSGOMapScore `json:"score"`
 	Winner Team         `json:"winner"`
@@ -47,11 +50,11 @@ type CSGOMapScore struct {
 }
 
 type CSGORound struct {
-	Number       int    `json:"number"`
-	Timer        Timer  `json:"timer"`
-	HomeTeamSide string `json:"home_team_side"`
-	AwayTeamSide string `json:"away_team_side"`
-	BombPlanted  bool   `json:"bomb_planted"`
-	BombTime     int    `json:"bomb_time"`
-	GameState    string `json:"game_state"`
+	Number       int      `json:"number"`
+	Timer        Timer    `json:"timer"`
+	HomeTeamSide CSGOSide `json:"home_team_side"`
+	AwayTeamSide CSGOSide `json:"away_team_side"`
+	BombPlanted  bool     `json:"bomb_planted"`
+	BombTime     int      `json:"bomb_time"`
+	GameState    string   `json:"game_state"`
 }

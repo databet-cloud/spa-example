@@ -3,10 +3,10 @@ package statistics
 import "encoding/json"
 
 type RawStatistic struct {
-	typ string
+	typ Type
 	json.RawMessage
 }
 
-func (r RawStatistic) Typ() string {
+func (r RawStatistic) GetType() Type {
 	return r.typ
 }
