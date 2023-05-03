@@ -23,12 +23,12 @@ const (
 type HockeyPeriodDuration string
 
 const (
-	HockeyPeriodDurationUnknown   = "unknown"
-	HockeyPeriodDurationThreeMin  = "3_min"
-	HockeyPeriodDurationFourMin   = "4_min"
-	HockeyPeriodDurationSevenMin  = "7_min"
-	HockeyPeriodDurationTenMin    = "10_min"
-	HockeyPeriodDurationTwentyMin = "20_min"
+	HockeyPeriodDurationUnknown   HockeyPeriodDuration = "unknown"
+	HockeyPeriodDurationThreeMin  HockeyPeriodDuration = "3_min"
+	HockeyPeriodDurationFourMin   HockeyPeriodDuration = "4_min"
+	HockeyPeriodDurationSevenMin  HockeyPeriodDuration = "7_min"
+	HockeyPeriodDurationTenMin    HockeyPeriodDuration = "10_min"
+	HockeyPeriodDurationTwentyMin HockeyPeriodDuration = "20_min"
 )
 
 func (s HockeyStatistic) GetType() Type {

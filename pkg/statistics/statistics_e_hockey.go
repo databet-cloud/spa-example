@@ -1,15 +1,23 @@
 package statistics
 
+type EHockeyPeriodType string
+
 const (
 	EHockeyPeriodRegular  EHockeyPeriodType = "regular"
 	EHockeyPeriodOvertime EHockeyPeriodType = "overtime"
 	EHockeyPeriodBullets  EHockeyPeriodType = "bullets"
+)
 
-	EHockeyPeriodDurationTwentyMin = 20
+type EHockeyPeriodDuration string
 
-	EHockeyPeriodOvertimeDurationFiveMin = 5
+const (
+	EHockeyPeriodDurationTwentyMin EHockeyPeriodDuration = "20_min"
+)
 
-	EHockeyPeriodBulletsTwentyMin = 20
+type EHockeyPeriodOvertimeDuration string
+
+const (
+	EHockeyPeriodOvertimeDurationFiveMin EHockeyPeriodOvertimeDuration = "5_min"
 )
 
 func (s EHockeyStatistic) GetType() Type {
@@ -17,13 +25,11 @@ func (s EHockeyStatistic) GetType() Type {
 }
 
 type EHockeyStatistic struct {
-	Type                   Type            `json:"type"`
-	OvertimePeriodDuration string          `json:"overtime_period_duration"`
-	PeriodDuration         string          `json:"period_duration"`
-	Periods                []EHockeyPeriod `json:"periods"`
+	Type                   Type                          `json:"type"`
+	OvertimePeriodDuration EHockeyPeriodOvertimeDuration `json:"overtime_period_duration"`
+	PeriodDuration         EHockeyPeriodDuration         `json:"period_duration"`
+	Periods                []EHockeyPeriod               `json:"periods"`
 }
-
-type EHockeyPeriodType = string
 
 type EHockeyPeriod struct {
 	Number       int                  `json:"number"`
