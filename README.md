@@ -120,6 +120,11 @@ Note: The system is multi-currency, but to integrate correctly you have to provi
 
 DataBet API client allows you to fetch markets, sports, tournaments, organizations, players and teams by their ids/filters and translates names to the given locale.
 
+## Statistics
+[https://statistics.databet.cloud](https://statistics.databet.cloud)
+
+DataBet API client allows you to fetch sport event versioned statistics (each sport has a different set of parameters in statistics) by their id and version. 
+
 ## Common errors
 * **403 Forbidden** means that you should add your ip to whitelist, using [STM](https://stm.databet.cloud) bookmaker settings
 * **401 Unauthorized** indicates problems with your bookmaker tls certificate, contact support to fix it
