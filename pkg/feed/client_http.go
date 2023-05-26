@@ -75,7 +75,6 @@ func (c *ClientHTTP) GetLogsFromVersion(ctx context.Context, version string) (*R
 	}
 
 	req.Header.Add("Last-Version", version)
-	req.URL.Query().Add("longPolling", "true")
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
