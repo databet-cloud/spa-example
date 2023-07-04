@@ -11,7 +11,7 @@ This sdk provides clients and tools to:
 
 To use provided clients, you should configure your http client to pass tls certificate:
 
-```
+```go
 // Parse tls certificate
 certificate, err := tls.LoadX509KeyPair("certFile", "keyFile")
 if err != nil {
@@ -19,11 +19,15 @@ if err != nil {
 }
 
 // Create http client and pass tls certificate to tls config
-httpClient := http.DefaultClient
-httpClient.Transport = &http.Transport{
+tr := &http.Transport{
     TLSClientConfig: &tls.Config{
         Certificates: []tls.Certificate{certificate},
     },
+}
+
+httpClient := &http.Client{
+    Timeout:   0, // must be explicitly set to 0, since feed is a stream of events
+    Transport: tr
 }
 ```
 
@@ -34,7 +38,7 @@ Feed client allows you to synchronize your system with an actual feed version
 
 [More Info](https://docs.data.bet/feed/)
 
-```
+```go
 client := feed.NewClientHTTP(httpClient, "https://feed.databet.cloud")
 
 cursor, lastVersion, err := client.GetAll(context.Background())
@@ -60,7 +64,8 @@ for cursor.HasMore() {
 
 You should use GetAll only once, during the first synchronization.
 Once you synchronized with an actual feed version, you can pass it to GetFromVersion method.
-```
+
+```go
 cursor, err := client.GetFromVersion(context.Background(), lastVersion)
 if err != nil {
     panic(err)
@@ -86,7 +91,8 @@ for cursor.HasMore() {
 ```
 
 To get the last feed version, simply use:
-```
+
+```go
 version, err := client.GetFeedVersion(context.Background())
 ```
 
