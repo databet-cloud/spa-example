@@ -4,9 +4,15 @@ func (s LOLStatistic) GetType() Type {
 	return s.Type
 }
 
+type LOLPlayerStatistic struct {
+	ID       string `json:"id"`
+	Nickname string `json:"nickname"`
+}
+
 type LOLStatistic struct {
-	Type Type     `json:"type"`
-	Maps []LOLMap `json:"maps"`
+	Type             Type                 `json:"type"`
+	Maps             []LOLMap             `json:"maps"`
+	PlayersStatistic []LOLPlayerStatistic `json:"players"`
 }
 
 type LOLMap struct {

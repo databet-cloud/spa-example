@@ -32,8 +32,9 @@ func (s CSGOStatistic) GetType() Type {
 }
 
 type CSGOStatistic struct {
-	Type Type      `json:"type"`
-	Maps []CSGOMap `json:"maps"`
+	Type             Type                  `json:"type"`
+	Maps             []CSGOMap             `json:"maps"`
+	PlayersStatistic []CSGOPlayerStatistic `json:"players"`
 }
 
 type CSGOMap struct {
@@ -57,4 +58,9 @@ type CSGORound struct {
 	BombPlanted  bool     `json:"bomb_planted"`
 	BombTime     int      `json:"bomb_time"`
 	GameState    string   `json:"game_state"`
+}
+
+type CSGOPlayerStatistic struct {
+	ID       string `json:"id"`
+	Nickname string `json:"nickname"`
 }
