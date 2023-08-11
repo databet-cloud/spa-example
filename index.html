@@ -1,0 +1,138 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
+
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" href="icon.png">
+  <!-- Place favicon.ico in the root directory -->
+
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
+
+  <meta name="theme-color" content="#fafafa">
+</head>
+
+<body>
+<script type="text/javascript" src="https://stg-spa.databet.cloud/static/js/bootstrap.js?v=1"></script>
+<script>
+  bettingLoader.load(
+    {
+      url: {
+        gqlEndpoint: '//<PLACE_YOUR_GRAPHQL_ADDRESS_HERE>',
+        bettingPath: '/',
+        pagePath: '',
+        staticEndpoint: '//demo-static.data.bet',
+      },
+      token:
+        '<PLACE_TOKEN_HERE>',
+      locale: 'en',
+      currency: 'EUR',
+      rootElement: 'betting__container',
+      sportIds: [
+        'esports_mobile_legends_bang_bang',
+        'esports_call_of_duty_warzone',
+        'american_football',
+        'table_tennis',
+        'esports_fifa',
+        'esports_valorant',
+        'esports_fortnite',
+        'football',
+        'basketball',
+        'tennis',
+        'ice_hockey',
+        'volleyball',
+        'baseball',
+        'beach_volleyball',
+        'boxing',
+        'futsal',
+        'handball',
+        'mma',
+        'snooker',
+        'motorsport',
+        'beach_soccer',
+        'esports_call_of_duty',
+        'esports_counter_strike',
+        'esports_dota_2',
+        'esports_hearthstone',
+        'esports_heroes_of_the_storm',
+        'esports_league_of_legends',
+        'esports_overwatch',
+        'esports_starcraft',
+        'esports_world_of_tanks',
+        'esports_street_fighter_5',
+        'esports_vainglory',
+        'esports_warcraft_3',
+        'esports_rainbow_six',
+        'esports_rocket_league',
+        'esports_smite',
+        'esports_soccer_mythical',
+        'esports_halo',
+        'esports_crossfire',
+        'esports_battlegrounds',
+        'esports_starcraft_1',
+        'esports_king_of_glory',
+        'esports_nba_2k18',
+      ],
+      isAuthorized: true,
+      features: {
+        'app.rank-personalized': true,
+        'match.stream-grid-player': false,
+        'match.bet-booster': false,
+        'betslip.disable-betslip-autofocus': false,
+        'main.HideNavigation': false
+      },
+    },
+    function (bettingAPI) {
+
+      bettingAPI.registerCallbacks({
+        getBanners: function (locale) {
+          return Promise.resolve([]);
+        },
+      });
+
+      // init default odd format
+      bettingAPI.selectOddFormat('Decimal');
+
+      // subscribe Betting Events
+      bettingAPI.subscribe('redirect', ({
+                                          destination,
+                                          link
+                                        }) => {
+        switch (destination) {
+          case 'login': {
+            window.location.href = '#!/auth/signin?popup';
+          }
+
+          default: {
+            break;
+          }
+        }
+      });
+
+      bettingAPI.init();
+      // set your palette
+      bettingAPI.updatePalette({
+        primaryColor: '#060c1f',
+        primaryText: '#ffffff',
+        primaryAccent: '#00bf9e',
+        secondaryColor: '#141c33',
+        secondaryText: '#a4a4a4',
+      });
+
+    }
+  );
+</script>
+<div class="col-lg-10" id="betting__container"></div>
+</body>
+
+</html>
