@@ -11,6 +11,15 @@
    Base styles: opinionated defaults
    ========================================================================== */
 
+.header {
+  box-sizing: border-box;
+  padding: 16px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  background: black;
+}
+
 html {
   color: #222;
   font-size: 1em;
