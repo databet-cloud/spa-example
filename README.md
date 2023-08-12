@@ -1,6 +1,6 @@
 # DataBet SPA Example
 
-This repository provides boilerplate code as an introduction to help you build your own betting application using the 
+This repository provides boilerplate code as an introduction to help you build your own betting application using the
 [DataBet SPA](https://docs.data.bet/betting-spa/).
 
 ## Documentation
@@ -12,7 +12,7 @@ This repository provides boilerplate code as an introduction to help you build y
 
 ### Prerequisites
 
-To run this project, you need to have 
+To run this project, you need to have
 [Node.js 18+ and NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) installed on your system.
 
 ### Setting up the Project
@@ -34,26 +34,19 @@ curl --location https://betting.int.databet.cloud/token/create \
 --data '{ "locale": "en", "currency": "EUR"}'
 ```
 
-#### 3. Modify the `index.html` File
-
-Open `index.html` in your editor and replace the placeholders:
-1. Replace `<PUT_YOUR_GRAPHQL_ADDRESS_HERE>` with the GQL address provided by DataBet.
-2. Replace `<PUT_TOKEN_HERE>` with the token retrieved from step #2.
-
-```html
-<!-- ... -->
-<script>
-    bettingLoader.load(
-        {
-            token: 'YOUR_TOKEN_HERE',
-            url: {
-                gqlEndpoint: 'YOUR_GQL_ADDRESS_HERE',
-                bettingPath: '/',
-                pagePath: '',
-                staticEndpoint: '//demo-static.data.bet',
-            },
-<!-- ... -->
+#### 3. Setting up Environment Variables
+1. Create a file named `.env` in the root directory of this project
+2. Copy the contents of the `.env.dist` file and paste them into the `.env` file.
+3. Replace the values of the variables in the `.env` file with appropriate values:
+  - `USER_TOKEN`: This is the authorization token retrieved from step #2
+  - `GRAPHQL_URL`: GQL address provided by DataBet.
+```plaintext
+USER_TOKEN=your_actual_user_token_here
+GRAPHQL_URL=your_gql_address_here
 ```
+4. Save the `.env` file.
+
+**Note:** the `.env` file contains sensitive information, so it is not recommended to disclose it publicly
 
 #### 4. Build and Start the Server
 
@@ -69,5 +62,5 @@ Congratulations! You've successfully set up the SPA example!
 
 ## What's Next?
 
-Once set up, you should integrate the [Callbacks API](https://docs.data.bet/betting-bet/) within your server. Explore 
+Once set up, you should integrate the [Callbacks API](https://docs.data.bet/betting-bet/) within your server. Explore
 any additional APIs you need to realize the **Betting Application of Your Dreams**!

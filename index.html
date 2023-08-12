@@ -24,13 +24,13 @@
 
 <body>
 <script type="text/javascript" src="https://stg-spa.databet.cloud/static/js/bootstrap.js?v=1"></script>
-<script>
+<script type="module">
   bettingLoader.load(
     {
-      token: '<PUT_TOKEN_HERE>',
+      token: process.env.USER_TOKEN,
       isAuthorized: false,
       url: {
-        gqlEndpoint: '//<PUT_YOUR_GRAPHQL_ADDRESS_HERE>',
+        gqlEndpoint: process.env.GRAPHQL_URL,
         bettingPath: '/',
         pagePath: '',
         staticEndpoint: '//stg-spa.databet.cloud',
