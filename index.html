@@ -27,14 +27,14 @@
 <script>
   bettingLoader.load(
     {
+      token: '<PUT_TOKEN_HERE>',
+      isAuthorized: false,
       url: {
-        gqlEndpoint: '//<PLACE_YOUR_GRAPHQL_ADDRESS_HERE>',
+        gqlEndpoint: '//<PUT_YOUR_GRAPHQL_ADDRESS_HERE>',
         bettingPath: '/',
         pagePath: '',
-        staticEndpoint: '//demo-static.data.bet',
+        staticEndpoint: '//stg-spa.databet.cloud',
       },
-      token:
-        '<PLACE_TOKEN_HERE>',
       locale: 'en',
       currency: 'EUR',
       rootElement: 'betting__container',
@@ -83,7 +83,6 @@
         'esports_king_of_glory',
         'esports_nba_2k18',
       ],
-      isAuthorized: true,
       features: {
         'app.rank-personalized': true,
         'match.stream-grid-player': false,
