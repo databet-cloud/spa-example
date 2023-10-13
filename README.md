@@ -62,5 +62,6 @@ Congratulations! You've successfully set up the SPA example!
 
 ## What's Next?
 
-Once set up, you should integrate the [Callbacks API](https://docs.data.bet/betting-bet/) within your server. Explore
-any additional APIs you need to realize the **Betting Application of Your Dreams**!
+Once set up, you should integrate the [Callbacks](https://github.com/databet-cloud/callback-server-example) within your 
+server. 
+Explore any additional APIs you need to realize the **Betting Application of Your Dreams**!
